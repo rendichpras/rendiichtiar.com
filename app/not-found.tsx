@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { PageTransition } from "./components/page-transition"
+import { PageTransition } from "@/components/animations/page-transition"
 
 export default function NotFound() {
   const router = useRouter()

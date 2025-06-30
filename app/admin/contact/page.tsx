@@ -19,7 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
-import { PageTransition } from "@/app/components/page-transition"
+import { PageTransition } from "@/components/animations/page-transition"
 import { Separator } from "@/components/ui/separator"
 
 import {

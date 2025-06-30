@@ -21,7 +21,7 @@ import {
   SiMongodb
 } from "react-icons/si"
 import { VscCode } from "react-icons/vsc"
-import { PageTransition } from "./components/page-transition"
+import { PageTransition } from "@/components/animations/page-transition"
 
 const techStack = [
   { name: "TypeScript", icon: SiTypescript, color: "text-[#3178C6]" },

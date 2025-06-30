@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Separator } from "@/components/ui/separator"
-import { PageTransition } from "../components/page-transition"
+import { PageTransition } from "@/components/animations/page-transition"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

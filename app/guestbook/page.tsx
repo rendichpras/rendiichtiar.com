@@ -5,7 +5,7 @@ import { GuestbookForm } from "@/components/guestbook/GuestbookForm"
 import { GuestbookList } from "@/components/guestbook/GuestbookList"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { PageTransition } from "../components/page-transition"
+import { PageTransition } from "@/components/animations/page-transition"
 
 export default async function GuestbookPage() {
   const session = await getServerSession()

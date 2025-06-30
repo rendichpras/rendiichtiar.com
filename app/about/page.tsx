@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Separator } from "@/components/ui/separator"
-import { PageTransition } from "../components/page-transition"
+import { PageTransition } from "@/components/animations/page-transition"
 import { BookOpen, GraduationCap, User2 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
