@@ -65,8 +65,8 @@ const sections = [
             <Card className="p-6 space-y-4">
                 <div className="space-y-4">
                     <Card className="p-4">
-                        <div className="flex items-start sm:items-center gap-3">
-                            <div className="size-10 rounded-lg flex items-center justify-center shrink-0">
+                        <div className="flex items-start sm:items-center gap-4">
+                            <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
                                 <img
                                     src="/saranatechnology.png"
                                     alt="Sarana Technology"
@@ -80,7 +80,7 @@ const sections = [
                                     <span>•</span>
                                     <span>Bali, Indonesia</span>
                                 </div>
-                                <div className="text-xs text-muted-foreground mt-1">
+                                <div className="text-xs text-muted-foreground mt-1.5">
                                     <span>April 2025 - Sekarang</span>
                                     <span> • </span>
                                     <span>Remote</span>
@@ -98,10 +98,9 @@ const sections = [
         title: "Pendidikan",
         content: (
             <Card className="p-6">
-
                 <Card className="p-4">
-                    <div className="flex items-start sm:items-center gap-3">
-                        <div className="size-10 rounded-lg flex items-center justify-center shrink-0">
+                    <div className="flex items-start sm:items-center gap-4">
+                        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
                             <img
                                 src="/upb.png"
                                 alt="Universitas Pelita Bangsa"
@@ -111,7 +110,7 @@ const sections = [
                         <div className="min-w-0 flex-1">
                             <h3 className="text-base sm:text-lg font-semibold">Universitas Pelita Bangsa</h3>
                             <p className="text-xs sm:text-sm text-muted-foreground">Teknik Informatika</p>
-                            <div className="text-xs text-muted-foreground mt-1">
+                            <div className="text-xs text-muted-foreground mt-1.5">
                                 <span>2025 - Sekarang</span>
                                 <span> • </span>
                                 <span>Bekasi, Indonesia</span>
@@ -120,9 +119,9 @@ const sections = [
                     </div>
                 </Card>
 
-                <Card className="p-4">
-                    <div className="flex items-start sm:items-center gap-3">
-                        <div className="size-10 rounded-lg flex items-center justify-center shrink-0">
+                <Card className="p-4 mt-4">
+                    <div className="flex items-start sm:items-center gap-4">
+                        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
                             <img
                                 src="/smkhsagung.png"
                                 alt="SMK HS AGUNG"
@@ -132,7 +131,7 @@ const sections = [
                         <div className="min-w-0 flex-1">
                             <h3 className="text-base sm:text-lg font-semibold">SMK HS AGUNG</h3>
                             <p className="text-xs sm:text-sm text-muted-foreground">Teknik Komputer dan Jaringan</p>
-                            <div className="text-xs text-muted-foreground mt-1">
+                            <div className="text-xs text-muted-foreground mt-1.5">
                                 <span>2022 - 2025</span>
                                 <span> • </span>
                                 <span>Bekasi, Indonesia</span>

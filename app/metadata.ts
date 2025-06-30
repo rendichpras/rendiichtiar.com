@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rendiichtiar.com"),
   title: "Rendi Ichtiar Prasetyo | Personal Website",
   description: "Portfolio website Rendi Ichtiar Prasetyo, seorang Full Stack Developer yang berpengalaman dalam pengembangan web modern menggunakan Next.js, React, dan teknologi terkini",
   keywords: ["Full Stack Developer", "Web Developer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Portfolio"],

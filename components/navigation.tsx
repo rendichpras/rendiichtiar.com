@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu, X, Home, BookOpen, User2 } from "lucide-react"
+import { Menu, X, Home, BookOpen, User2, Mail } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Tooltip,
@@ -30,6 +30,11 @@ const navItems = [
     path: "/guestbook",
     name: "Buku Tamu",
     icon: BookOpen
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    icon: Mail
   }
 ]
 

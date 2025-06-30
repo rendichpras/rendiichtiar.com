@@ -97,3 +97,12 @@ model Like {
 
   @@unique([userId, guestbookId])
 }
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+  status    String   @default("UNREAD") // UNREAD, READ, REPLIED
+}

@@ -8,6 +8,7 @@ import { BackToTop } from "@/components/BackToTop"
 import { Navbar } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { metadata } from "./metadata"
+import { cn } from "@/lib/utils"
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -48,7 +49,7 @@ export default function RootLayout({
         <meta name="msapplication-TileImage" content="/icon/ms-icon-144x144.png" />
         <meta name="theme-color" content="#ffffff" />
       </head>
-      <body className={`${outfit.variable} ${firaCode.variable} font-sans antialiased`}>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", outfit.variable, firaCode.variable)}>
         <AuthProvider>
           <ThemeProvider
             attribute="class"
@@ -59,7 +60,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <BackToTop />
-            <Toaster />
+            <Toaster richColors closeButton position="top-right" />
             <Footer />
           </ThemeProvider>
         </AuthProvider>
