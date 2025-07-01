@@ -12,16 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SiJavascript } from "react-icons/si"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
+import type { OnMount } from "@monaco-editor/react"
 
 // Lazy load Monaco Editor
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center w-full h-full min-h-[500px] bg-secondary/20 animate-pulse rounded-md">
-      <Skeleton className="w-full h-full" />
-    </div>
-  ),
-})
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
 // Daftar kata kunci yang dilarang
 const BLOCKED_KEYWORDS = [
@@ -45,48 +39,12 @@ const BLOCKED_KEYWORDS = [
   "prompt",
 ]
 
-function EditorSkeleton() {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-2"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-7 w-20" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="size-8" />
-          <Skeleton className="size-8" />
-        </div>
-      </div>
-      <Skeleton className="w-full h-[500px]" />
-    </motion.div>
-  )
-}
-
-function ConsoleSkeleton() {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-      className="space-y-2"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-7 w-20" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="size-8" />
-          <Skeleton className="size-8" />
-        </div>
-      </div>
-      <Skeleton className="w-full h-[500px]" />
-    </motion.div>
-  )
-}
+// Komponen loading untuk editor
+const EditorLoading = () => (
+  <div className="flex items-center justify-center w-full h-full min-h-[500px] bg-secondary/20 animate-pulse rounded-md">
+    <Skeleton className="w-full h-full" />
+  </div>
+)
 
 function JavaScriptIcon() {
   return (
@@ -100,108 +58,129 @@ export function PlaygroundContent() {
   const [code, setCode] = useState("")
   const [output, setOutput] = useState("")
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [editorReady, setEditorReady] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  // Handler ketika editor siap
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    try {
+      setEditorReady(true)
+      editor.updateOptions({
+        tabSize: 2,
+        insertSpaces: true,
+        autoClosingBrackets: "always",
+        autoClosingQuotes: "always",
+        formatOnPaste: true,
+        formatOnType: true
+      })
+
+      // Tambahkan snippets
+      monaco.languages.registerCompletionItemProvider('javascript', {
+        provideCompletionItems: (model, position) => {
+          try {
+            const word = model.getWordUntilPosition(position)
+            const range = {
+              startLineNumber: position.lineNumber,
+              endLineNumber: position.lineNumber,
+              startColumn: word.startColumn,
+              endColumn: word.endColumn
+            }
+
+            return {
+              suggestions: [
+                {
+                  label: 'cl',
+                  kind: monaco.languages.CompletionItemKind.Snippet,
+                  insertText: 'console.log($1)',
+                  insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  detail: 'Console log',
+                  range
+                }
+              ]
+            }
+          } catch (error) {
+            console.error('Error in completion provider:', error)
+            return { suggestions: [] }
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Error in editor mount:', error)
+    }
+  }
 
   // Validasi kode sebelum dijalankan
   const validateCode = (code: string): boolean => {
-    const containsBlockedKeyword = BLOCKED_KEYWORDS.some(keyword => 
-      new RegExp(`\\b${keyword}\\b`).test(code)
-    )
+    try {
+      if (code.length > 5000) {
+        toast.error("Kode terlalu panjang (maksimal 5000 karakter)")
+        return false
+      }
 
-    if (containsBlockedKeyword) {
-      toast.error("Kode mengandung fungsi yang tidak diizinkan untuk keamanan")
+      const containsBlockedKeyword = BLOCKED_KEYWORDS.some(keyword => 
+        new RegExp(`\\b${keyword}\\b`).test(code)
+      )
+
+      if (containsBlockedKeyword) {
+        toast.error("Kode mengandung fungsi yang tidak diizinkan untuk keamanan")
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error('Error in code validation:', error)
+      toast.error("Terjadi kesalahan saat validasi kode")
       return false
     }
-
-    if (code.length > 5000) {
-      toast.error("Kode terlalu panjang (maksimal 5000 karakter)")
-      return false
-    }
-
-    return true
   }
 
   const runCode = () => {
+    if (!editorReady) {
+      toast.error("Editor belum siap. Mohon tunggu sebentar.")
+      return
+    }
+    
     try {
-      if (!validateCode(code)) {
-        return
-      }
+      if (!validateCode(code)) return
 
-      // Buat sandbox untuk menjalankan kode
+      const logs: string[] = []
       const sandbox = {
         console: {
           log: (...args: any[]) => {
-            logs.push(args.map(arg => {
-              if (typeof arg === 'object') {
-                return JSON.stringify(arg, null, 2)
-              }
-              return String(arg)
-            }).join(" "))
+            try {
+              logs.push(args.map(arg => {
+                if (arg instanceof Error) return arg.message
+                if (typeof arg === 'object') return JSON.stringify(arg, null, 2)
+                return String(arg)
+              }).join(" "))
+            } catch (error) {
+              console.error('Error in console.log:', error)
+              logs.push('[Error logging output]')
+            }
           }
         }
       }
 
-      // Menangkap console.log
-      const logs: string[] = []
-
-      // Menggunakan Function constructor dengan konteks terbatas
       const wrappedCode = `
-        with (sandbox) {
-          ${code}
+        try {
+          with (sandbox) {
+            ${code}
+          }
+        } catch (error) {
+          console.log(error)
         }
       `
       
       const result = new Function("sandbox", wrappedCode)(sandbox)
-      
-      // Menampilkan output
       setOutput([...logs, result !== undefined ? String(result) : ""].filter(Boolean).join("\n"))
     } catch (error) {
-      setOutput(String(error))
+      if (error instanceof Error) {
+        setOutput(error.message)
+        toast.error(error.message)
+      } else {
+        setOutput(String(error))
+        toast.error("Terjadi kesalahan saat menjalankan kode")
+      }
     }
-  }
-
-  const clearCode = () => {
-    setCode("")
-    setOutput("")
-  }
-
-  const handleEditorChange = (value: string | undefined) => {
-    if (value && value.length > 5000) {
-      toast.error("Kode terlalu panjang (maksimal 5000 karakter)")
-      return
-    }
-    setCode(value || "")
-  }
-
-  if (!mounted) {
-    return (
-      <PageTransition>
-        <main className="min-h-screen bg-background relative lg:pl-64 pt-16 lg:pt-0">
-          <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
-            {/* Header */}
-            <div className="space-y-2 max-w-2xl">
-              <div className="flex items-center gap-2">
-                <Skeleton className="size-8" />
-                <Skeleton className="h-9 w-48" />
-              </div>
-              <Skeleton className="h-5 w-96" />
-            </div>
-
-            <Separator className="my-6 bg-border/60" />
-
-            {/* Playground */}
-            <Card className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
-              <EditorSkeleton />
-              <ConsoleSkeleton />
-            </Card>
-          </section>
-        </main>
-      </PageTransition>
-    )
   }
 
   return (
@@ -245,7 +224,10 @@ export function PlaygroundContent() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={clearCode}
+                      onClick={() => {
+                        setCode("")
+                        setOutput("")
+                      }}
                       className="size-8"
                     >
                       <Trash2 className="size-4" />
@@ -263,13 +245,21 @@ export function PlaygroundContent() {
                   </div>
                 </div>
                 <div className="relative min-h-[500px] border rounded-md overflow-hidden">
-                  <Suspense fallback={<Skeleton className="w-full h-[500px]" />}>
+                  <Suspense fallback={<EditorLoading />}>
                     <MonacoEditor
                       height="500px"
                       defaultLanguage="javascript"
                       theme="vs-dark"
                       value={code}
-                      onChange={handleEditorChange}
+                      onChange={value => {
+                        if (!editorReady) return
+                        if (value && value.length > 5000) {
+                          toast.error("Kode terlalu panjang (maksimal 5000 karakter)")
+                          return
+                        }
+                        setCode(value ?? "")
+                      }}
+                      onMount={handleEditorDidMount}
                       options={{
                         minimap: { enabled: false },
                         fontSize: 14,
@@ -289,9 +279,9 @@ export function PlaygroundContent() {
                         guides: {
                           bracketPairs: true,
                           indentation: true,
-                        },
+                        }
                       }}
-                      loading={<Skeleton className="w-full h-[500px]" />}
+                      loading={<EditorLoading />}
                     />
                   </Suspense>
                 </div>
@@ -334,4 +324,4 @@ export function PlaygroundContent() {
       </main>
     </PageTransition>
   )
-} 
+}

@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
   },
   // Mengoptimalkan bundle size dengan menambahkan external dependencies
   transpilePackages: ['@monaco-editor/react'],
+  // Konfigurasi untuk menangani error Vercel Analytics
+  experimental: {
+    clientInstrumentationHook: false
+  }
 };
 
 export default nextConfig;
