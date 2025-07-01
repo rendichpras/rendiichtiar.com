@@ -12,13 +12,22 @@ export const metadata: Metadata = {
     url: "https://rendiichtiar.com/about",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Rendi Ichtiar Prasetyo - Personal Website",
+      },
+    ],
   },
   twitter: {
     title: "Tentang | Rendi Ichtiar Prasetyo",
     description: "Sekilas tentang siapa saya – karena setiap detail menambah kedalaman dalam kanvas kehidupan.",
     card: "summary_large_image",
     creator: "@rendiichtiar",
-    site: "@rendiichtiar"
+    site: "@rendiichtiar",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,

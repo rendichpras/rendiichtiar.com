@@ -12,13 +12,22 @@ export const metadata: Metadata = {
     url: "https://rendiichtiar.com/playground",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Rendi Ichtiar Prasetyo - Personal Website",
+      },
+    ],
   },
   twitter: {
     title: "JavaScript Playground | Rendi Ichtiar Prasetyo",
     description: "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.",
     card: "summary_large_image",
     creator: "@rendiichtiar",
-    site: "@rendiichtiar"
+    site: "@rendiichtiar",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
