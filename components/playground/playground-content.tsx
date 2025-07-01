@@ -70,7 +70,19 @@ export function PlaygroundContent() {
         autoClosingBrackets: "always",
         autoClosingQuotes: "always",
         formatOnPaste: true,
-        formatOnType: true
+        formatOnType: true,
+        // Mengaktifkan fitur paste
+        quickSuggestions: {
+          other: true,
+          comments: true,
+          strings: true
+        },
+        snippetSuggestions: "inline",
+        // Memperbaiki masalah input
+        acceptSuggestionOnEnter: "on",
+        autoClosingOvertype: "always",
+        autoIndent: "full",
+        autoSurround: "languageDefined"
       })
 
       // Tambahkan snippets
@@ -279,7 +291,31 @@ export function PlaygroundContent() {
                         guides: {
                           bracketPairs: true,
                           indentation: true,
-                        }
+                        },
+                        // Mengaktifkan fitur paste dan input
+                        mouseWheelZoom: true,
+                        dragAndDrop: true,
+                        copyWithSyntaxHighlighting: true,
+                        // Memperbaiki masalah input
+                        acceptSuggestionOnEnter: "on",
+                        autoClosingBrackets: "always",
+                        autoClosingQuotes: "always",
+                        autoIndent: "full",
+                        autoSurround: "languageDefined",
+                        // Mengaktifkan fitur paste
+                        quickSuggestions: {
+                          other: true,
+                          comments: true,
+                          strings: true
+                        },
+                        snippetSuggestions: "inline",
+                        // Memperbaiki masalah cursor
+                        cursorBlinking: "smooth",
+                        cursorSmoothCaretAnimation: "on",
+                        cursorStyle: "line",
+                        // Memperbaiki masalah input
+                        renderControlCharacters: true,
+                        renderWhitespace: "selection"
                       }}
                       loading={<EditorLoading />}
                     />
