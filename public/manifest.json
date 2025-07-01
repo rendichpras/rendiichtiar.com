@@ -1,5 +1,11 @@
 {
- "name": "App",
+ "name": "Rendi Ichtiar Prasetyo",
+ "short_name": "Rendi Ichtiar",
+ "description": "Portfolio website Rendi Ichtiar Prasetyo, seorang Full Stack Developer",
+ "start_url": "/",
+ "display": "standalone",
+ "background_color": "#ffffff",
+ "theme_color": "#ffffff",
  "icons": [
   {
    "src": "\/android-icon-36x36.png",

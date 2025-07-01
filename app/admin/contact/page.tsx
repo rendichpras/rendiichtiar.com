@@ -21,6 +21,7 @@ import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
 import { PageTransition } from "@/components/animations/page-transition"
 import { Separator } from "@/components/ui/separator"
+import { ContactSkeleton } from "@/components/admin/contact/ContactSkeleton"
 
 import {
     ColumnDef,
@@ -70,6 +71,7 @@ export default function AdminContactPage() {
     const [replyMessage, setReplyMessage] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     // State untuk data table
     const [sorting, setSorting] = useState<SortingState>([])
@@ -91,17 +93,30 @@ export default function AdminContactPage() {
         }
     }
 
-    // Memuat data saat komponen dimount
     useEffect(() => {
-        // Redirect jika tidak terautentikasi
-        if (status === "unauthenticated") {
-            router.push("/")
+        const checkAuth = async () => {
+            if (status === "loading") return
+
+            if (!session || session.user?.email !== "rendiichtiarprasetyo@gmail.com") {
+                router.push("/forbidden")
+                return
+            }
+
+            try {
+                const response = await fetch("/api/contact")
+                if (!response.ok) throw new Error("Failed to fetch")
+                const data = await response.json()
+                setContacts(data.contacts)
+            } catch (error) {
+                console.error("Error fetching data:", error)
+                toast.error("Gagal memuat data")
+            } finally {
+                setLoading(false)
+            }
         }
-        // Load contacts hanya jika terautentikasi
-        if (status === "authenticated") {
-            loadContacts()
-        }
-    }, [status])
+
+        checkAuth()
+    }, [session, status, router])
 
     // Fungsi untuk mengirim balasan
     const handleReply = async () => {
@@ -151,16 +166,18 @@ export default function AdminContactPage() {
                 return (
                     <Button
                         variant="ghost"
+                        size="sm"
+                        className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Tanggal
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
             },
             cell: ({ row }) => {
                 return (
-                    <div className="whitespace-nowrap">
+                    <div className="font-medium">
                         {formatDistanceToNow(new Date(row.getValue("createdAt")), {
                             addSuffix: true,
                             locale: id
@@ -175,12 +192,17 @@ export default function AdminContactPage() {
                 return (
                     <Button
                         variant="ghost"
+                        size="sm"
+                        className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Nama
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
+            },
+            cell: ({ row }) => {
+                return <div className="font-medium">{row.getValue("name")}</div>
             },
         },
         {
@@ -189,21 +211,38 @@ export default function AdminContactPage() {
                 return (
                     <Button
                         variant="ghost"
+                        size="sm"
+                        className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Email
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
+            },
+            cell: ({ row }) => {
+                return <div className="text-muted-foreground">{row.getValue("email")}</div>
             },
         },
         {
             accessorKey: "message",
-            header: "Pesan",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="-ml-4 h-8 data-[state=open]:bg-accent"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Pesan
+                        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+                    </Button>
+                )
+            },
             cell: ({ row }) => {
                 return (
-                    <div className="max-w-md">
-                        <p className="line-clamp-2">{row.getValue("message")}</p>
+                    <div className="max-w-[500px]">
+                        <p className="line-clamp-2 text-muted-foreground">{row.getValue("message")}</p>
                     </div>
                 )
             },
@@ -214,10 +253,12 @@ export default function AdminContactPage() {
                 return (
                     <Button
                         variant="ghost"
+                        size="sm"
+                        className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
                         Status
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
             },
@@ -225,16 +266,17 @@ export default function AdminContactPage() {
                 const status = row.getValue("status") as Contact["status"]
                 switch (status) {
                     case "UNREAD":
-                        return <Badge variant="destructive">Belum Dibaca</Badge>
+                        return <Badge variant="destructive" className="font-normal">Belum Dibaca</Badge>
                     case "READ":
-                        return <Badge variant="secondary">Sudah Dibaca</Badge>
+                        return <Badge variant="secondary" className="font-normal">Sudah Dibaca</Badge>
                     case "REPLIED":
-                        return <Badge variant="default">Sudah Dibalas</Badge>
+                        return <Badge variant="default" className="font-normal">Sudah Dibalas</Badge>
                 }
             },
         },
         {
             id: "actions",
+            header: "Aksi",
             cell: ({ row }) => {
                 const contact = row.original as Contact
                 return (
@@ -243,6 +285,7 @@ export default function AdminContactPage() {
                         disabled={contact.status === "REPLIED"}
                         size="sm"
                         variant={contact.status === "UNREAD" ? "default" : "secondary"}
+                        className="w-[100px]"
                     >
                         {contact.status === "REPLIED" ? "Sudah Dibalas" : "Balas"}
                     </Button>
@@ -271,15 +314,12 @@ export default function AdminContactPage() {
         },
     })
 
-    // Tampilkan loading state
-    if (status === "loading") {
+    if (loading) {
         return (
             <PageTransition>
                 <main className="min-h-screen bg-background relative lg:pl-64 pt-16 lg:pt-0">
                     <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
-                        <div className="flex items-center justify-center h-[60vh]">
-                            <p className="text-muted-foreground">Memuat...</p>
-                        </div>
+                        <ContactSkeleton />
                     </section>
                 </main>
             </PageTransition>
@@ -304,20 +344,20 @@ export default function AdminContactPage() {
                     <Separator className="my-6 bg-border/60" />
 
                     {/* Table Card */}
-                    <Card>
+                    <Card className="border-none">
                         <div className="p-4">
-                            <div className="flex items-center gap-4 py-4">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 py-4">
                                 <Input
                                     placeholder="Cari berdasarkan nama..."
                                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                                     onChange={(event) =>
                                         table.getColumn("name")?.setFilterValue(event.target.value)
                                     }
-                                    className="max-w-sm"
+                                    className="w-full sm:max-w-sm"
                                 />
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="ml-auto">
+                                        <Button variant="outline" className="w-full sm:w-auto sm:ml-auto">
                                             Kolom <ChevronDown className="ml-2 h-4 w-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
@@ -346,14 +386,14 @@ export default function AdminContactPage() {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
-                            <div className="rounded-md border">
+                            <div className="rounded-lg border bg-card text-card-foreground">
                                 <Table>
                                     <TableHeader>
                                         {table.getHeaderGroups().map((headerGroup) => (
-                                            <TableRow key={headerGroup.id}>
+                                            <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-border/50">
                                                 {headerGroup.headers.map((header) => {
                                                     return (
-                                                        <TableHead key={header.id}>
+                                                        <TableHead key={header.id} className="h-11 px-6 text-xs">
                                                             {header.isPlaceholder
                                                                 ? null
                                                                 : flexRender(
@@ -372,9 +412,10 @@ export default function AdminContactPage() {
                                                 <TableRow
                                                     key={row.id}
                                                     data-state={row.getIsSelected() && "selected"}
+                                                    className="hover:bg-muted/50 border-b border-border/50 last:border-0"
                                                 >
                                                     {row.getVisibleCells().map((cell) => (
-                                                        <TableCell key={cell.id}>
+                                                        <TableCell key={cell.id} className="px-6 py-3">
                                                             {flexRender(
                                                                 cell.column.columnDef.cell,
                                                                 cell.getContext()
@@ -396,11 +437,11 @@ export default function AdminContactPage() {
                                     </TableBody>
                                 </Table>
                             </div>
-                            <div className="flex items-center justify-end space-x-2 py-4">
-                                <div className="flex-1 text-sm text-muted-foreground">
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+                                <div className="text-sm text-muted-foreground order-2 sm:order-1">
                                     {table.getFilteredRowModel().rows.length} pesan
                                 </div>
-                                <div className="space-x-2">
+                                <div className="flex items-center gap-2 order-1 sm:order-2">
                                     <Button
                                         variant="outline"
                                         size="sm"

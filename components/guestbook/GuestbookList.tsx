@@ -63,25 +63,31 @@ const ProviderIcon = ({ provider }: { provider: string }) => {
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
-              <path
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4"
-              />
-              <path
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853"
-              />
-              <path
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                fill="#FBBC05"
-              />
-              <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                fill="#EA4335"
-              />
-            </svg>
+          <TooltipTrigger asChild>
+            <button 
+              type="button"
+              aria-label="Login dengan Google"
+              className="flex items-center"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                />
+              </svg>
+            </button>
           </TooltipTrigger>
           <TooltipContent>
             <p>Login dengan Google</p>
@@ -95,10 +101,16 @@ const ProviderIcon = ({ provider }: { provider: string }) => {
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-            </svg>
+          <TooltipTrigger asChild>
+            <button 
+              type="button"
+              aria-label="Login dengan GitHub"
+              className="flex items-center"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+              </svg>
+            </button>
           </TooltipTrigger>
           <TooltipContent>
             <p>Login dengan GitHub</p>
@@ -196,7 +208,7 @@ export function GuestbookList() {
               <div key={entry.id} className="group">
                 <div className="flex gap-4">
                   <Avatar className="h-8 w-8 shrink-0">
-                    <AvatarImage src={entry.user.image || ""} />
+                    <AvatarImage src={entry.user.image || ""} alt={`Avatar ${entry.user.name}`} />
                     <AvatarFallback>
                       {entry.user.name?.charAt(0) || "?"}
                     </AvatarFallback>
@@ -204,7 +216,7 @@ export function GuestbookList() {
                   <div className="flex-1 space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-medium leading-none">
                           {entry.user.name}
                         </span>
                         <ProviderIcon provider={entry.provider} />
@@ -212,15 +224,19 @@ export function GuestbookList() {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <div className="flex items-center">
+                                <button 
+                                  className="flex items-center"
+                                  aria-label="Pemilik website"
+                                >
                                   <svg 
                                     className="w-4 h-4 text-blue-500" 
                                     fill="currentColor" 
                                     viewBox="0 0 24 24"
+                                    aria-hidden="true"
                                   >
                                     <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z" />
                                   </svg>
-                                </div>
+                                </button>
                               </TooltipTrigger>
                               <TooltipContent>
                                 <p>Pemilik</p>
@@ -245,11 +261,18 @@ export function GuestbookList() {
                       <button
                         onClick={() => handleReplyClick(entry.id, entry.user.name || "")}
                         className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
+                        aria-label={`Balas ke ${entry.user.name}`}
                       >
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg 
+                          className="w-4 h-4 sm:w-5 sm:h-5" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                         </svg>
-                        Balas
+                        <span>Balas</span>
                       </button>
 
                       <LikeButton 
@@ -262,20 +285,34 @@ export function GuestbookList() {
                         <button
                           onClick={() => toggleReplies(entry.id)}
                           className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
+                          aria-label={expandedEntries.has(entry.id) ? "Sembunyikan balasan" : `Lihat ${entry.replies.length} balasan`}
+                          aria-expanded={expandedEntries.has(entry.id)}
                         >
                           {expandedEntries.has(entry.id) ? (
                             <span className="flex items-center gap-1.5">
-                              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg 
+                                className="w-4 h-4 sm:w-5 sm:h-5" 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                                aria-hidden="true"
+                              >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
-                              Sembunyikan
+                              <span>Sembunyikan</span>
                             </span>
                           ) : (
                             <span className="flex items-center gap-1.5">
-                              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg 
+                                className="w-4 h-4 sm:w-5 sm:h-5" 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                                aria-hidden="true"
+                              >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
-                              {`${entry.replies.length} Balasan`}
+                              <span>{`${entry.replies.length} Balasan`}</span>
                             </span>
                           )}
                         </button>

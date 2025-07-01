@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion"
 import { useState, useCallback } from "react"
+import Link from "next/link"
 
 // Shared Components and Constants
 const navItems = [
@@ -325,47 +326,42 @@ export function Navbar() {
           </motion.div>
 
           <nav className="flex-1 space-y-1">
-            {navItems.map((item) => {
+            {navItems.map((item, index) => {
               const Icon = item.icon
               const isActive = pathname === item.path
 
               return (
-                <motion.a
+                <motion.div
                   key={item.path}
-                  href={item.path}
-                  className={cn(
-                    "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors overflow-hidden",
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
-                  )}
-                  whileHover={{ x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  initial={false}
-                  animate={isActive ? {
-                    backgroundColor: "rgba(var(--primary), 0.1)",
-                    color: "hsl(var(--primary))"
-                  } : {
-                    backgroundColor: "transparent",
-                    color: "hsl(var(--muted-foreground))"
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  <motion.div
-                    animate={isActive ? { rotate: 360, scale: 1.1 } : { rotate: 0, scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  <Link
+                    href={item.path}
+                    className={cn(
+                      "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors overflow-hidden",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                    )}
                   >
-                    <Icon className="size-4" />
-                  </motion.div>
-                  <span>{item.name}</span>
-                  {isActive && (
                     <motion.div
-                      layoutId="nav-indicator"
-                      className="absolute right-2 h-1.5 w-1.5 rounded-full bg-primary"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                </motion.a>
+                      animate={isActive ? { rotate: 360, scale: 1.1 } : { rotate: 0, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <Icon className="size-4" />
+                    </motion.div>
+                    <span>{item.name}</span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="nav-indicator"
+                        className="absolute right-2 h-1.5 w-1.5 rounded-full bg-primary"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                </motion.div>
               )
             })}
           </nav>
