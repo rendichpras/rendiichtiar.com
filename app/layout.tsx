@@ -9,6 +9,8 @@ import { Navbar } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { metadata } from "./metadata"
 import { cn } from "@/lib/utils"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -61,6 +63,8 @@ export default function RootLayout({
             <JsonLd />
             <Navbar />
             {children}
+            <SpeedInsights />
+            <Analytics />
             <BackToTop />
             <Toaster richColors closeButton position="top-right" />
             <Footer />
