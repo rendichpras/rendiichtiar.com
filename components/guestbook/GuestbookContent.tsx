@@ -1,6 +1,5 @@
 "use client"
 
-import { getServerSession } from "next-auth/next"
 import { SignInButton } from "@/components/auth/SignInButton"
 import { SignOutButton } from "@/components/auth/SignOutButton"
 import { GuestbookForm } from "@/components/guestbook/GuestbookForm"
