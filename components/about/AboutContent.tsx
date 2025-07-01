@@ -64,30 +64,9 @@ const sections = [
         content: (
             <Card className="p-6 space-y-4">
                 <div className="space-y-4">
-                    <Card className="p-4">
-                        <div className="flex items-start sm:items-center gap-4">
-                            <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
-                                <img
-                                    src="/saranatechnology.png"
-                                    alt="Sarana Technology"
-                                    className="size-full object-contain"
-                                />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                                <h3 className="text-base sm:text-lg font-semibold truncate">Frontend Engineer</h3>
-                                <div className="flex flex-wrap gap-x-2 text-xs sm:text-sm text-muted-foreground">
-                                    <span>Sarana Technology</span>
-                                    <span>•</span>
-                                    <span>Bali, Indonesia</span>
-                                </div>
-                                <div className="text-xs text-muted-foreground mt-1.5">
-                                    <span>April 2025 - Sekarang</span>
-                                    <span> • </span>
-                                    <span>Remote</span>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
+                    <p className="text-sm sm:text-base text-muted-foreground text-center">
+                        Belum ada karir yang ditampilkan
+                    </p>
                 </div>
             </Card>
         )
@@ -97,7 +76,7 @@ const sections = [
         icon: GraduationCap,
         title: "Pendidikan",
         content: (
-            <Card className="p-6">
+            <Card className="p-6 space-y-0.9">
                 <Card className="p-4">
                     <div className="flex items-start sm:items-center gap-4">
                         <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
@@ -119,7 +98,7 @@ const sections = [
                     </div>
                 </Card>
 
-                <Card className="p-4 mt-4">
+                <Card className="p-4">
                     <div className="flex items-start sm:items-center gap-4">
                         <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
                             <img
