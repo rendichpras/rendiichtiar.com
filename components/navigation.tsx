@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu, X, Home, BookOpen, User2, Mail } from "lucide-react"
+import { Menu, X, Home, BookOpen, User2, Mail, Code } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Tooltip,
@@ -16,7 +16,7 @@ import { useState, useCallback } from "react"
 import Link from "next/link"
 
 // Shared Components and Constants
-const navItems = [
+const mainNavItems = [
   {
     path: "/",
     name: "Beranda",
@@ -36,6 +36,14 @@ const navItems = [
     path: "/contact",
     name: "Contact",
     icon: Mail
+  }
+]
+
+const appNavItems = [
+  {
+    path: "/playground",
+    name: "JS Playground",
+    icon: Code
   }
 ]
 
@@ -83,7 +91,7 @@ const MobileNavItem = ({
   pathname, 
   onNavigate 
 }: { 
-  item: typeof navItems[0]
+  item: typeof mainNavItems[0]
   pathname: string
   onNavigate: (path: string) => void 
 }) => {
@@ -151,7 +159,7 @@ const MobileNavContent = ({
         </button>
       </div>
       <nav className="flex-1 p-3 space-y-2">
-        {navItems.map((item) => (
+        {mainNavItems.map((item) => (
           <MobileNavItem 
             key={item.path}
             item={item}
@@ -258,19 +266,35 @@ export function MobileNav() {
                   </motion.div>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto" role="menu">
-                  {navItems.map((item) => (
-                    <MobileNavItem 
-                      key={item.path}
-                      item={item}
-                      pathname={pathname}
-                      onNavigate={handleNavigation}
-                    />
-                  ))}
+                <nav className="flex-1 p-4 space-y-4 overflow-y-auto" role="menu">
+                  <div className="space-y-1">
+                    {mainNavItems.map((item) => (
+                      <MobileNavItem 
+                        key={item.path}
+                        item={item}
+                        pathname={pathname}
+                        onNavigate={handleNavigation}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="px-3 py-2">
+                      <p className="text-xs font-medium text-muted-foreground">Aplikasi</p>
+                    </div>
+                    {appNavItems.map((item) => (
+                      <MobileNavItem 
+                        key={item.path}
+                        item={item}
+                        pathname={pathname}
+                        onNavigate={handleNavigation}
+                      />
+                    ))}
+                  </div>
                 </nav>
 
                 <div className="p-4 border-t">
-                  <ThemeToggle />
+                  <ThemeToggle variant="compact" className="hover:scale-100" />
                 </div>
               </div>
             </motion.div>
@@ -338,55 +362,101 @@ export function Navbar() {
             <Logo className="text-xl mb-12" />
           </motion.div>
 
-          <nav className="flex-1 space-y-1" role="navigation" aria-label="Menu Utama">
-            {navItems.map((item, index) => {
-              const Icon = item.icon
-              const isActive = pathname === item.path
+          <nav className="flex-1 space-y-4" role="navigation" aria-label="Menu Utama">
+            <div className="space-y-1">
+              {mainNavItems.map((item, index) => {
+                const Icon = item.icon
+                const isActive = pathname === item.path
 
-              return (
-                <motion.div
-                  key={item.path}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link
-                    href={item.path}
-                    className={cn(
-                      "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors overflow-hidden",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
-                    )}
-                    aria-current={isActive ? "page" : undefined}
+                return (
+                  <motion.div
+                    key={item.path}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
                   >
-                    <motion.div
-                      animate={isActive ? { rotate: 360, scale: 1.1 } : { rotate: 0, scale: 1 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    <Link
+                      href={item.path}
+                      className={cn(
+                        "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors overflow-hidden",
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                      )}
+                      aria-current={isActive ? "page" : undefined}
                     >
-                      <Icon className="size-4" aria-hidden="true" />
-                    </motion.div>
-                    <span>{item.name}</span>
-                    {isActive && (
                       <motion.div
-                        layoutId="nav-indicator"
-                        className="absolute right-2 h-1.5 w-1.5 rounded-full bg-primary"
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        aria-hidden="true"
-                      />
-                    )}
-                  </Link>
-                </motion.div>
-              )
-            })}
+                        animate={isActive ? { rotate: 360, scale: 1.1 } : { rotate: 0, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
+                        <Icon className="size-4" aria-hidden="true" />
+                      </motion.div>
+                      <span>{item.name}</span>
+                      {isActive && (
+                        <motion.div
+                          layoutId="nav-indicator"
+                          className="absolute right-2 h-1.5 w-1.5 rounded-full bg-primary"
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                )
+              })}
+            </div>
+
+            <div className="space-y-1">
+              <div className="px-3 py-2">
+                <p className="text-xs font-medium text-muted-foreground">Aplikasi</p>
+              </div>
+              {appNavItems.map((item, index) => {
+                const Icon = item.icon
+                const isActive = pathname === item.path
+
+                return (
+                  <motion.div
+                    key={item.path}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: (mainNavItems.length + index) * 0.1 }}
+                  >
+                    <Link
+                      href={item.path}
+                      className={cn(
+                        "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors overflow-hidden",
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                      )}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      <motion.div
+                        animate={isActive ? { rotate: 360, scale: 1.1 } : { rotate: 0, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
+                        <Icon className="size-4" aria-hidden="true" />
+                      </motion.div>
+                      <span>{item.name}</span>
+                      {isActive && (
+                        <motion.div
+                          layoutId="nav-indicator"
+                          className="absolute right-2 h-1.5 w-1.5 rounded-full bg-primary"
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                )
+              })}
+            </div>
           </nav>
 
           <motion.div 
             className="mt-auto pt-6"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
-            <ThemeToggle />
+            <ThemeToggle className="hover:scale-100" />
           </motion.div>
         </div>
       </motion.aside>

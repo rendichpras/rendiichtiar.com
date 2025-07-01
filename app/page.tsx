@@ -1,11 +1,5 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { Marquee } from "@/components/ui/marquee"
 import { 
   SiTypescript,
@@ -22,7 +16,6 @@ import {
 } from "react-icons/si"
 import { VscCode } from "react-icons/vsc"
 import { PageTransition } from "@/components/animations/page-transition"
-import Link from "next/link"
 
 const techStack = [
   { name: "TypeScript", icon: SiTypescript, color: "text-[#3178C6]" },
