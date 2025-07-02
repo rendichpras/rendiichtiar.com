@@ -2,11 +2,12 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import nodemailer from "nodemailer"
+import messages from "@/messages/id" // Gunakan ID sebagai default
 
 // Schema validasi untuk balasan
 const replySchema = z.object({
     contactId: z.string(),
-    replyMessage: z.string().min(10, "Balasan minimal 10 karakter")
+    replyMessage: z.string().min(10, messages.api.contact.validation.reply)
 })
 
 // Template email balasan
@@ -24,30 +25,30 @@ const replyEmailTemplate = (userName: string, originalMessage: string, replyMess
     <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 32px;">
         <!-- Header -->
         <div style="margin-bottom: 32px;">
-            <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #1a1a1a;">Balasan untuk Pesan Anda</h1>
-            <p style="margin: 8px 0 0 0; color: #666666; font-size: 16px;">Halo ${userName} 👋</p>
+            <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #1a1a1a;">${messages.api.contact.email.reply.title}</h1>
+            <p style="margin: 8px 0 0 0; color: #666666; font-size: 16px;">${messages.api.contact.email.reply.greeting.replace("{name}", userName)}</p>
         </div>
 
         <!-- Original Message -->
         <div style="background-color: #f4f4f5; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-            <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 500; color: #666666;">Pesan Anda sebelumnya:</p>
+            <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 500; color: #666666;">${messages.api.contact.email.reply.original_message}</p>
             <p style="margin: 0; color: #1a1a1a; font-size: 15px; line-height: 1.6;">${originalMessage}</p>
         </div>
 
         <!-- Reply Message -->
         <div style="background-color: #f0f9ff; border-radius: 8px; padding: 16px; margin-bottom: 32px; border-left: 4px solid #0284c7;">
-            <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 500; color: #0284c7;">Balasan dari saya:</p>
+            <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 500; color: #0284c7;">${messages.api.contact.email.reply.reply_message}</p>
             <p style="margin: 0; color: #1a1a1a; font-size: 15px; line-height: 1.6;">${replyMessage}</p>
         </div>
 
         <!-- CTA Button -->
         <div style="text-align: center; margin-bottom: 32px;">
-            <a href="https://rendiichtiar.com" style="display: inline-block; background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 15px;">Kunjungi Website</a>
+            <a href="https://rendiichtiar.com" style="display: inline-block; background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 15px;">${messages.api.contact.email.reply.visit_website}</a>
         </div>
 
         <!-- Footer -->
         <div style="text-align: center; padding-top: 24px; border-top: 1px solid #e5e5e5;">
-            <p style="margin: 0 0 16px 0; color: #666666; font-size: 14px;">Salam hangat,<br/><span style="color: #1a1a1a; font-weight: 600;">Rendi Ichtiar</span></p>
+            <p style="margin: 0 0 16px 0; color: #666666; font-size: 14px;">${messages.api.contact.email.reply.regards}<br/><span style="color: #1a1a1a; font-weight: 600;">${messages.api.contact.email.reply.signature}</span></p>
             
             <!-- Social Links -->
             <div style="margin-top: 16px;">
@@ -87,7 +88,7 @@ export async function POST(req: Request) {
         if (!contact) {
             return NextResponse.json({
                 success: false,
-                message: "Pesan tidak ditemukan"
+                message: messages.api.contact.error.not_found
             }, { status: 404 })
         }
 
@@ -105,27 +106,27 @@ export async function POST(req: Request) {
         await transporter.sendMail({
             from: process.env.SMTP_FROM,
             to: contact.email,
-            subject: "Re: Balasan untuk Pesan Anda",
+            subject: messages.api.contact.email.reply.subject,
             html: replyEmailTemplate(contact.name, contact.message, validatedData.replyMessage)
         })
 
         return NextResponse.json({
             success: true,
-            message: "Balasan berhasil dikirim"
+            message: messages.api.contact.success.replied
         })
 
     } catch (error) {
         if (error instanceof z.ZodError) {
             return NextResponse.json({
                 success: false,
-                message: "Validasi gagal",
+                message: messages.api.contact.error.validation,
                 errors: error.errors
             }, { status: 400 })
         }
 
         return NextResponse.json({
             success: false,
-            message: "Terjadi kesalahan, silakan coba lagi nanti"
+            message: messages.api.contact.error.general
         }, { status: 500 })
     }
 } 

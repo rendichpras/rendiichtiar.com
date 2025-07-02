@@ -2,6 +2,8 @@
 
 import { Menu, X, Home, BookOpen, User2, Mail, Code } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { useI18n } from "@/lib/i18n"
 import {
   Tooltip,
   TooltipContent,
@@ -14,35 +16,41 @@ import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion"
 import { useState, useCallback } from "react"
 import Link from "next/link"
+import type { Messages } from "@/lib/i18n"
 
-// Shared Components and Constants
-const mainNavItems = [
+type NavItem = {
+  path: string
+  nameKey: string
+  icon: React.ComponentType<{ className?: string }>
+}
+
+const mainNavItems: NavItem[] = [
   {
     path: "/",
-    name: "Beranda",
+    nameKey: "navigation.home",
     icon: Home
   },
   {
     path: "/about",
-    name: "About",
+    nameKey: "navigation.about",
     icon: User2
   },
   {
     path: "/guestbook",
-    name: "Buku Tamu",
+    nameKey: "navigation.guestbook",
     icon: BookOpen
   },
   {
     path: "/contact",
-    name: "Contact",
+    nameKey: "navigation.contact",
     icon: Mail
   }
 ]
 
-const appNavItems = [
+const appNavItems: NavItem[] = [
   {
     path: "/playground",
-    name: "JS Playground",
+    nameKey: "navigation.playground",
     icon: Code
   }
 ]
@@ -85,18 +93,25 @@ const Logo = ({ className }: { className?: string }) => (
   </Link>
 )
 
+const getTranslation = (messages: Messages, key: string) => {
+  const [section, field] = key.split('.');
+  return messages[section as keyof Messages][field as keyof Messages[keyof Messages]] as string;
+}
+
 // Mobile Navigation Components
 const MobileNavItem = ({ 
   item, 
   pathname, 
-  onNavigate 
+  onNavigate
 }: { 
-  item: typeof mainNavItems[0]
+  item: NavItem
   pathname: string
-  onNavigate: (path: string) => void 
+  onNavigate: (path: string) => void
 }) => {
+  const { messages } = useI18n()
   const isActive = pathname === item.path
   const Icon = item.icon
+  const name = getTranslation(messages, item.nameKey)
 
   return (
     <motion.button
@@ -127,7 +142,7 @@ const MobileNavItem = ({
       >
         <Icon className="size-5" aria-hidden="true" />
       </motion.div>
-      <span className="font-medium">{item.name}</span>
+      <span className="font-medium">{name}</span>
       {isActive && (
         <motion.div
           layoutId="activeTabMobile"
@@ -179,6 +194,7 @@ export function MobileNav() {
   const pathname = usePathname()
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
+  const { messages } = useI18n()
   
   const handleNavigation = useCallback((path: string) => {
     setIsOpen(false)
@@ -201,7 +217,7 @@ export function MobileNav() {
           size="icon" 
           className="sm:hidden rounded-full"
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Tutup Menu" : "Buka Menu"}
+          aria-label={isOpen ? messages.navigation.close_menu : messages.navigation.open_menu}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
         >
@@ -280,7 +296,7 @@ export function MobileNav() {
 
                   <div className="space-y-1">
                     <div className="px-3 py-2">
-                      <p className="text-xs font-medium text-muted-foreground">Aplikasi</p>
+                      <p className="text-xs font-medium text-muted-foreground">{messages.navigation.apps}</p>
                     </div>
                     {appNavItems.map((item) => (
                       <MobileNavItem 
@@ -293,8 +309,9 @@ export function MobileNav() {
                   </div>
                 </nav>
 
-                <div className="p-4 border-t">
+                <div className="p-4 border-t flex items-center justify-between">
                   <ThemeToggle variant="compact" className="hover:scale-100" />
+                  <LanguageSwitcher variant="compact" />
                 </div>
               </div>
             </motion.div>
@@ -310,6 +327,7 @@ export function Navbar() {
   const pathname = usePathname()
   const { scrollY } = useScroll()
   const [isScrolled, setIsScrolled] = useState(false)
+  const { messages } = useI18n()
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50)
@@ -342,7 +360,7 @@ export function Navbar() {
       <motion.aside
         className="fixed left-0 top-0 bottom-0 z-50 hidden lg:flex flex-col w-64 border-r border-primary/10"
         role="complementary"
-        aria-label="Sidebar Navigasi"
+        aria-label={messages.navigation.nav_menu}
       >
         <motion.div 
           className={cn(
@@ -362,11 +380,12 @@ export function Navbar() {
             <Logo className="text-xl mb-12" />
           </motion.div>
 
-          <nav className="flex-1 space-y-4" role="navigation" aria-label="Menu Utama">
+          <nav className="flex-1 space-y-4" role="navigation" aria-label={messages.navigation.main_menu}>
             <div className="space-y-1">
               {mainNavItems.map((item, index) => {
                 const Icon = item.icon
                 const isActive = pathname === item.path
+                const name = getTranslation(messages, item.nameKey)
 
                 return (
                   <motion.div
@@ -391,7 +410,7 @@ export function Navbar() {
                       >
                         <Icon className="size-4" aria-hidden="true" />
                       </motion.div>
-                      <span>{item.name}</span>
+                      <span>{String(name)}</span>
                       {isActive && (
                         <motion.div
                           layoutId="nav-indicator"
@@ -408,11 +427,12 @@ export function Navbar() {
 
             <div className="space-y-1">
               <div className="px-3 py-2">
-                <p className="text-xs font-medium text-muted-foreground">Aplikasi</p>
+                <p className="text-xs font-medium text-muted-foreground">{messages.navigation.apps}</p>
               </div>
               {appNavItems.map((item, index) => {
                 const Icon = item.icon
                 const isActive = pathname === item.path
+                const name = getTranslation(messages, item.nameKey)
 
                 return (
                   <motion.div
@@ -437,7 +457,7 @@ export function Navbar() {
                       >
                         <Icon className="size-4" aria-hidden="true" />
                       </motion.div>
-                      <span>{item.name}</span>
+                      <span>{String(name)}</span>
                       {isActive && (
                         <motion.div
                           layoutId="nav-indicator"
@@ -454,9 +474,10 @@ export function Navbar() {
           </nav>
 
           <motion.div 
-            className="mt-auto pt-6"
+            className="mt-auto pt-6 flex items-center justify-between px-3"
           >
             <ThemeToggle className="hover:scale-100" />
+            <LanguageSwitcher variant="compact" />
           </motion.div>
         </div>
       </motion.aside>

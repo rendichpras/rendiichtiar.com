@@ -1,14 +1,15 @@
 import { Metadata } from "next"
+import messages from "@/messages/id" // Gunakan ID sebagai default
 
 export const metadata: Metadata = {
-  title: "Buku Tamu | Rendi Ichtiar Prasetyo",
-  description: "Tinggalkan pesan, saran, atau kesan Anda di buku tamu digital saya.",
+  title: messages.metadata.guestbook.title,
+  description: messages.metadata.guestbook.description,
   alternates: {
     canonical: "https://rendiichtiar.com/guestbook"
   },
   openGraph: {
-    title: "Buku Tamu | Rendi Ichtiar Prasetyo",
-    description: "Tinggalkan pesan, saran, atau kesan Anda di buku tamu digital saya.",
+    title: messages.metadata.guestbook.title,
+    description: messages.metadata.guestbook.description,
     url: "https://rendiichtiar.com/guestbook",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: "Buku Tamu | Rendi Ichtiar Prasetyo",
-    description: "Tinggalkan pesan, saran, atau kesan Anda di buku tamu digital saya.",
+    title: messages.metadata.guestbook.title,
+    description: messages.metadata.guestbook.description,
     card: "summary_large_image",
     creator: "@rendiichtiar",
     site: "@rendiichtiar",

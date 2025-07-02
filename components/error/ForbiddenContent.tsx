@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { PageTransition } from "@/components/animations/page-transition"
+import { useI18n } from "@/lib/i18n"
 
 export function ForbiddenContent() {
   const router = useRouter()
+  const { messages } = useI18n()
 
   return (
     <PageTransition>
@@ -44,16 +46,16 @@ export function ForbiddenContent() {
                   </motion.div>
                 </div>
 
-                <div className="max-w-lg mx-auto space-y-4">
-                  <h2 className="text-2xl sm:text-3xl font-bold">Akses Ditolak</h2>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold">{messages.error.forbidden.heading}</h2>
                   <p className="text-muted-foreground">
-                    Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.
+                    {messages.error.forbidden.message}
                   </p>
                   <Button
                     size="lg"
                     onClick={() => router.push("/")}
                   >
-                    Kembali ke Beranda
+                    {messages.error.forbidden.back_home}
                   </Button>
                 </div>
               </motion.div>

@@ -7,17 +7,20 @@ import { GuestbookList } from "@/components/guestbook/GuestbookList"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PageTransition } from "@/components/animations/page-transition"
+import { useI18n } from "@/lib/i18n"
 
 export function GuestbookContent({ session }: { session: any }) {
+  const { messages } = useI18n()
+
   return (
     <PageTransition>
       <main className="min-h-screen bg-background relative lg:pl-64 pt-16 lg:pt-0">
         <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
           {/* Header */}
           <div className="space-y-2 max-w-2xl">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Buku Tamu</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.guestbook.title}</h1>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Tinggalkan pesan, kesan, atau saran Anda di buku tamu saya.
+              {messages.guestbook.subtitle}
             </p>
           </div>
 
@@ -53,7 +56,7 @@ export function GuestbookContent({ session }: { session: any }) {
               ) : (
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    Masuk untuk mengirim pesan di buku tamu
+                    {messages.guestbook.auth.sign_in_message}
                   </p>
                   <SignInButton />
                 </div>

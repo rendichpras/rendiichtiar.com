@@ -1,11 +1,12 @@
 import { getServerSession } from "next-auth/next"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import messages from "@/messages/id" // Gunakan ID sebagai default
 
 export async function POST(req: Request) {
   const session = await getServerSession()
   if (!session?.user?.email) {
-    return new NextResponse("Unauthorized", { status: 401 })
+    return new NextResponse(messages.api.guestbook.error.unauthorized, { status: 401 })
   }
 
   const json = await req.json()
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
   })
 
   if (!user) {
-    return new NextResponse("User not found", { status: 404 })
+    return new NextResponse(messages.api.guestbook.error.user_not_found, { status: 404 })
   }
 
   const entry = await prisma.guestbook.create({

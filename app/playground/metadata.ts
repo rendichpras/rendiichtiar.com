@@ -1,14 +1,15 @@
 import { Metadata } from "next"
+import messages from "@/messages/id" // Gunakan ID sebagai default
 
 export const metadata: Metadata = {
-  title: "JavaScript Playground | Rendi Ichtiar Prasetyo",
-  description: "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.",
+  title: messages.metadata.playground.title,
+  description: messages.metadata.playground.description,
   alternates: {
     canonical: "https://rendiichtiar.com/playground"
   },
   openGraph: {
-    title: "JavaScript Playground | Rendi Ichtiar Prasetyo",
-    description: "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.",
+    title: messages.metadata.playground.title,
+    description: messages.metadata.playground.description,
     url: "https://rendiichtiar.com/playground",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: "JavaScript Playground | Rendi Ichtiar Prasetyo",
-    description: "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.",
+    title: messages.metadata.playground.title,
+    description: messages.metadata.playground.description,
     card: "summary_large_image",
     creator: "@rendiichtiar",
     site: "@rendiichtiar",

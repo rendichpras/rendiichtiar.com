@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
 import { toast } from "sonner"
 import { addGuestbookEntry, toggleLike } from "@/app/actions/guestbook"
+import { useI18n } from "@/lib/i18n"
 
 interface ReplyProps {
   parentId: string
@@ -26,16 +27,17 @@ export function GuestbookReply({
   const { data: session } = useSession()
   const [replyMessage, setReplyMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { messages } = useI18n()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!replyMessage.trim()) {
-      toast.error("Pesan tidak boleh kosong!")
+      toast.error(messages.guestbook.form.empty_error)
       return
     }
 
     if (!session?.user?.email) {
-      toast.error("Sesi tidak valid, silakan masuk kembali")
+      toast.error(messages.guestbook.form.session_error)
       return
     }
 
@@ -45,9 +47,9 @@ export function GuestbookReply({
       await addGuestbookEntry(messageWithMention, session.user.email, parentId, parentAuthor)
       setReplyMessage("")
       onReplyComplete()
-      toast.success("Balasan Anda telah ditambahkan!")
+      toast.success(messages.guestbook.list.reply.success)
     } catch (error) {
-      toast.error("Gagal menambahkan balasan. Silakan coba lagi.")
+      toast.error(messages.guestbook.list.reply.error)
     } finally {
       setIsSubmitting(false)
     }
@@ -65,11 +67,11 @@ export function GuestbookReply({
               {session.user?.name?.charAt(0) || "?"}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0"> {/* min-w-0 untuk mencegah overflow */}
+          <div className="flex-1 min-w-0">
             <Textarea
               value={replyMessage}
               onChange={(e) => setReplyMessage(e.target.value)}
-              placeholder={`Balas ke @${parentAuthor}...`}
+              placeholder={messages.guestbook.list.reply.placeholder.replace("{name}", parentAuthor)}
               className="min-h-[35px] text-xs sm:text-sm resize-none focus-visible:ring-primary"
               maxLength={280}
             />
@@ -81,7 +83,7 @@ export function GuestbookReply({
                 onClick={onReplyComplete}
                 className="text-[10px] sm:text-xs h-7 sm:h-8"
               >
-                Batal
+                {messages.guestbook.list.reply.cancel}
               </Button>
               <Button 
                 type="submit"
@@ -89,7 +91,7 @@ export function GuestbookReply({
                 disabled={isSubmitting}
                 className="text-[10px] sm:text-xs h-7 sm:h-8"
               >
-                {isSubmitting ? "Mengirim..." : "Kirim"}
+                {isSubmitting ? messages.guestbook.list.reply.sending : messages.guestbook.list.reply.send}
               </Button>
             </div>
           </div>
@@ -115,6 +117,7 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const hasLiked = likes.some(like => like.user.email === userEmail)
+  const { messages } = useI18n()
 
   const handleLike = async () => {
     if (!userEmail || isLoading) return
@@ -124,10 +127,9 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
     try {
       await toggleLike(guestbookId, userEmail)
     } catch (error) {
-      toast.error("Gagal memberikan like")
+      toast.error(messages.guestbook.list.like.error)
     } finally {
       setIsLoading(false)
-      // Reset animasi setelah 300ms (durasi animasi)
       setTimeout(() => setIsAnimating(false), 300)
     }
   }
@@ -189,6 +191,7 @@ interface ReplyListProps {
 
 export function GuestbookReplyList({ replies, onReplyClick }: ReplyListProps) {
   const { data: session } = useSession()
+  const { messages } = useI18n()
   
   if (replies.length === 0) return null
 
@@ -234,7 +237,7 @@ export function GuestbookReplyList({ replies, onReplyClick }: ReplyListProps) {
                   <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                   </svg>
-                  Balas
+                  {messages.guestbook.list.reply.button}
                 </button>
                 <LikeButton 
                   guestbookId={reply.id}

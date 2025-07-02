@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { containsForbiddenWords, getForbiddenWords } from "@/lib/constants/forbidden-words"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { useI18n } from "@/lib/i18n"
 
 export function GuestbookForm() {
   const { data: session } = useSession()
@@ -17,16 +18,17 @@ export function GuestbookForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forbiddenWords, setForbiddenWords] = useState<string[]>([])
   const router = useRouter()
+  const { messages } = useI18n()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!message.trim()) {
-      toast.error("Pesan tidak boleh kosong!")
+      toast.error(messages.guestbook.form.empty_error)
       return
     }
 
     if (!session?.user?.email) {
-      toast.error("Sesi tidak valid, silakan masuk kembali")
+      toast.error(messages.guestbook.form.session_error)
       return
     }
 
@@ -35,10 +37,10 @@ export function GuestbookForm() {
       await addGuestbookEntry(message, session.user.email)
       setMessage("")
       setForbiddenWords([])
-      toast.success("Pesan Anda telah ditambahkan ke buku tamu!")
+      toast.success(messages.guestbook.form.success)
       router.refresh()
     } catch (error) {
-      toast.error("Gagal menambahkan pesan. Silakan coba lagi.")
+      toast.error(messages.guestbook.form.error)
     } finally {
       setIsSubmitting(false)
     }
@@ -66,7 +68,7 @@ export function GuestbookForm() {
         <Textarea
           value={message}
           onChange={handleChange}
-          placeholder="Tulis pesan Anda di sini..."
+          placeholder={messages.guestbook.form.placeholder}
           className={`min-h-[35px] resize-none focus-visible:ring-primary pr-12 ${
             forbiddenWords.length > 0 ? "border-destructive" : ""
           }`}
@@ -88,7 +90,7 @@ export function GuestbookForm() {
           <div className="flex items-center gap-2 text-sm">
             <ExclamationTriangleIcon className="h-4 w-4 shrink-0" />
             <AlertDescription>
-              Pesan mengandung kata-kata yang tidak diizinkan
+              {messages.guestbook.form.forbidden_words}
             </AlertDescription>
           </div>
         </Alert>
@@ -122,10 +124,10 @@ export function GuestbookForm() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <span className="pl-6">Mengirim...</span>
+              <span className="pl-6">{messages.guestbook.form.sending}</span>
             </>
           ) : (
-            "Kirim Pesan"
+            messages.guestbook.form.send
           )}
         </Button>
       </div>

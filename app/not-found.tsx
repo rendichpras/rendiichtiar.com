@@ -1,16 +1,17 @@
 import { NotFoundContent } from "@/components/error/NotFoundContent"
 import { Metadata } from "next"
+import messages from "@/messages/id" // Gunakan ID sebagai default
 
 export const metadata: Metadata = {
-  title: "404 Not Found | Rendi Ichtiar Prasetyo",
-  description: "Halaman yang Anda cari tidak ditemukan.",
+  title: messages.error.not_found.title,
+  description: messages.error.not_found.message,
   openGraph: {
-    title: "404 Not Found | Rendi Ichtiar Prasetyo",
-    description: "Halaman yang Anda cari tidak ditemukan.",
+    title: messages.error.not_found.title,
+    description: messages.error.not_found.message,
   },
   twitter: {
-    title: "404 Not Found | Rendi Ichtiar Prasetyo",
-    description: "Halaman yang Anda cari tidak ditemukan.",
+    title: messages.error.not_found.title,
+    description: messages.error.not_found.message,
   }
 }
 

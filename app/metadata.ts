@@ -3,7 +3,7 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
   metadataBase: new URL("https://rendiichtiar.com"),
   title: "Rendi Ichtiar Prasetyo | Frontend Engineer",
-  description: "Seorang Frontend Engineer yang berfokus pada pengembangan aplikasi web modern dengan React, Next.js, dan TypeScript.",
+  description: "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
   keywords: ["Full Stack Developer", "Web Developer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Portfolio"],
   authors: [{ name: "Rendi Ichtiar Prasetyo" }],
   creator: "Rendi Ichtiar Prasetyo",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Rendi Ichtiar Prasetyo | Frontend Engineer",
-    description: "Seorang Frontend Engineer yang berfokus pada pengembangan aplikasi web modern dengan React, Next.js, dan TypeScript.",
+    description: "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
     url: "/",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Rendi Ichtiar Prasetyo | Frontend Engineer",
-    description: "Seorang Frontend Engineer yang berfokus pada pengembangan aplikasi web modern dengan React, Next.js, dan TypeScript.",
+    description: "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
     card: "summary_large_image",
     creator: "@rendiichtiar",
     site: "@rendiichtiar",

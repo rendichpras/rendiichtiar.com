@@ -1,16 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun, Monitor } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
+import { motion } from "framer-motion"
 
 interface ThemeToggleProps {
   className?: string
@@ -20,6 +16,7 @@ interface ThemeToggleProps {
 export function ThemeToggle({ className, variant = "default" }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
+  const { messages } = useI18n()
 
   React.useEffect(() => {
     setMounted(true)
@@ -43,51 +40,44 @@ export function ThemeToggle({ className, variant = "default" }: ThemeToggleProps
 
   const isCompact = variant === "compact"
 
-  if (isCompact) {
-    return (
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn("relative size-8 rounded-full", className)}
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      >
-        <Sun className="absolute size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-yellow-500" />
-        <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-primary" />
-        <span className="sr-only">Ubah tema</span>
-      </Button>
-    )
-  }
-
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "relative size-9 rounded-full bg-background/80 backdrop-blur-sm hover:bg-accent",
-            className
-          )}
-        >
-          <Sun className="absolute size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-yellow-500" />
-          <Moon className="absolute size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-primary" />
-          <span className="sr-only">Ubah tema</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Sun className="mr-2 size-4 text-yellow-500" />
-          <span>Terang</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Moon className="mr-2 size-4" />
-          <span>Gelap</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Monitor className="mr-2 size-4" />
-          <span>Sistem</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className={cn(
+        "relative overflow-hidden",
+        isCompact ? "size-8" : "size-9",
+        "rounded-full hover:bg-accent",
+        className
+      )}
+      aria-label={messages.theme.toggle}
+    >
+      <motion.div
+        initial={false}
+        animate={{
+          scale: theme === "dark" ? 0 : 1,
+          opacity: theme === "dark" ? 0 : 1,
+          rotate: theme === "dark" ? -45 : 0
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <Sun className="size-4 text-yellow-500" />
+      </motion.div>
+
+      <motion.div
+        initial={false}
+        animate={{
+          scale: theme === "dark" ? 1 : 0,
+          opacity: theme === "dark" ? 1 : 0,
+          rotate: theme === "dark" ? 0 : 45
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <Moon className="size-4 text-primary" />
+      </motion.div>
+    </Button>
   )
 } 

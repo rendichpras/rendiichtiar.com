@@ -1,6 +1,9 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { Marquee } from "@/components/ui/marquee"
+import { useI18n } from "@/lib/i18n"
 import { 
   SiTypescript,
   SiNodedotjs,
@@ -33,6 +36,8 @@ const techStack = [
 ]
 
 export default function Home() {
+  const { messages } = useI18n()
+
   return (
     <PageTransition>
       <main className="min-h-screen bg-background relative lg:pl-64 pt-16 lg:pt-0">
@@ -60,7 +65,7 @@ export default function Home() {
                 <div className="flex-1 space-y-4">
                   <div className="space-y-2">
                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
-                      Hai, saya Rendi 👋
+                      {messages.home.greeting}
                     </h1>
                     <div className="flex flex-wrap gap-3 sm:gap-4 text-sm sm:text-base text-muted-foreground">
                       <div className="flex items-center gap-2">
@@ -68,7 +73,7 @@ export default function Home() {
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                           <circle cx="12" cy="10" r="3"/>
                         </svg>
-                        <span>Bekasi, Indonesia</span>
+                        <span>{messages.home.location}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -76,13 +81,13 @@ export default function Home() {
                           <line x1="8" y1="21" x2="16" y2="21"/>
                           <line x1="12" y1="17" x2="12" y2="21"/>
                         </svg>
-                        <span>Remote Worker</span>
+                        <span>{messages.home.remote_worker}</span>
                       </div>
                     </div>
                   </div>
 
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Seorang Software Engineer yang berfokus pada pengembangan Frontend dengan pengalaman lebih dari 2 tahun. Saya memiliki keahlian dalam ekosistem JavaScript modern seperti React, Next.js, dan TypeScript untuk membangun aplikasi web yang responsif dan berkinerja tinggi. Dengan perhatian terhadap detail dan pemahaman mendalam tentang pengalaman pengguna, saya berkomitmen untuk menghadirkan solusi digital yang tidak hanya fungsional, tetapi juga intuitif dan menyenangkan untuk digunakan.
+                    {messages.home.bio}
                   </p>
                 </div>
               </div>
@@ -90,9 +95,9 @@ export default function Home() {
               <div className="pt-6 sm:pt-8 border-t">
                 <div className="space-y-4 sm:space-y-6">
                   <div className="space-y-2">
-                    <h2 className="text-xl sm:text-2xl font-bold">Teknologi yang Saya Gunakan</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold">{messages.home.tech_stack}</h2>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Teknologi yang saya gunakan untuk membangun aplikasi modern dan scalable
+                      {messages.home.tech_stack_desc}
                     </p>
                   </div>
 
@@ -158,9 +163,9 @@ export default function Home() {
               <div className="pt-8 sm:pt-12 border-t">
                 <div className="space-y-8 sm:space-y-12">
                   <div className="space-y-3 sm:space-y-4">
-                    <h2 className="text-xl sm:text-2xl font-bold">Yang Telah Saya Kerjakan</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold">{messages.home.work_title}</h2>
                     <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl">
-                      Saya membantu brand, perusahaan, institusi, dan startup dalam menciptakan pengalaman digital yang luar biasa untuk bisnis mereka melalui layanan pengembangan yang strategis.
+                      {messages.home.work_desc}
                     </p>
                   </div>
 
@@ -169,10 +174,10 @@ export default function Home() {
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                       </svg>
-                      <span>Mari Bekerja Sama!</span>
+                      <span>{messages.home.lets_work}</span>
                     </div>
                     <p className="text-muted-foreground text-sm sm:text-base">
-                      Saya terbuka untuk proyek freelance, silakan hubungi saya melalui email untuk melihat bagaimana kita bisa berkolaborasi.
+                      {messages.home.work_cta}
                     </p>
                     <div>
                       <Button
@@ -181,7 +186,7 @@ export default function Home() {
                         className="rounded-lg font-medium text-sm sm:text-base"
                       >
                         <a href="mailto:rendichpras@gmail.com">
-                          Hubungi saya
+                          {messages.home.contact_me}
                         </a>
                       </Button>
                     </div>

@@ -12,52 +12,54 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
-
-const contactSchema = z.object({
-    name: z.string().min(2, "Nama minimal 2 karakter"),
-    email: z.string().email("Email tidak valid"),
-    message: z.string().min(10, "Pesan minimal 10 karakter")
-})
+import { useI18n } from "@/lib/i18n"
 
 const socialLinks = [
     {
         icon: Mail,
-        label: "Email",
+        labelKey: "email",
         href: "mailto:rendichpras@gmail.com",
         color: "bg-[#EA4335]/10 text-[#EA4335]"
     },
     {
         icon: Linkedin,
-        label: "LinkedIn",
+        labelKey: "linkedin",
         href: "https://linkedin.com/in/rendiichtiar",
         color: "bg-[#0A66C2]/10 text-[#0A66C2]"
     },
     {
         icon: Facebook,
-        label: "Facebook",
+        labelKey: "facebook",
         href: "https://facebook.com/rendiichtiar",
         color: "bg-[#1DA1F2]/10 text-[#1DA1F2]"
     },
     {
         icon: Instagram,
-        label: "Instagram",
+        labelKey: "instagram",
         href: "https://instagram.com/rendiichtiar",
         color: "bg-[#E4405F]/10 text-[#E4405F]"
     },
     {
         icon: Github,
-        label: "Github",
+        labelKey: "github",
         href: "https://github.com/rendichpras",
         color: "bg-[#181717]/10 text-[#181717] dark:bg-[#fff]/10 dark:text-[#fff]"
     }
 ]
 
 export function ContactContent() {
+    const { messages } = useI18n()
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         message: ""
+    })
+
+    const contactSchema = z.object({
+        name: z.string().min(2, messages.contact.form.validation.name),
+        email: z.string().email(messages.contact.form.validation.email),
+        message: z.string().min(10, messages.contact.form.validation.message)
     })
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -80,7 +82,7 @@ export function ContactContent() {
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.message || "Terjadi kesalahan")
+                throw new Error(data.message || messages.contact.form.error.general)
             }
 
             // Reset form
@@ -91,7 +93,7 @@ export function ContactContent() {
             })
 
             // Tampilkan notifikasi sukses
-            toast.success("Pesan berhasil dikirim! Terima kasih telah menghubungi saya.")
+            toast.success(messages.contact.form.success)
 
         } catch (error) {
             console.error("Error submitting form:", error)
@@ -103,7 +105,7 @@ export function ContactContent() {
                 })
             } else {
                 // Tampilkan error umum
-                toast.error("Terjadi kesalahan. Silakan coba lagi nanti.")
+                toast.error(messages.contact.form.error.general)
             }
         } finally {
             setIsLoading(false)
@@ -124,9 +126,9 @@ export function ContactContent() {
                 <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
                     {/* Header */}
                     <div className="space-y-2 max-w-3xl">
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Kontak</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.contact.title}</h1>
                         <p className="text-sm sm:text-base text-muted-foreground">
-                            Mari terhubung dan diskusikan bagaimana kita bisa berkolaborasi bersama.
+                            {messages.contact.subtitle}
                         </p>
                     </div>
 
@@ -134,13 +136,13 @@ export function ContactContent() {
 
                     {/* Social Links */}
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">Temukan saya di media sosial</h2>
+                        <h2 className="text-lg font-semibold mb-4">{messages.contact.social.title}</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                             {socialLinks.map((social, index) => {
                                 const Icon = social.icon
                                 return (
                                     <motion.div
-                                        key={social.label}
+                                        key={social.labelKey}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
@@ -163,7 +165,7 @@ export function ContactContent() {
                                                         <Icon className="size-4" />
                                                     </div>
                                                     <span className="text-sm font-medium group-hover:text-primary transition-colors">
-                                                        {social.label}
+                                                        {messages.contact.social[social.labelKey as keyof typeof messages.contact.social]}
                                                     </span>
                                                 </div>
                                             </Card>
@@ -179,16 +181,16 @@ export function ContactContent() {
                         <Card className="p-6 border-2 border-dashed">
                             <div className="flex flex-col sm:flex-row items-start gap-6">
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-lg font-semibold mb-2">Sesi Obrolan 1 on 1</h3>
-                                    <p className="text-sm text-muted-foreground mb-4">Mari luangkan waktu untuk berdiskusi tentang apa saja</p>
+                                    <h3 className="text-lg font-semibold mb-2">{messages.contact.call.title}</h3>
+                                    <p className="text-sm text-muted-foreground mb-4">{messages.contact.call.subtitle}</p>
                                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                                         <div className="flex items-center gap-2">
                                             <Video className="size-4" />
-                                            <span>Google Meet</span>
+                                            <span>{messages.contact.call.platform}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Calendar className="size-4" />
-                                            <span>30 Menit</span>
+                                            <span>{messages.contact.call.duration}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -197,7 +199,7 @@ export function ContactContent() {
                                     className="shrink-0"
                                     onClick={() => window.open("https://cal.com/rendiichtiar", "_blank")}
                                 >
-                                    Jadwalkan Sekarang
+                                    {messages.contact.call.button}
                                 </Button>
                             </div>
                         </Card>
@@ -205,18 +207,18 @@ export function ContactContent() {
 
                     {/* Contact Form */}
                     <div>
-                        <h2 className="text-lg font-semibold mb-4">Atau kirim pesan</h2>
+                        <h2 className="text-lg font-semibold mb-4">{messages.contact.form.title}</h2>
                         <Card className="p-6">
                             <form className="space-y-4" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <label htmlFor="name" className="text-sm font-medium">
-                                            Nama*
+                                            {messages.contact.form.name.label}
                                         </label>
                                         <Input
                                             id="name"
                                             name="name"
-                                            placeholder="Nama lengkap"
+                                            placeholder={messages.contact.form.name.placeholder}
                                             required
                                             value={formData.name}
                                             onChange={handleChange}
@@ -225,13 +227,13 @@ export function ContactContent() {
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="email" className="text-sm font-medium">
-                                            Email*
+                                            {messages.contact.form.email.label}
                                         </label>
                                         <Input
                                             id="email"
                                             name="email"
                                             type="email"
-                                            placeholder="email@kamu.com"
+                                            placeholder={messages.contact.form.email.placeholder}
                                             required
                                             value={formData.email}
                                             onChange={handleChange}
@@ -241,12 +243,12 @@ export function ContactContent() {
                                 </div>
                                 <div className="space-y-2">
                                     <label htmlFor="message" className="text-sm font-medium">
-                                        Pesan*
+                                        {messages.contact.form.message.label}
                                     </label>
                                     <Textarea
                                         id="message"
                                         name="message"
-                                        placeholder="Tulis pesan Anda di sini..."
+                                        placeholder={messages.contact.form.message.placeholder}
                                         rows={6}
                                         required
                                         value={formData.message}
@@ -256,7 +258,7 @@ export function ContactContent() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <p className="text-xs text-muted-foreground">
-                                        Rata-rata respon: 1-2 Jam (Jam Kerja, GMT+7)
+                                        {messages.contact.form.response_time}
                                     </p>
                                     <Button 
                                         type="submit" 
@@ -264,7 +266,7 @@ export function ContactContent() {
                                         className="ml-auto"
                                         disabled={isLoading}
                                     >
-                                        {isLoading ? "Mengirim..." : "Kirim Pesan"}
+                                        {isLoading ? messages.contact.form.sending : messages.contact.form.send}
                                     </Button>
                                 </div>
                             </form>

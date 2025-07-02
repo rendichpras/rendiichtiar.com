@@ -9,6 +9,7 @@ import { Navbar } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { metadata } from "./metadata"
 import { cn } from "@/lib/utils"
+import { I18nProvider } from "@/lib/i18n"
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -58,12 +59,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <JsonLd />
-            <Navbar />
-            {children}
-            <BackToTop />
-            <Toaster richColors closeButton position="top-right" />
-            <Footer />
+            <I18nProvider>
+              <JsonLd />
+              <Navbar />
+              {children}
+              <BackToTop />
+              <Toaster richColors closeButton position="top-right" />
+              <Footer />
+            </I18nProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>

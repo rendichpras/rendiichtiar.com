@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { useI18n } from "@/lib/i18n"
 import {
     Dialog,
     DialogContent,
@@ -64,6 +65,7 @@ type Contact = {
 }
 
 export default function AdminContactPage() {
+    const { messages } = useI18n()
     const { data: session, status } = useSession()
     const router = useRouter()
     const [contacts, setContacts] = useState<Contact[]>([])
@@ -89,7 +91,7 @@ export default function AdminContactPage() {
             }
         } catch (error) {
             console.error("Error loading contacts:", error)
-            toast.error("Gagal memuat data kontak")
+            toast.error(messages.admin.contact.notifications.load_error)
         }
     }
 
@@ -109,14 +111,14 @@ export default function AdminContactPage() {
                 setContacts(data.contacts)
             } catch (error) {
                 console.error("Error fetching data:", error)
-                toast.error("Gagal memuat data")
+                toast.error(messages.admin.contact.notifications.load_error)
             } finally {
                 setLoading(false)
             }
         }
 
         checkAuth()
-    }, [session, status, router])
+    }, [session, status, router, messages])
 
     // Fungsi untuk mengirim balasan
     const handleReply = async () => {
@@ -137,7 +139,7 @@ export default function AdminContactPage() {
 
             const data = await response.json()
             if (data.success) {
-                toast.success("Balasan berhasil dikirim")
+                toast.success(messages.admin.contact.notifications.reply_success)
                 setIsDialogOpen(false)
                 setReplyMessage("")
                 loadContacts() // Muat ulang data
@@ -146,7 +148,7 @@ export default function AdminContactPage() {
             }
         } catch (error) {
             console.error("Error sending reply:", error)
-            toast.error("Gagal mengirim balasan")
+            toast.error(messages.admin.contact.notifications.reply_error)
         } finally {
             setIsLoading(false)
         }
@@ -170,7 +172,7 @@ export default function AdminContactPage() {
                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Tanggal
+                        {messages.admin.contact.table.columns.date}
                         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
@@ -196,7 +198,7 @@ export default function AdminContactPage() {
                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Nama
+                        {messages.admin.contact.table.columns.name}
                         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
@@ -215,7 +217,7 @@ export default function AdminContactPage() {
                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Email
+                        {messages.admin.contact.table.columns.email}
                         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
@@ -234,7 +236,7 @@ export default function AdminContactPage() {
                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Pesan
+                        {messages.admin.contact.table.columns.message}
                         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
@@ -257,7 +259,7 @@ export default function AdminContactPage() {
                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Status
+                        {messages.admin.contact.table.columns.status}
                         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
                     </Button>
                 )
@@ -266,17 +268,17 @@ export default function AdminContactPage() {
                 const status = row.getValue("status") as Contact["status"]
                 switch (status) {
                     case "UNREAD":
-                        return <Badge variant="destructive" className="font-normal">Belum Dibaca</Badge>
+                        return <Badge variant="destructive" className="font-normal">{messages.admin.contact.table.status.unread}</Badge>
                     case "READ":
-                        return <Badge variant="secondary" className="font-normal">Sudah Dibaca</Badge>
+                        return <Badge variant="secondary" className="font-normal">{messages.admin.contact.table.status.read}</Badge>
                     case "REPLIED":
-                        return <Badge variant="default" className="font-normal">Sudah Dibalas</Badge>
+                        return <Badge variant="default" className="font-normal">{messages.admin.contact.table.status.replied}</Badge>
                 }
             },
         },
         {
             id: "actions",
-            header: "Aksi",
+            header: messages.admin.contact.table.columns.actions,
             cell: ({ row }) => {
                 const contact = row.original as Contact
                 return (
@@ -287,7 +289,9 @@ export default function AdminContactPage() {
                         variant={contact.status === "UNREAD" ? "default" : "secondary"}
                         className="w-[100px]"
                     >
-                        {contact.status === "REPLIED" ? "Sudah Dibalas" : "Balas"}
+                        {contact.status === "REPLIED" 
+                            ? messages.admin.contact.table.actions.replied 
+                            : messages.admin.contact.table.actions.reply}
                     </Button>
                 )
             },
@@ -335,9 +339,9 @@ export default function AdminContactPage() {
                 <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
                     {/* Header */}
                     <div className="space-y-2 max-w-3xl">
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Manajemen Pesan</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.admin.contact.title}</h1>
                         <p className="text-sm sm:text-base text-muted-foreground">
-                            Kelola dan balas pesan dari pengunjung website.
+                            {messages.admin.contact.subtitle}
                         </p>
                     </div>
 
@@ -348,7 +352,7 @@ export default function AdminContactPage() {
                         <div className="p-4">
                             <div className="flex flex-col sm:flex-row items-center gap-4 py-4">
                                 <Input
-                                    placeholder="Cari berdasarkan nama..."
+                                    placeholder={messages.admin.contact.table.search}
                                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                                     onChange={(event) =>
                                         table.getColumn("name")?.setFilterValue(event.target.value)
@@ -358,7 +362,7 @@ export default function AdminContactPage() {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="outline" className="w-full sm:w-auto sm:ml-auto">
-                                            Kolom <ChevronDown className="ml-2 h-4 w-4" />
+                                            {messages.admin.contact.table.columns_button} <ChevronDown className="ml-2 h-4 w-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
@@ -366,6 +370,7 @@ export default function AdminContactPage() {
                                             .getAllColumns()
                                             .filter((column) => column.getCanHide())
                                             .map((column) => {
+                                                const columnKey = column.id as keyof typeof messages.admin.contact.table.columns
                                                 return (
                                                     <DropdownMenuCheckboxItem
                                                         key={column.id}
@@ -375,11 +380,7 @@ export default function AdminContactPage() {
                                                             column.toggleVisibility(!!value)
                                                         }
                                                     >
-                                                        {column.id === "createdAt" ? "Tanggal" :
-                                                            column.id === "name" ? "Nama" :
-                                                                column.id === "email" ? "Email" :
-                                                                    column.id === "message" ? "Pesan" :
-                                                                        column.id === "status" ? "Status" : column.id}
+                                                        {messages.admin.contact.table.columns[columnKey]}
                                                     </DropdownMenuCheckboxItem>
                                                 )
                                             })}
@@ -430,7 +431,7 @@ export default function AdminContactPage() {
                                                     colSpan={columns.length}
                                                     className="h-24 text-center"
                                                 >
-                                                    Belum ada pesan
+                                                    {messages.admin.contact.table.empty}
                                                 </TableCell>
                                             </TableRow>
                                         )}
@@ -439,7 +440,7 @@ export default function AdminContactPage() {
                             </div>
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
                                 <div className="text-sm text-muted-foreground order-2 sm:order-1">
-                                    {table.getFilteredRowModel().rows.length} pesan
+                                    {messages.admin.contact.table.total_messages.replace("{count}", String(table.getFilteredRowModel().rows.length))}
                                 </div>
                                 <div className="flex items-center gap-2 order-1 sm:order-2">
                                     <Button
@@ -448,7 +449,7 @@ export default function AdminContactPage() {
                                         onClick={() => table.previousPage()}
                                         disabled={!table.getCanPreviousPage()}
                                     >
-                                        Sebelumnya
+                                        {messages.admin.contact.table.pagination.previous}
                                     </Button>
                                     <Button
                                         variant="outline"
@@ -456,7 +457,7 @@ export default function AdminContactPage() {
                                         onClick={() => table.nextPage()}
                                         disabled={!table.getCanNextPage()}
                                     >
-                                        Selanjutnya
+                                        {messages.admin.contact.table.pagination.next}
                                     </Button>
                                 </div>
                             </div>
@@ -467,16 +468,16 @@ export default function AdminContactPage() {
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogContent className="sm:max-w-[500px]">
                             <DialogHeader>
-                                <DialogTitle>Balas Pesan</DialogTitle>
+                                <DialogTitle>{messages.admin.contact.reply_dialog.title}</DialogTitle>
                                 <DialogDescription>
-                                    Balas pesan dari {selectedContact?.name}
+                                    {messages.admin.contact.reply_dialog.subtitle.replace("{name}", selectedContact?.name || "")}
                                 </DialogDescription>
                             </DialogHeader>
 
                             <div className="space-y-4 py-4">
                                 <div className="bg-muted p-4 rounded-lg space-y-2">
                                     <div className="flex items-center justify-between flex-wrap gap-2">
-                                        <p className="font-medium text-sm">Pesan asli:</p>
+                                        <p className="font-medium text-sm">{messages.admin.contact.reply_dialog.original_message}</p>
                                         <Badge variant="outline" className="font-normal">
                                             {formatDistanceToNow(selectedContact ? new Date(selectedContact.createdAt) : new Date(), {
                                                 addSuffix: true,
@@ -488,7 +489,7 @@ export default function AdminContactPage() {
                                 </div>
 
                                 <Textarea
-                                    placeholder="Tulis balasan Anda di sini..."
+                                    placeholder={messages.admin.contact.reply_dialog.placeholder}
                                     value={replyMessage}
                                     onChange={(e) => setReplyMessage(e.target.value)}
                                     rows={6}
@@ -501,14 +502,14 @@ export default function AdminContactPage() {
                                     onClick={() => setIsDialogOpen(false)}
                                     className="w-full sm:w-auto"
                                 >
-                                    Batal
+                                    {messages.admin.contact.reply_dialog.cancel}
                                 </Button>
                                 <Button
                                     onClick={handleReply}
                                     disabled={isLoading || !replyMessage.trim()}
                                     className="w-full sm:w-auto"
                                 >
-                                    {isLoading ? "Mengirim..." : "Kirim Balasan"}
+                                    {isLoading ? messages.admin.contact.reply_dialog.sending : messages.admin.contact.reply_dialog.send}
                                 </Button>
                             </DialogFooter>
                         </DialogContent>

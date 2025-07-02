@@ -3,11 +3,11 @@ export default function JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Rendi Ichtiar Prasetyo',
-    jobTitle: 'Full Stack Developer',
+    jobTitle: 'Software Engineer',
     url: 'https://rendiichtiar.com',
     sameAs: [
-      'https://github.com/YOUR_GITHUB',
-      'https://linkedin.com/in/YOUR_LINKEDIN',
+      'https://github.com/rendichpras',
+      'https://linkedin.com/in/rendiichtiar',
       // Tambahkan social media lainnya
     ],
     knowsAbout: [

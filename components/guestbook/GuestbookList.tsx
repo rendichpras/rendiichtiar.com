@@ -17,6 +17,7 @@ import { useEffect, useState, useCallback } from "react"
 import { GuestbookSkeleton } from "./GuestbookSkeleton"
 import { GuestbookReply, GuestbookReplyList, LikeButton } from "./GuestbookReply"
 import { useSession } from "next-auth/react"
+import { useI18n } from "@/lib/i18n"
 
 type GuestbookEntry = {
   id: string
@@ -130,6 +131,7 @@ export function GuestbookList() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyingToName, setReplyingToName] = useState<string>("")
   const { data: session } = useSession()
+  const { messages } = useI18n()
 
   const toggleReplies = (entryId: string) => {
     setExpandedEntries(prev => {
@@ -183,7 +185,7 @@ export function GuestbookList() {
         <CardContent>
           <div className="flex items-center justify-center h-full py-8 text-center">
             <p className="text-sm text-muted-foreground">
-              Belum ada pesan. Jadilah yang pertama!
+              {messages.guestbook.list.empty}
             </p>
           </div>
         </CardContent>
@@ -196,8 +198,8 @@ export function GuestbookList() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold">Pesan Terbaru</h2>
-            <p className="text-sm text-muted-foreground">Lihat apa yang orang lain katakan</p>
+            <h2 className="text-lg font-semibold">{messages.guestbook.list.title}</h2>
+            <p className="text-sm text-muted-foreground">{messages.guestbook.list.subtitle}</p>
           </div>
         </div>
       </CardHeader>
@@ -226,7 +228,7 @@ export function GuestbookList() {
                               <TooltipTrigger asChild>
                                 <button 
                                   className="flex items-center"
-                                  aria-label="Pemilik website"
+                                  aria-label={messages.guestbook.list.owner}
                                 >
                                   <svg 
                                     className="w-4 h-4 text-blue-500" 
@@ -239,7 +241,7 @@ export function GuestbookList() {
                                 </button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Pemilik</p>
+                                <p>{messages.guestbook.list.owner}</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -261,7 +263,7 @@ export function GuestbookList() {
                       <button
                         onClick={() => handleReplyClick(entry.id, entry.user.name || "")}
                         className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
-                        aria-label={`Balas ke ${entry.user.name}`}
+                        aria-label={`${messages.guestbook.list.reply.button} ${entry.user.name}`}
                       >
                         <svg 
                           className="w-4 h-4 sm:w-5 sm:h-5" 
@@ -272,7 +274,7 @@ export function GuestbookList() {
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                         </svg>
-                        <span>Balas</span>
+                        <span>{messages.guestbook.list.reply.button}</span>
                       </button>
 
                       <LikeButton 
@@ -285,7 +287,7 @@ export function GuestbookList() {
                         <button
                           onClick={() => toggleReplies(entry.id)}
                           className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
-                          aria-label={expandedEntries.has(entry.id) ? "Sembunyikan balasan" : `Lihat ${entry.replies.length} balasan`}
+                          aria-label={expandedEntries.has(entry.id) ? messages.guestbook.list.hide_replies : messages.guestbook.list.show_replies.replace("{count}", String(entry.replies.length))}
                           aria-expanded={expandedEntries.has(entry.id)}
                         >
                           {expandedEntries.has(entry.id) ? (
@@ -299,7 +301,7 @@ export function GuestbookList() {
                               >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
-                              <span>Sembunyikan</span>
+                              <span>{messages.guestbook.list.hide_replies}</span>
                             </span>
                           ) : (
                             <span className="flex items-center gap-1.5">
@@ -312,7 +314,7 @@ export function GuestbookList() {
                               >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
-                              <span>{`${entry.replies.length} Balasan`}</span>
+                              <span>{messages.guestbook.list.show_replies.replace("{count}", String(entry.replies.length))}</span>
                             </span>
                           )}
                         </button>

@@ -1,0 +1,329 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "guestbook": "Guestbook",
+    "contact": "Contact",
+    "playground": "JS Playground",
+    "apps": "Apps",
+    "close_menu": "Close Menu",
+    "open_menu": "Open Menu",
+    "nav_menu": "Navigation Menu",
+    "main_menu": "Main Menu"
+  },
+  "home": {
+    "greeting": "Hi, I'm Rendi 👋",
+    "location": "Bekasi, Indonesia",
+    "remote_worker": "Remote Worker",
+    "bio": "A Software Engineer focusing on Frontend development with over 2 years of experience. I have expertise in modern JavaScript ecosystems such as React, Next.js, and TypeScript for building responsive and high-performance web applications. With attention to detail and a deep understanding of user experience, I am committed to delivering digital solutions that are not only functional but also intuitive and enjoyable to use.",
+    "tech_stack": "Technologies I Use",
+    "tech_stack_desc": "Technologies I use to build modern and scalable applications",
+    "work_title": "What I've Been Working On",
+    "work_desc": "I help brands, companies, institutions, and startups create exceptional digital experiences for their businesses through strategic development services.",
+    "lets_work": "Let's Work Together!",
+    "work_cta": "I'm open to freelance projects, please contact me via email to see how we can collaborate.",
+    "contact_me": "Contact me",
+    "verified": "Verified",
+    "to_home": "Go to Home"
+  },
+  "about": {
+    "title": "About",
+    "subtitle": "A glimpse of who I am – because every detail adds depth to the canvas of life.",
+    "sections": {
+      "intro": "Intro",
+      "career": "Career",
+      "education": "Education"
+    },
+    "intro": {
+      "greeting": "Hello! Thank you for visiting my personal website.",
+      "bio1": "I am a Software Engineer focusing on Frontend development with over 2 years of experience. I have expertise in modern JavaScript ecosystems such as React, Next.js, and TypeScript for building responsive and high-performance web applications. With attention to detail and a deep understanding of user experience, I am committed to delivering digital solutions that are not only functional but also intuitive and enjoyable to use.",
+      "bio2": "My journey in web development began from my interest in technology and design. I've always believed that technology should make life easier, not the other way around. This principle is what I always apply in every project I work on. I enjoy exploring new technologies and always strive to stay up-to-date with the latest developments in web development.",
+      "bio3": "In every project, I focus not only on code but also on business aspects and user experience. I believe that a good application is one that can solve real problems in an elegant and efficient way. I always try to understand user and business needs deeply before starting to develop solutions.",
+      "bio4": "Outside of coding, I am very interested in UI/UX design and software architecture. I believe that a good understanding of design and architecture is key to building applications that not only work well but are also easy to maintain and develop in the future. I also actively contribute to the open source community and enjoy sharing knowledge with fellow developers.",
+      "bio5": "I am always open to collaboration and new opportunities. If you have an interesting project or want to discuss technology, don't hesitate to contact me. Let's create something amazing together!",
+      "closing": "Best regards,"
+    },
+    "career": {
+      "empty": "No career displayed yet"
+    },
+    "education": {
+      "upb": {
+        "name": "Pelita Bangsa University",
+        "major": "Informatics Engineering",
+        "period": "2025 - Present",
+        "location": "Bekasi, Indonesia"
+      },
+      "smk": {
+        "name": "SMK HS AGUNG",
+        "major": "Computer and Network Engineering",
+        "period": "2022 - 2025",
+        "location": "Bekasi, Indonesia"
+      }
+    }
+  },
+  "guestbook": {
+    "title": "Guestbook",
+    "subtitle": "Leave your message, impression, or suggestion in my guestbook.",
+    "form": {
+      "placeholder": "Write your message here...",
+      "empty_error": "Message cannot be empty!",
+      "session_error": "Invalid session, please sign in again",
+      "success": "Your message has been added to the guestbook!",
+      "error": "Failed to add message. Please try again.",
+      "forbidden_words": "Message contains forbidden words",
+      "sending": "Sending...",
+      "send": "Send Message"
+    },
+    "auth": {
+      "sign_in_message": "Sign in to send a message in the guestbook"
+    },
+    "list": {
+      "title": "Latest Messages",
+      "subtitle": "See what others are saying",
+      "empty": "No messages yet. Be the first!",
+      "owner": "Owner",
+      "reply": {
+        "button": "Reply",
+        "placeholder": "Reply to @{name}...",
+        "cancel": "Cancel",
+        "sending": "Sending...",
+        "send": "Send",
+        "success": "Your reply has been added!",
+        "error": "Failed to add reply. Please try again."
+      },
+      "like": {
+        "error": "Failed to like"
+      },
+      "show_replies": "{count} Replies",
+      "hide_replies": "Hide"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Let's connect and discuss how we can collaborate together.",
+    "social": {
+      "title": "Find me on social media",
+      "email": "Email",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "github": "Github"
+    },
+    "call": {
+      "title": "1 on 1 Chat Session",
+      "subtitle": "Let's take time to discuss about anything",
+      "platform": "Google Meet",
+      "duration": "30 Minutes",
+      "button": "Schedule Now"
+    },
+    "form": {
+      "title": "Or send a message",
+      "name": {
+        "label": "Name*",
+        "placeholder": "Full name"
+      },
+      "email": {
+        "label": "Email*",
+        "placeholder": "your@email.com"
+      },
+      "message": {
+        "label": "Message*",
+        "placeholder": "Write your message here..."
+      },
+      "response_time": "Average response: 1-2 Hours (Working Hours, GMT+7)",
+      "sending": "Sending...",
+      "send": "Send Message",
+      "success": "Message sent successfully! Thank you for contacting me.",
+      "validation": {
+        "name": "Name must be at least 2 characters",
+        "email": "Invalid email",
+        "message": "Message must be at least 10 characters"
+      },
+      "error": {
+        "general": "An error occurred. Please try again later."
+      }
+    }
+  },
+  "playground": {
+    "title": "JavaScript Playground",
+    "subtitle": "Test and run your JavaScript code directly in the browser with instant feedback.",
+    "editor": {
+      "language": "JavaScript",
+      "actions": {
+        "clear": "Clear code",
+        "fullscreen": "Toggle fullscreen",
+        "run": "Run code"
+      }
+    },
+    "console": {
+      "title": "Console",
+      "clear": "Clear output"
+    },
+    "errors": {
+      "code_too_long": "Code is too long (maximum 5000 characters)",
+      "blocked_keyword": "Code contains functions that are not allowed for security",
+      "validation_error": "An error occurred while validating the code",
+      "editor_not_ready": "Editor is not ready. Please wait a moment.",
+      "runtime_error": "An error occurred while running the code"
+    }
+  },
+  "admin": {
+    "contact": {
+      "title": "Message Management",
+      "subtitle": "Manage and reply to messages from website visitors.",
+      "table": {
+        "columns": {
+          "date": "Date",
+          "name": "Name",
+          "email": "Email",
+          "message": "Message",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "unread": "Unread",
+          "read": "Read",
+          "replied": "Replied"
+        },
+        "actions": {
+          "reply": "Reply",
+          "replied": "Replied"
+        },
+        "search": "Search by name...",
+        "columns_button": "Columns",
+        "empty": "No messages yet",
+        "total_messages": "{count} messages",
+        "pagination": {
+          "previous": "Previous",
+          "next": "Next"
+        }
+      },
+      "reply_dialog": {
+        "title": "Reply Message",
+        "subtitle": "Reply to {name}'s message",
+        "original_message": "Original message:",
+        "placeholder": "Write your reply here...",
+        "cancel": "Cancel",
+        "sending": "Sending...",
+        "send": "Send Reply"
+      },
+      "notifications": {
+        "load_error": "Failed to load contact data",
+        "reply_success": "Reply sent successfully",
+        "reply_error": "Failed to send reply"
+      }
+    }
+  },
+  "error": {
+    "forbidden": {
+      "title": "403 Forbidden",
+      "heading": "Access Denied",
+      "message": "Sorry, you don't have permission to access this page.",
+      "back_home": "Back to Home"
+    },
+    "not_found": {
+      "title": "404 Not Found",
+      "heading": "Page Not Found",
+      "message": "Sorry, the page you are looking for cannot be found or has been moved.",
+      "back_home": "Back to Home"
+    }
+  },
+  "validation": {
+    "forbidden_words": {
+      "error": "Message contains forbidden words"
+    }
+  },
+  "api": {
+    "contact": {
+      "validation": {
+        "name": "Name must be at least 2 characters",
+        "email": "Invalid email",
+        "message": "Message must be at least 10 characters",
+        "reply": "Reply must be at least 10 characters"
+      },
+      "error": {
+        "fetch": "Failed to fetch contact data",
+        "validation": "Validation failed",
+        "general": "An error occurred, please try again later",
+        "not_found": "Message not found"
+      },
+      "success": {
+        "sent": "Message sent successfully",
+        "replied": "Reply sent successfully"
+      },
+      "email": {
+        "admin": {
+          "subject": "[Website] New Message from {name}",
+          "title": "New Message from Website",
+          "name_label": "Name:",
+          "email_label": "Email:",
+          "message_label": "Message:",
+          "message_id": "Message ID:"
+        },
+        "user": {
+          "subject": "Thank You for Your Message",
+          "title": "Thank You {name}!",
+          "thank_you": "Thank you for contacting me. I will reply to your message soon.",
+          "message_copy": "Copy of Your Message:",
+          "visit_website": "Visit Website",
+          "regards": "Best regards,",
+          "signature": "Rendi Ichtiar"
+        },
+        "reply": {
+          "subject": "Re: Reply to Your Message",
+          "title": "Reply to Your Message",
+          "greeting": "Hi {name} 👋",
+          "original_message": "Your previous message:",
+          "reply_message": "My reply:",
+          "visit_website": "Visit Website",
+          "regards": "Best regards,",
+          "signature": "Rendi Ichtiar"
+        }
+      }
+    },
+    "guestbook": {
+      "error": {
+        "unauthorized": "Unauthorized",
+        "user_not_found": "User not found"
+      }
+    }
+  },
+  "metadata": {
+    "home": {
+      "title": "Rendi Ichtiar Prasetyo | Frontend Engineer",
+      "description": "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
+      "keywords": ["Full Stack Developer", "Web Developer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Portfolio"],
+      "og_alt": "Rendi Ichtiar Prasetyo - Personal Website"
+    },
+    "about": {
+      "title": "About | Rendi Ichtiar Prasetyo",
+      "description": "Learn more about me, my experience, and my journey as a Frontend Engineer."
+    },
+    "guestbook": {
+      "title": "Guestbook | Rendi Ichtiar Prasetyo",
+      "description": "Leave your message, impression, or suggestion in my guestbook."
+    },
+    "contact": {
+      "title": "Contact | Rendi Ichtiar Prasetyo",
+      "description": "Get in touch with me for collaboration, questions, or just to say hello."
+    },
+    "playground": {
+      "title": "JavaScript Playground | Rendi Ichtiar Prasetyo",
+      "description": "Test and run your JavaScript code directly in the browser with instant feedback."
+    }
+  },
+  "footer": {
+    "copyright": "© {year} Rendi Ichtiar Prasetyo",
+    "social": {
+      "github": "Visit Rendi Ichtiar's GitHub profile",
+      "linkedin": "Visit Rendi Ichtiar's LinkedIn profile",
+      "instagram": "Visit Rendi Ichtiar's Instagram profile"
+    }
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+} 

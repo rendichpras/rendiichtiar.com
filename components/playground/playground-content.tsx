@@ -13,6 +13,7 @@ import { SiJavascript } from "react-icons/si"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
 import type { OnMount } from "@monaco-editor/react"
+import { useI18n } from "@/lib/i18n"
 
 // Lazy load Monaco Editor
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
@@ -55,6 +56,7 @@ function JavaScriptIcon() {
 }
 
 export function PlaygroundContent() {
+  const { messages } = useI18n()
   const [code, setCode] = useState("")
   const [output, setOutput] = useState("")
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -71,14 +73,12 @@ export function PlaygroundContent() {
         autoClosingQuotes: "always",
         formatOnPaste: true,
         formatOnType: true,
-        // Mengaktifkan fitur paste
         quickSuggestions: {
           other: true,
           comments: true,
           strings: true
         },
         snippetSuggestions: "inline",
-        // Memperbaiki masalah input
         acceptSuggestionOnEnter: "on",
         autoClosingOvertype: "always",
         autoIndent: "full",
@@ -124,7 +124,7 @@ export function PlaygroundContent() {
   const validateCode = (code: string): boolean => {
     try {
       if (code.length > 5000) {
-        toast.error("Kode terlalu panjang (maksimal 5000 karakter)")
+        toast.error(messages.playground.errors.code_too_long)
         return false
       }
 
@@ -133,21 +133,21 @@ export function PlaygroundContent() {
       )
 
       if (containsBlockedKeyword) {
-        toast.error("Kode mengandung fungsi yang tidak diizinkan untuk keamanan")
+        toast.error(messages.playground.errors.blocked_keyword)
         return false
       }
 
       return true
     } catch (error) {
       console.error('Error in code validation:', error)
-      toast.error("Terjadi kesalahan saat validasi kode")
+      toast.error(messages.playground.errors.validation_error)
       return false
     }
   }
 
   const runCode = () => {
     if (!editorReady) {
-      toast.error("Editor belum siap. Mohon tunggu sebentar.")
+      toast.error(messages.playground.errors.editor_not_ready)
       return
     }
     
@@ -190,7 +190,7 @@ export function PlaygroundContent() {
         toast.error(error.message)
       } else {
         setOutput(String(error))
-        toast.error("Terjadi kesalahan saat menjalankan kode")
+        toast.error(messages.playground.errors.runtime_error)
       }
     }
   }
@@ -207,10 +207,10 @@ export function PlaygroundContent() {
           >
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">JavaScript Playground</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.playground.title}</h1>
             </div>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.
+              {messages.playground.subtitle}
             </p>
           </motion.div>
 
@@ -230,7 +230,7 @@ export function PlaygroundContent() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-sm rounded bg-secondary">JavaScript</span>
+                    <span className="px-2 py-1 text-sm rounded bg-secondary">{messages.playground.editor.language}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -243,7 +243,7 @@ export function PlaygroundContent() {
                       className="size-8"
                     >
                       <Trash2 className="size-4" />
-                      <span className="sr-only">Hapus kode</span>
+                      <span className="sr-only">{messages.playground.editor.actions.clear}</span>
                     </Button>
                     <Button
                       variant="ghost"
@@ -252,7 +252,7 @@ export function PlaygroundContent() {
                       className="size-8"
                     >
                       <Expand className="size-4" />
-                      <span className="sr-only">Toggle fullscreen</span>
+                      <span className="sr-only">{messages.playground.editor.actions.fullscreen}</span>
                     </Button>
                   </div>
                 </div>
@@ -266,7 +266,7 @@ export function PlaygroundContent() {
                       onChange={value => {
                         if (!editorReady) return
                         if (value && value.length > 5000) {
-                          toast.error("Kode terlalu panjang (maksimal 5000 karakter)")
+                          toast.error(messages.playground.errors.code_too_long)
                           return
                         }
                         setCode(value ?? "")
@@ -292,28 +292,23 @@ export function PlaygroundContent() {
                           bracketPairs: true,
                           indentation: true,
                         },
-                        // Mengaktifkan fitur paste dan input
                         mouseWheelZoom: true,
                         dragAndDrop: true,
                         copyWithSyntaxHighlighting: true,
-                        // Memperbaiki masalah input
                         acceptSuggestionOnEnter: "on",
                         autoClosingBrackets: "always",
                         autoClosingQuotes: "always",
                         autoIndent: "full",
                         autoSurround: "languageDefined",
-                        // Mengaktifkan fitur paste
                         quickSuggestions: {
                           other: true,
                           comments: true,
                           strings: true
                         },
                         snippetSuggestions: "inline",
-                        // Memperbaiki masalah cursor
                         cursorBlinking: "smooth",
                         cursorSmoothCaretAnimation: "on",
                         cursorStyle: "line",
-                        // Memperbaiki masalah input
                         renderControlCharacters: true,
                         renderWhitespace: "selection"
                       }}
@@ -327,7 +322,7 @@ export function PlaygroundContent() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-sm rounded bg-secondary">Console</span>
+                    <span className="px-2 py-1 text-sm rounded bg-secondary">{messages.playground.console.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -337,7 +332,7 @@ export function PlaygroundContent() {
                       className="size-8"
                     >
                       <Trash2 className="size-4" />
-                      <span className="sr-only">Hapus output</span>
+                      <span className="sr-only">{messages.playground.console.clear}</span>
                     </Button>
                     <Button
                       variant="default"
@@ -346,7 +341,7 @@ export function PlaygroundContent() {
                       className="size-8"
                     >
                       <Play className="size-4" />
-                      <span className="sr-only">Jalankan kode</span>
+                      <span className="sr-only">{messages.playground.editor.actions.run}</span>
                     </Button>
                   </div>
                 </div>

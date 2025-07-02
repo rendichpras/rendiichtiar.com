@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { PageTransition } from "@/components/animations/page-transition"
+import { useI18n } from "@/lib/i18n"
 
 export function NotFoundContent() {
   const router = useRouter()
+  const { messages } = useI18n()
 
   return (
     <PageTransition>
@@ -44,16 +46,16 @@ export function NotFoundContent() {
                   </motion.div>
                 </div>
 
-                <div className="max-w-lg mx-auto space-y-4">
-                  <h2 className="text-2xl sm:text-3xl font-bold">Halaman Tidak Ditemukan</h2>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold">{messages.error.not_found.heading}</h2>
                   <p className="text-muted-foreground">
-                    Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.
+                    {messages.error.not_found.message}
                   </p>
                   <Button
                     size="lg"
                     onClick={() => router.push("/")}
                   >
-                    Kembali ke Beranda
+                    {messages.error.not_found.back_home}
                   </Button>
                 </div>
               </motion.div>
