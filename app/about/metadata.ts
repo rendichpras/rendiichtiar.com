@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     url: "https://rendiichtiar.com/about",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
+    locale: "id_ID",
     images: [
       {
         url: "/og-image.png",
@@ -36,6 +37,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1
     },
   },
   verification: {

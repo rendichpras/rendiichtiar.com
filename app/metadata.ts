@@ -2,7 +2,10 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rendiichtiar.com"),
-  title: "Rendi Ichtiar Prasetyo | Frontend Engineer",
+  title: {
+    default: "Rendi Ichtiar Prasetyo | Frontend Engineer",
+    template: "%s | Rendi Ichtiar Prasetyo"
+  },
   description: "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
   keywords: ["Full Stack Developer", "Web Developer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Portfolio"],
   authors: [{ name: "Rendi Ichtiar Prasetyo" }],
@@ -14,6 +17,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1
     },
   },
   openGraph: {
@@ -22,6 +28,7 @@ export const metadata: Metadata = {
     url: "/",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
+    locale: "id_ID",
     images: [
       {
         url: "/og-image.png",
