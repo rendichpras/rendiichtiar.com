@@ -325,5 +325,13 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "description": "Please sign in with your Google or GitHub account to interact with website features.",
+      "google": "Sign in with Google",
+      "github": "Sign in with GitHub"
+    }
   }
 } 

@@ -18,6 +18,7 @@ import { GuestbookSkeleton } from "./GuestbookSkeleton"
 import { GuestbookReply, GuestbookReplyList, LikeButton } from "./GuestbookReply"
 import { useSession } from "next-auth/react"
 import { useI18n } from "@/lib/i18n"
+import { LoginDialog } from "@/components/auth/LoginDialog"
 
 type GuestbookEntry = {
   id: string
@@ -130,6 +131,7 @@ export function GuestbookList() {
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set())
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyingToName, setReplyingToName] = useState<string>("")
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
   const { data: session } = useSession()
   const { messages } = useI18n()
 
@@ -152,6 +154,10 @@ export function GuestbookList() {
   }
 
   const handleReplyClick = (parentId: string, authorName: string) => {
+    if (!session) {
+      setShowLoginDialog(true)
+      return
+    }
     setReplyingTo(parentId)
     setReplyingToName(authorName)
     // Pastikan balasan terlihat ketika membalas
@@ -181,7 +187,7 @@ export function GuestbookList() {
 
   if (entries.length === 0) {
     return (
-      <Card className="bg-background/50 backdrop-blur-sm border-primary/20">
+      <Card className="border-border/30 transition-colors duration-300 hover:border-border/50">
         <CardContent>
           <div className="flex items-center justify-center h-full py-8 text-center">
             <p className="text-sm text-muted-foreground">
@@ -194,167 +200,174 @@ export function GuestbookList() {
   }
 
   return (
-    <Card className="bg-background/50 backdrop-blur-sm border-primary/20 h-full">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-lg font-semibold">{messages.guestbook.list.title}</h2>
-            <p className="text-sm text-muted-foreground">{messages.guestbook.list.subtitle}</p>
+    <>
+      <Card className="border-border/30 transition-colors duration-300 hover:border-border/50 h-full">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold text-foreground">{messages.guestbook.list.title}</h2>
+              <p className="text-sm text-muted-foreground">{messages.guestbook.list.subtitle}</p>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <ScrollArea className="h-[calc(100%-5rem)]">
-        <CardContent>
-          <div className="space-y-6 pr-4">
-            {entries.map((entry: GuestbookEntry) => (
-              <div key={entry.id} className="group">
-                <div className="flex gap-4">
-                  <Avatar className="h-8 w-8 shrink-0">
-                    <AvatarImage src={entry.user.image || ""} alt={`Avatar ${entry.user.name}`} />
-                    <AvatarFallback>
-                      {entry.user.name?.charAt(0) || "?"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium leading-none">
-                          {entry.user.name}
-                        </span>
-                        <ProviderIcon provider={entry.provider} />
-                        {entry.user.email === OWNER_EMAIL && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button 
-                                  className="flex items-center"
-                                  aria-label={messages.guestbook.list.owner}
-                                >
-                                  <svg 
-                                    className="w-4 h-4 text-blue-500" 
-                                    fill="currentColor" 
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
+        </CardHeader>
+        <ScrollArea className="h-[calc(100%-5rem)]">
+          <CardContent>
+            <div className="space-y-6 pr-4">
+              {entries.map((entry: GuestbookEntry) => (
+                <div key={entry.id} className="group">
+                  <div className="flex gap-4">
+                    <Avatar className="h-8 w-8 shrink-0 border border-border/30">
+                      <AvatarImage src={entry.user.image || ""} alt={`Avatar ${entry.user.name}`} />
+                      <AvatarFallback>
+                        {entry.user.name?.charAt(0) || "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium leading-none text-foreground/90">
+                            {entry.user.name}
+                          </span>
+                          <ProviderIcon provider={entry.provider} />
+                          {entry.user.email === OWNER_EMAIL && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button 
+                                    className="flex items-center"
+                                    aria-label={messages.guestbook.list.owner}
                                   >
-                                    <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z" />
-                                  </svg>
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{messages.guestbook.list.owner}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                                    <svg 
+                                      className="w-4 h-4 text-primary" 
+                                      fill="currentColor" 
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                    >
+                                      <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z" />
+                                    </svg>
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{messages.guestbook.list.owner}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(entry.createdAt), {
+                            addSuffix: true,
+                            locale: id,
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed break-words">
+                        {entry.message}
+                      </p>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-4 mt-2">
+                        <button
+                          onClick={() => handleReplyClick(entry.id, entry.user.name || "")}
+                          className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
+                          aria-label={`${messages.guestbook.list.reply.button} ${entry.user.name}`}
+                        >
+                          <svg 
+                            className="w-4 h-4 sm:w-5 sm:h-5" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                          </svg>
+                          <span>{messages.guestbook.list.reply.button}</span>
+                        </button>
+
+                        <LikeButton 
+                          guestbookId={entry.id}
+                          likes={entry.likes}
+                          userEmail={session?.user?.email}
+                        />
+
+                        {entry.replies.length > 0 && (
+                          <button
+                            onClick={() => toggleReplies(entry.id)}
+                            className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
+                            aria-label={expandedEntries.has(entry.id) ? messages.guestbook.list.hide_replies : messages.guestbook.list.show_replies.replace("{count}", String(entry.replies.length))}
+                            aria-expanded={expandedEntries.has(entry.id)}
+                          >
+                            {expandedEntries.has(entry.id) ? (
+                              <span className="flex items-center gap-1.5">
+                                <svg 
+                                  className="w-4 h-4 sm:w-5 sm:h-5" 
+                                  fill="none" 
+                                  viewBox="0 0 24 24" 
+                                  stroke="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                                <span>{messages.guestbook.list.hide_replies}</span>
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1.5">
+                                <svg 
+                                  className="w-4 h-4 sm:w-5 sm:h-5" 
+                                  fill="none" 
+                                  viewBox="0 0 24 24" 
+                                  stroke="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                                <span>{messages.guestbook.list.show_replies.replace("{count}", String(entry.replies.length))}</span>
+                              </span>
+                            )}
+                          </button>
                         )}
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(entry.createdAt), {
-                          addSuffix: true,
-                          locale: id,
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed break-words">
-                      {entry.message}
-                    </p>
-                    
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-4 mt-2">
-                      <button
-                        onClick={() => handleReplyClick(entry.id, entry.user.name || "")}
-                        className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
-                        aria-label={`${messages.guestbook.list.reply.button} ${entry.user.name}`}
-                      >
-                        <svg 
-                          className="w-4 h-4 sm:w-5 sm:h-5" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                        </svg>
-                        <span>{messages.guestbook.list.reply.button}</span>
-                      </button>
-
-                      <LikeButton 
-                        guestbookId={entry.id}
-                        likes={entry.likes}
-                        userEmail={session?.user?.email}
+                      
+                      {/* Reply Section */}
+                      <GuestbookReply 
+                        parentId={entry.id}
+                        parentAuthor={replyingToName || entry.user.name || ""}
+                        onReplyComplete={() => handleReplyComplete(entry.id)}
+                        isReplying={replyingTo === entry.id && !entry.replies.some(reply => reply.id === replyingTo)}
                       />
-
-                      {entry.replies.length > 0 && (
-                        <button
-                          onClick={() => toggleReplies(entry.id)}
-                          className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 min-w-[60px]"
-                          aria-label={expandedEntries.has(entry.id) ? messages.guestbook.list.hide_replies : messages.guestbook.list.show_replies.replace("{count}", String(entry.replies.length))}
-                          aria-expanded={expandedEntries.has(entry.id)}
-                        >
-                          {expandedEntries.has(entry.id) ? (
-                            <span className="flex items-center gap-1.5">
-                              <svg 
-                                className="w-4 h-4 sm:w-5 sm:h-5" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
-                                stroke="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
-                              <span>{messages.guestbook.list.hide_replies}</span>
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1.5">
-                              <svg 
-                                className="w-4 h-4 sm:w-5 sm:h-5" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
-                                stroke="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                              <span>{messages.guestbook.list.show_replies.replace("{count}", String(entry.replies.length))}</span>
-                            </span>
+                      
+                      {/* Reply List - Show when there are replies and expanded */}
+                      {entry.replies.length > 0 && expandedEntries.has(entry.id) && (
+                        <>
+                          <GuestbookReplyList 
+                            replies={entry.replies} 
+                            onReplyClick={handleReplyClick}
+                          />
+                          {/* Form Reply untuk Balasan */}
+                          {entry.replies.some(reply => reply.id === replyingTo) && (
+                            <GuestbookReply 
+                              parentId={entry.id}
+                              parentAuthor={replyingToName}
+                              onReplyComplete={() => handleReplyComplete(entry.id)}
+                              isReplying={true}
+                            />
                           )}
-                        </button>
+                        </>
                       )}
                     </div>
-                    
-                    {/* Reply Section */}
-                    <GuestbookReply 
-                      parentId={entry.id}
-                      parentAuthor={replyingToName || entry.user.name || ""}
-                      onReplyComplete={() => handleReplyComplete(entry.id)}
-                      isReplying={replyingTo === entry.id && !entry.replies.some(reply => reply.id === replyingTo)}
-                    />
-                    
-                    {/* Reply List - Show when there are replies and expanded */}
-                    {entry.replies.length > 0 && expandedEntries.has(entry.id) && (
-                      <>
-                        <GuestbookReplyList 
-                          replies={entry.replies} 
-                          onReplyClick={handleReplyClick}
-                        />
-                        {/* Form Reply untuk Balasan */}
-                        {entry.replies.some(reply => reply.id === replyingTo) && (
-                          <GuestbookReply 
-                            parentId={entry.id}
-                            parentAuthor={replyingToName}
-                            onReplyComplete={() => handleReplyComplete(entry.id)}
-                            isReplying={true}
-                          />
-                        )}
-                      </>
-                    )}
                   </div>
+                  <Separator className="mt-6 bg-border/40" />
                 </div>
-                <Separator className="mt-6 bg-border/40" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </ScrollArea>
-    </Card>
+              ))}
+            </div>
+          </CardContent>
+        </ScrollArea>
+      </Card>
+
+      <LoginDialog 
+        isOpen={showLoginDialog} 
+        onClose={() => setShowLoginDialog(false)} 
+      />
+    </>
   )
 } 

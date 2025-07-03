@@ -19,31 +19,31 @@ const socialLinks = [
         icon: Mail,
         labelKey: "email",
         href: "mailto:rendichpras@gmail.com",
-        color: "bg-[#EA4335]/10 text-[#EA4335]"
+        color: "bg-[#EA4335]/10 text-[#EA4335] hover:bg-[#EA4335]/20"
     },
     {
         icon: Linkedin,
         labelKey: "linkedin",
         href: "https://linkedin.com/in/rendiichtiar",
-        color: "bg-[#0A66C2]/10 text-[#0A66C2]"
+        color: "bg-[#0A66C2]/10 text-[#0A66C2] hover:bg-[#0A66C2]/20"
     },
     {
         icon: Facebook,
         labelKey: "facebook",
         href: "https://facebook.com/rendiichtiar",
-        color: "bg-[#1DA1F2]/10 text-[#1DA1F2]"
+        color: "bg-[#1DA1F2]/10 text-[#1DA1F2] hover:bg-[#1DA1F2]/20"
     },
     {
         icon: Instagram,
         labelKey: "instagram",
         href: "https://instagram.com/rendiichtiar",
-        color: "bg-[#E4405F]/10 text-[#E4405F]"
+        color: "bg-[#E4405F]/10 text-[#E4405F] hover:bg-[#E4405F]/20"
     },
     {
         icon: Github,
         labelKey: "github",
         href: "https://github.com/rendichpras",
-        color: "bg-[#181717]/10 text-[#181717] dark:bg-[#fff]/10 dark:text-[#fff]"
+        color: "bg-[#181717]/10 text-[#181717] hover:bg-[#181717]/20 dark:bg-[#fff]/10 dark:text-[#fff] dark:hover:bg-[#fff]/20"
     }
 ]
 
@@ -126,17 +126,21 @@ export function ContactContent() {
                 <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
                     {/* Header */}
                     <div className="space-y-2 max-w-3xl">
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.contact.title}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                            {messages.contact.title}
+                        </h1>
                         <p className="text-sm sm:text-base text-muted-foreground">
                             {messages.contact.subtitle}
                         </p>
                     </div>
 
-                    <Separator className="my-6 bg-border/60" />
+                    <Separator className="my-6 bg-border/40" />
 
                     {/* Social Links */}
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">{messages.contact.social.title}</h2>
+                        <h2 className="text-lg font-semibold mb-4 text-foreground">
+                            {messages.contact.social.title}
+                        </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                             {socialLinks.map((social, index) => {
                                 const Icon = social.icon
@@ -154,17 +158,18 @@ export function ContactContent() {
                                             className="block"
                                         >
                                             <Card className={cn(
-                                                "flex items-center gap-3 p-3 transition-colors hover:border-primary/40",
+                                                "flex items-center gap-3 p-3 border-border/30 bg-card/50 backdrop-blur-sm",
+                                                "transition-all duration-300 hover:border-border/50",
                                                 "group cursor-pointer"
                                             )}>
                                                 <div className="flex flex-row items-center gap-2">
                                                     <div className={cn(
-                                                        "size-8 rounded-lg flex items-center justify-center shrink-0",
+                                                        "size-8 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-300",
                                                         social.color
                                                     )}>
                                                         <Icon className="size-4" />
                                                     </div>
-                                                    <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                                                    <span className="text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors">
                                                         {messages.contact.social[social.labelKey as keyof typeof messages.contact.social]}
                                                     </span>
                                                 </div>
@@ -178,25 +183,27 @@ export function ContactContent() {
 
                     {/* Book a Call */}
                     <div className="mb-8">
-                        <Card className="p-6 border-2 border-dashed">
+                        <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/50">
                             <div className="flex flex-col sm:flex-row items-start gap-6">
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-lg font-semibold mb-2">{messages.contact.call.title}</h3>
+                                    <h3 className="text-lg font-semibold mb-2 text-foreground">
+                                        {messages.contact.call.title}
+                                    </h3>
                                     <p className="text-sm text-muted-foreground mb-4">{messages.contact.call.subtitle}</p>
                                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                                         <div className="flex items-center gap-2">
-                                            <Video className="size-4" />
+                                            <Video className="size-4 text-primary/70" />
                                             <span>{messages.contact.call.platform}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <Calendar className="size-4" />
+                                            <Calendar className="size-4 text-primary/70" />
                                             <span>{messages.contact.call.duration}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <Button
                                     size="lg"
-                                    className="shrink-0"
+                                    className="shrink-0 bg-primary/10 hover:bg-primary/20 text-primary"
                                     onClick={() => window.open("https://cal.com/rendiichtiar", "_blank")}
                                 >
                                     {messages.contact.call.button}
@@ -207,12 +214,14 @@ export function ContactContent() {
 
                     {/* Contact Form */}
                     <div>
-                        <h2 className="text-lg font-semibold mb-4">{messages.contact.form.title}</h2>
-                        <Card className="p-6">
+                        <h2 className="text-lg font-semibold mb-4 text-foreground">
+                            {messages.contact.form.title}
+                        </h2>
+                        <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/50">
                             <form className="space-y-4" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label htmlFor="name" className="text-sm font-medium">
+                                        <label htmlFor="name" className="text-sm font-medium text-foreground/90">
                                             {messages.contact.form.name.label}
                                         </label>
                                         <Input
@@ -223,10 +232,11 @@ export function ContactContent() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             disabled={isLoading}
+                                            className="border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/50 focus-visible:ring-primary"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="email" className="text-sm font-medium">
+                                        <label htmlFor="email" className="text-sm font-medium text-foreground/90">
                                             {messages.contact.form.email.label}
                                         </label>
                                         <Input
@@ -238,11 +248,12 @@ export function ContactContent() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             disabled={isLoading}
+                                            className="border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/50 focus-visible:ring-primary"
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label htmlFor="message" className="text-sm font-medium">
+                                    <label htmlFor="message" className="text-sm font-medium text-foreground/90">
                                         {messages.contact.form.message.label}
                                     </label>
                                     <Textarea
@@ -254,6 +265,7 @@ export function ContactContent() {
                                         value={formData.message}
                                         onChange={handleChange}
                                         disabled={isLoading}
+                                        className="border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/50 focus-visible:ring-primary"
                                     />
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -263,7 +275,7 @@ export function ContactContent() {
                                     <Button 
                                         type="submit" 
                                         size="lg" 
-                                        className="ml-auto"
+                                        className="ml-auto bg-primary/10 hover:bg-primary/20 text-primary"
                                         disabled={isLoading}
                                     >
                                         {isLoading ? messages.contact.form.sending : messages.contact.form.send}

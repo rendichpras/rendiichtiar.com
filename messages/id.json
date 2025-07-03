@@ -325,5 +325,13 @@
       "linkedin": "Kunjungi profil LinkedIn Rendi Ichtiar",
       "instagram": "Kunjungi profil Instagram Rendi Ichtiar"
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Masuk ke Akun",
+      "description": "Silakan masuk menggunakan akun Google atau GitHub untuk berinteraksi dengan fitur website.",
+      "google": "Masuk dengan Google",
+      "github": "Masuk dengan GitHub"
+    }
   }
 }

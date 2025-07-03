@@ -58,14 +58,6 @@ model User {
   likes         Like[]
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
 model Guestbook {
   id        String   @id @default(cuid())
   message   String   @db.Text

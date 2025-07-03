@@ -46,14 +46,17 @@ export function NotFoundContent() {
                   </motion.div>
                 </div>
 
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold">{messages.error.not_found.heading}</h2>
-                  <p className="text-muted-foreground">
+                <div className="space-y-4">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+                    {messages.error.not_found.heading}
+                  </h2>
+                  <p className="text-muted-foreground max-w-lg mx-auto">
                     {messages.error.not_found.message}
                   </p>
                   <Button
                     size="lg"
                     onClick={() => router.push("/")}
+                    className="bg-primary/10 hover:bg-primary/20 text-primary"
                   >
                     {messages.error.not_found.back_home}
                   </Button>

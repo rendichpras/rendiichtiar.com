@@ -46,14 +46,17 @@ export function ForbiddenContent() {
                   </motion.div>
                 </div>
 
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold">{messages.error.forbidden.heading}</h2>
-                  <p className="text-muted-foreground">
+                <div className="space-y-4">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+                    {messages.error.forbidden.heading}
+                  </h2>
+                  <p className="text-muted-foreground max-w-lg mx-auto">
                     {messages.error.forbidden.message}
                   </p>
                   <Button
                     size="lg"
                     onClick={() => router.push("/")}
+                    className="bg-primary/10 hover:bg-primary/20 text-primary"
                   >
                     {messages.error.forbidden.back_home}
                   </Button>

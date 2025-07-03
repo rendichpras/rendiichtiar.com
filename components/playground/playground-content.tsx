@@ -207,14 +207,16 @@ export function PlaygroundContent() {
           >
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.playground.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                {messages.playground.title}
+              </h1>
             </div>
             <p className="text-sm sm:text-base text-muted-foreground">
               {messages.playground.subtitle}
             </p>
           </motion.div>
 
-          <Separator className="my-6 bg-border/60" />
+          <Separator className="my-6 bg-border/40" />
 
           {/* Playground */}
           <motion.div
@@ -223,14 +225,14 @@ export function PlaygroundContent() {
             transition={{ delay: 0.2 }}
           >
             <Card className={cn(
-              "grid grid-cols-1 lg:grid-cols-2 gap-4 p-4",
+              "grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 border-border/30 transition-all duration-300 hover:border-border/50",
               isFullscreen && "fixed inset-4 z-50 overflow-auto"
             )}>
               {/* Editor Panel */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-sm rounded bg-secondary">{messages.playground.editor.language}</span>
+                    <span className="px-2 py-1 text-sm rounded bg-primary/10 text-primary">{messages.playground.editor.language}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -240,7 +242,7 @@ export function PlaygroundContent() {
                         setCode("")
                         setOutput("")
                       }}
-                      className="size-8"
+                      className="size-8 hover:bg-background/80"
                     >
                       <Trash2 className="size-4" />
                       <span className="sr-only">{messages.playground.editor.actions.clear}</span>
@@ -249,14 +251,14 @@ export function PlaygroundContent() {
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsFullscreen(!isFullscreen)}
-                      className="size-8"
+                      className="size-8 hover:bg-background/80"
                     >
                       <Expand className="size-4" />
                       <span className="sr-only">{messages.playground.editor.actions.fullscreen}</span>
                     </Button>
                   </div>
                 </div>
-                <div className="relative min-h-[500px] border rounded-md overflow-hidden">
+                <div className="relative min-h-[500px] border border-border/30 rounded-md overflow-hidden transition-all duration-300 hover:border-border/50">
                   <Suspense fallback={<EditorLoading />}>
                     <MonacoEditor
                       height="500px"
@@ -322,14 +324,14 @@ export function PlaygroundContent() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-sm rounded bg-secondary">{messages.playground.console.title}</span>
+                    <span className="px-2 py-1 text-sm rounded bg-primary/10 text-primary">{messages.playground.console.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => setOutput("")}
-                      className="size-8"
+                      className="size-8 hover:bg-background/80"
                     >
                       <Trash2 className="size-4" />
                       <span className="sr-only">{messages.playground.console.clear}</span>
@@ -338,14 +340,14 @@ export function PlaygroundContent() {
                       variant="default"
                       size="icon"
                       onClick={runCode}
-                      className="size-8"
+                      className="size-8 bg-primary/10 hover:bg-primary/20 text-primary"
                     >
                       <Play className="size-4" />
                       <span className="sr-only">{messages.playground.editor.actions.run}</span>
                     </Button>
                   </div>
                 </div>
-                <div className="min-h-[500px] p-4 font-mono text-sm border rounded-md bg-secondary/50 overflow-auto whitespace-pre-wrap">
+                <div className="min-h-[500px] p-4 font-mono text-sm border border-border/30 rounded-md overflow-auto whitespace-pre-wrap transition-all duration-300 hover:border-border/50">
                   {output}
                 </div>
               </div>

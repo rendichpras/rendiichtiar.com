@@ -69,8 +69,8 @@ export function GuestbookForm() {
           value={message}
           onChange={handleChange}
           placeholder={messages.guestbook.form.placeholder}
-          className={`min-h-[35px] resize-none focus-visible:ring-primary pr-12 ${
-            forbiddenWords.length > 0 ? "border-destructive" : ""
+          className={`min-h-[35px] resize-none focus-visible:ring-primary pr-12 border-border/30 transition-all duration-300 hover:border-border/50 ${
+            forbiddenWords.length > 0 ? "border-destructive focus-visible:ring-destructive" : ""
           }`}
           maxLength={280}
         />
@@ -86,7 +86,7 @@ export function GuestbookForm() {
       </div>
 
       {forbiddenWords.length > 0 && (
-        <Alert variant="destructive" className="py-2">
+        <Alert variant="destructive" className="py-2 border-destructive/30 bg-destructive/5">
           <div className="flex items-center gap-2 text-sm">
             <ExclamationTriangleIcon className="h-4 w-4 shrink-0" />
             <AlertDescription>
@@ -100,7 +100,7 @@ export function GuestbookForm() {
         <Button 
           type="submit" 
           disabled={isSubmitting || forbiddenWords.length > 0}
-          className="relative"
+          className="relative bg-primary/10 hover:bg-primary/20 text-primary"
         >
           {isSubmitting ? (
             <>

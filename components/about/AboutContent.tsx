@@ -22,24 +22,24 @@ const sections: SectionContent[] = [
         icon: User2,
         titleKey: "intro",
         content: ({ messages }) => (
-            <Card className="p-6">
+            <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
                 <div className="space-y-4">
-                    <p className="text-sm sm:text-base leading-relaxed">
+                    <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                         {messages.about.intro.greeting}
                     </p>
-                    <p className="text-sm sm:text-base leading-relaxed">
+                    <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                         {messages.about.intro.bio1}
                     </p>
-                    <p className="text-sm sm:text-base leading-relaxed">
+                    <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                         {messages.about.intro.bio2}
                     </p>
-                    <p className="text-sm sm:text-base leading-relaxed">
+                    <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                         {messages.about.intro.bio3}
                     </p>
-                    <p className="text-sm sm:text-base leading-relaxed">
+                    <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                         {messages.about.intro.bio4}
                     </p>
-                    <p className="text-sm sm:text-base leading-relaxed">
+                    <p className="text-sm sm:text-base leading-relaxed text-foreground/90">
                         {messages.about.intro.bio5}
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -54,7 +54,7 @@ const sections: SectionContent[] = [
         icon: BookOpen,
         titleKey: "career",
         content: ({ messages }) => (
-            <Card className="p-6 space-y-4">
+            <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
                 <div className="space-y-4">
                     <p className="text-sm sm:text-base text-muted-foreground text-center">
                         {messages.about.career.empty}
@@ -68,10 +68,10 @@ const sections: SectionContent[] = [
         icon: GraduationCap,
         titleKey: "education",
         content: ({ messages }) => (
-            <Card className="p-6 space-y-0.9">
-                <Card className="p-4">
+            <Card className="p-6 space-y-4 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+                <Card className="p-4 border-border/30 bg-card/30 backdrop-blur-sm transition-all duration-300 hover:border-border/50 hover:bg-card/50">
                     <div className="flex items-start sm:items-center gap-4">
-                        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
+                        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border border-border/30">
                             <img
                                 src="/upb.png"
                                 alt={messages.about.education.upb.name}
@@ -79,20 +79,20 @@ const sections: SectionContent[] = [
                             />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-base sm:text-lg font-semibold">{messages.about.education.upb.name}</h3>
-                            <p className="text-xs sm:text-sm text-muted-foreground">{messages.about.education.upb.major}</p>
+                            <h3 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{messages.about.education.upb.name}</h3>
+                            <p className="text-xs sm:text-sm text-foreground/80">{messages.about.education.upb.major}</p>
                             <div className="text-xs text-muted-foreground mt-1.5">
                                 <span>{messages.about.education.upb.period}</span>
-                                <span> • </span>
+                                <span className="mx-1.5">•</span>
                                 <span>{messages.about.education.upb.location}</span>
                             </div>
                         </div>
                     </div>
                 </Card>
 
-                <Card className="p-4">
+                <Card className="p-4 border-border/30 bg-card/30 backdrop-blur-sm transition-all duration-300 hover:border-border/50 hover:bg-card/50">
                     <div className="flex items-start sm:items-center gap-4">
-                        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border">
+                        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border border-border/30">
                             <img
                                 src="/smkhsagung.png"
                                 alt={messages.about.education.smk.name}
@@ -100,11 +100,11 @@ const sections: SectionContent[] = [
                             />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-base sm:text-lg font-semibold">{messages.about.education.smk.name}</h3>
-                            <p className="text-xs sm:text-sm text-muted-foreground">{messages.about.education.smk.major}</p>
+                            <h3 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{messages.about.education.smk.name}</h3>
+                            <p className="text-xs sm:text-sm text-foreground/80">{messages.about.education.smk.major}</p>
                             <div className="text-xs text-muted-foreground mt-1.5">
                                 <span>{messages.about.education.smk.period}</span>
-                                <span> • </span>
+                                <span className="mx-1.5">•</span>
                                 <span>{messages.about.education.smk.location}</span>
                             </div>
                         </div>
@@ -125,13 +125,13 @@ export function AboutContent() {
                 <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
                     {/* Header */}
                     <div className="space-y-2 max-w-2xl">
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.about.title}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{messages.about.title}</h1>
                         <p className="text-sm sm:text-base text-muted-foreground">
                             {messages.about.subtitle}
                         </p>
                     </div>
 
-                    <Separator className="my-6 bg-border/60" />
+                    <Separator className="my-6 bg-border/40" />
 
                     {/* Navigation Cards */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
@@ -147,9 +147,9 @@ export function AboutContent() {
                                 >
                                     <Card
                                         className={cn(
-                                            "group relative flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200",
-                                            "hover:bg-primary/5 active:bg-primary/10",
-                                            isActive && "bg-primary/10 text-primary border-primary"
+                                            "group relative flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-300",
+                                            "border-border/30 hover:border-border/50",
+                                            isActive && "bg-primary/10 text-primary border-primary/50 hover:border-primary/50"
                                         )}
                                         onClick={() => setActiveSection(section.id)}
                                     >

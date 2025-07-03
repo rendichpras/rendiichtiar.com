@@ -10,6 +10,7 @@ import { id } from "date-fns/locale"
 import { toast } from "sonner"
 import { addGuestbookEntry, toggleLike } from "@/app/actions/guestbook"
 import { useI18n } from "@/lib/i18n"
+import { LoginDialog } from "@/components/auth/LoginDialog"
 
 interface ReplyProps {
   parentId: string
@@ -61,7 +62,7 @@ export function GuestbookReply({
     <div className="pl-4 sm:pl-8 mt-4">
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="flex items-start gap-2 sm:gap-3">
-          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 mt-1">
+          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 mt-1 border border-border/30">
             <AvatarImage src={session.user?.image || ""} />
             <AvatarFallback>
               {session.user?.name?.charAt(0) || "?"}
@@ -72,7 +73,7 @@ export function GuestbookReply({
               value={replyMessage}
               onChange={(e) => setReplyMessage(e.target.value)}
               placeholder={messages.guestbook.list.reply.placeholder.replace("{name}", parentAuthor)}
-              className="min-h-[35px] text-xs sm:text-sm resize-none focus-visible:ring-primary"
+              className="min-h-[35px] text-xs sm:text-sm resize-none focus-visible:ring-primary border-border/30 transition-all duration-300 hover:border-border/50"
               maxLength={280}
             />
             <div className="flex justify-end gap-2 mt-2">
@@ -81,7 +82,7 @@ export function GuestbookReply({
                 variant="ghost"
                 size="sm"
                 onClick={onReplyComplete}
-                className="text-[10px] sm:text-xs h-7 sm:h-8"
+                className="text-[10px] sm:text-xs h-7 sm:h-8 hover:bg-background/80"
               >
                 {messages.guestbook.list.reply.cancel}
               </Button>
@@ -89,7 +90,7 @@ export function GuestbookReply({
                 type="submit"
                 size="sm"
                 disabled={isSubmitting}
-                className="text-[10px] sm:text-xs h-7 sm:h-8"
+                className="text-[10px] sm:text-xs h-7 sm:h-8 bg-primary/10 hover:bg-primary/20 text-primary"
               >
                 {isSubmitting ? messages.guestbook.list.reply.sending : messages.guestbook.list.reply.send}
               </Button>
@@ -116,11 +117,17 @@ interface LikeButtonProps {
 export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
   const hasLiked = likes.some(like => like.user.email === userEmail)
   const { messages } = useI18n()
 
   const handleLike = async () => {
-    if (!userEmail || isLoading) return
+    if (!userEmail) {
+      setShowLoginDialog(true)
+      return
+    }
+    
+    if (isLoading) return
     
     setIsLoading(true)
     setIsAnimating(true)
@@ -135,34 +142,41 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
   }
 
   return (
-    <button
-      onClick={handleLike}
-      disabled={!userEmail || isLoading}
-      className={`text-[10px] sm:text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 ${
-        hasLiked ? 'text-primary' : ''
-      }`}
-    >
-      <svg 
-        className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${
-          isAnimating ? 'scale-125' : ''
+    <>
+      <button
+        onClick={handleLike}
+        disabled={isLoading}
+        className={`text-[10px] sm:text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 ${
+          hasLiked ? 'text-primary' : ''
         }`}
-        fill={hasLiked ? "currentColor" : "none"} 
-        viewBox="0 0 24 24" 
-        stroke="currentColor"
       >
-        <path 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          strokeWidth={2} 
-          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-        />
-      </svg>
-      <span className={`transition-transform duration-300 ${
-        isAnimating ? 'scale-110' : ''
-      }`}>
-        {likes.length > 0 && likes.length}
-      </span>
-    </button>
+        <svg 
+          className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${
+            isAnimating ? 'scale-125' : ''
+          }`}
+          fill={hasLiked ? "currentColor" : "none"} 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+          />
+        </svg>
+        <span className={`transition-transform duration-300 ${
+          isAnimating ? 'scale-110' : ''
+        }`}>
+          {likes.length > 0 && likes.length}
+        </span>
+      </button>
+
+      <LoginDialog 
+        isOpen={showLoginDialog} 
+        onClose={() => setShowLoginDialog(false)} 
+      />
+    </>
   )
 }
 
@@ -200,7 +214,7 @@ export function GuestbookReplyList({ replies, onReplyClick }: ReplyListProps) {
       {replies.map((reply) => (
         <div key={reply.id}>
           <div className="flex items-start gap-2 sm:gap-3">
-            <Avatar className="h-5 w-5 sm:h-6 sm:w-6 mt-1">
+            <Avatar className="h-5 w-5 sm:h-6 sm:w-6 mt-1 border border-border/30">
               <AvatarImage src={reply.user.image || ""} />
               <AvatarFallback>
                 {reply.user.name?.charAt(0) || "?"}
@@ -208,7 +222,7 @@ export function GuestbookReplyList({ replies, onReplyClick }: ReplyListProps) {
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs sm:text-sm font-medium text-primary">
+                <span className="text-xs sm:text-sm font-medium text-foreground/90">
                   {reply.user.name}
                 </span>
                 <span className="text-[10px] sm:text-xs text-muted-foreground">

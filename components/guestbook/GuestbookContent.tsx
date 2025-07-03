@@ -18,13 +18,15 @@ export function GuestbookContent({ session }: { session: any }) {
         <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
           {/* Header */}
           <div className="space-y-2 max-w-2xl">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.guestbook.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+              {messages.guestbook.title}
+            </h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               {messages.guestbook.subtitle}
             </p>
           </div>
 
-          <Separator className="my-6 bg-border/60" />
+          <Separator className="my-6 bg-border/40" />
 
           {/* Content */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-6">
@@ -32,7 +34,7 @@ export function GuestbookContent({ session }: { session: any }) {
             <div className="space-y-6">
               {session ? (
                 <div className="flex items-center gap-4">
-                  <Avatar className="size-10">
+                  <Avatar className="size-10 border-2 border-border/30">
                     <AvatarImage
                       src={session.user?.image || ""}
                       alt={session.user?.name || ""}
@@ -44,7 +46,7 @@ export function GuestbookContent({ session }: { session: any }) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium">{session.user?.name}</p>
+                        <p className="text-sm font-medium text-foreground/90">{session.user?.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {session.user?.email}
                         </p>
@@ -54,7 +56,7 @@ export function GuestbookContent({ session }: { session: any }) {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between p-4 rounded-lg border border-border/30">
                   <p className="text-sm text-muted-foreground">
                     {messages.guestbook.auth.sign_in_message}
                   </p>

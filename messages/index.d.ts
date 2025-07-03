@@ -124,6 +124,14 @@ declare module "@/messages/id" {
         instagram: string
       }
     }
+    auth: {
+      login: {
+        title: string
+        description: string
+        google: string
+        github: string
+      }
+    }
   }
   export default messages
 }
@@ -252,6 +260,14 @@ declare module "@/messages/en" {
         github: string
         linkedin: string
         instagram: string
+      }
+    }
+    auth: {
+      login: {
+        title: string
+        description: string
+        google: string
+        github: string
       }
     }
   }
