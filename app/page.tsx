@@ -1,10 +1,13 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { memo } from "react"
 import Image from "next/image"
-import { Marquee } from "@/components/ui/marquee"
+import { PageTransition } from "@/components/animations/page-transition"
 import { useI18n } from "@/lib/i18n"
-import { 
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import { MapPin, MonitorUp, MessageCircle } from "lucide-react"
+import {
   SiTypescript,
   SiNodedotjs,
   SiTailwindcss,
@@ -15,44 +18,158 @@ import {
   SiJavascript,
   SiNginx,
   SiDocker,
-  SiMongodb
+  SiMongodb,
 } from "react-icons/si"
 import { VscCode } from "react-icons/vsc"
-import { PageTransition } from "@/components/animations/page-transition"
+import type { IconType } from "react-icons"
 
-const techStack = [
-  { name: "TypeScript", icon: SiTypescript, color: "text-primary" },
-  { name: "Node.js", icon: SiNodedotjs, color: "text-[#339933]/90" },
-  { name: "TailwindCSS", icon: SiTailwindcss, color: "text-[#06B6D4]/90" },
-  { name: "PostgreSQL", icon: SiPostgresql, color: "text-primary/90" },
-  { name: "Prisma", icon: SiPrisma, color: "text-foreground/90" },
-  { name: "Next.js", icon: SiNextdotjs, color: "text-foreground/90" },
-  { name: "React", icon: SiReact, color: "text-[#61DAFB]/90" },
-  { name: "JavaScript", icon: SiJavascript, color: "text-[#F7DF1E]/90" },
-  { name: "Nginx", icon: SiNginx, color: "text-[#009639]/90" },
-  { name: "Docker", icon: SiDocker, color: "text-primary/90" },
-  { name: "MongoDB", icon: SiMongodb, color: "text-[#47A248]/90" },
-  { name: "VS Code", icon: VscCode, color: "text-primary/90" }
-]
+/**
+ * Home page (refactored + local marquee)
+ * - Konsisten pakai shadcn/ui (Button, Card) dan token warna (bg-background, text-foreground, dll)
+ * - Marquee lokal (CSS keyframes) untuk pergerakan stabil
+ * - Warna brand HANYA di tech stack marquee (sesuai permintaan)
+ */
+
+interface TechItem {
+  name: string
+  icon: IconType
+  colorClass: string // dikecualikan dari token, sengaja brand colors
+}
+
+const TECH_STACK: readonly TechItem[] = [
+  { name: "TypeScript", icon: SiTypescript, colorClass: "text-primary" },
+  { name: "Node.js", icon: SiNodedotjs, colorClass: "text-[#339933]/90" },
+  { name: "TailwindCSS", icon: SiTailwindcss, colorClass: "text-[#06B6D4]/90" },
+  { name: "PostgreSQL", icon: SiPostgresql, colorClass: "text-primary/90" },
+  { name: "Prisma", icon: SiPrisma, colorClass: "text-foreground/90" },
+  { name: "Next.js", icon: SiNextdotjs, colorClass: "text-foreground/90" },
+  { name: "React", icon: SiReact, colorClass: "text-[#61DAFB]/90" },
+  { name: "JavaScript", icon: SiJavascript, colorClass: "text-[#F7DF1E]/90" },
+  { name: "Nginx", icon: SiNginx, colorClass: "text-[#009639]/90" },
+  { name: "Docker", icon: SiDocker, colorClass: "text-primary/90" },
+  { name: "MongoDB", icon: SiMongodb, colorClass: "text-[#47A248]/90" },
+  { name: "VS Code", icon: VscCode, colorClass: "text-primary/90" },
+] as const
+
+// ---------- Local Marquee (tanpa dependensi eksternal) ----------
+interface LocalMarqueeProps {
+  children: React.ReactNode
+  durationSeconds?: number
+  reverse?: boolean
+  pauseOnHover?: boolean
+  className?: string
+}
+
+function LocalMarquee({
+  children,
+  durationSeconds = 30,
+  reverse,
+  pauseOnHover,
+  className = "",
+}: LocalMarqueeProps) {
+  const style = { ["--marquee-duration" as any]: `${durationSeconds}s` }
+
+  return (
+    <div
+      className={`marquee relative overflow-hidden ${className}`}
+      data-dir={reverse ? "reverse" : "normal"}
+      data-pause={pauseOnHover ? "hover" : "none"}
+      style={style}
+    >
+      <div className="marquee__track">
+        <div className="marquee__group">{children}</div>
+      </div>
+
+      {/* Styles khusus untuk marquee */}
+      <style jsx>{`
+        .marquee {
+          --marquee-duration: 30s;
+        }
+        .marquee__track {
+          display: flex;
+          width: max-content;
+          animation: marquee var(--marquee-duration) linear infinite;
+          will-change: transform;
+        }
+        .marquee[data-dir="reverse"] .marquee__track {
+          animation-direction: reverse;
+        }
+        .marquee[data-pause="hover"]:hover .marquee__track {
+          animation-play-state: paused;
+        }
+        .marquee__group {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+const EdgeFades = memo(function EdgeFades() {
+  return (
+    <>
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent" />
+    </>
+  )
+})
+
+const TechPill = memo(function TechPill({ name, icon: Icon, colorClass }: TechItem) {
+  return (
+    <div
+      className="mx-1 flex items-center gap-2 rounded-full border border-border/30 px-4 py-1.5 transition-colors duration-300 hover:border-border/50"
+      title={name}
+    >
+      <Icon className={`h-5 w-5 ${colorClass}`} aria-hidden />
+      <span className="text-base font-medium text-foreground/90">{name}</span>
+    </div>
+  )
+})
+
+interface MarqueeRowProps {
+  reverse?: boolean
+  durationSeconds: number
+}
+
+const MarqueeRow = memo(function MarqueeRow({ reverse, durationSeconds }: MarqueeRowProps) {
+  const items = [...TECH_STACK, ...TECH_STACK].map((t, idx) => (
+    <TechPill key={`${t.name}-${idx}`} {...t} />
+  ))
+
+  return (
+    <div className="relative">
+      <EdgeFades />
+      <LocalMarquee durationSeconds={durationSeconds} reverse={reverse} pauseOnHover className="py-1">
+        {items}
+      </LocalMarquee>
+    </div>
+  )
+})
 
 export default function Home() {
   const { messages } = useI18n()
 
   return (
     <PageTransition>
-      <main className="min-h-screen bg-background relative lg:pl-64 pt-16 lg:pt-0">
+      <main className="relative min-h-screen bg-background pt-16 lg:pt-0 lg:pl-64">
         {/* Hero Section */}
         <section className="relative py-8 sm:py-12 md:py-16">
           <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
             <div className="space-y-6 sm:space-y-8">
               {/* Profile Header */}
-              <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
                 {/* Avatar */}
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 shrink-0 sm:mx-0">
-                  <div className="w-full h-full relative overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
+                <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
+                  <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
                     <Image
                       src="/avatar.jpg"
-                      alt="Rendi"
+                      alt="Portrait of Rendi Ichtiar Prasetyo"
                       priority
                       fill
                       sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 128px"
@@ -64,135 +181,87 @@ export default function Home() {
                 {/* Intro */}
                 <div className="flex-1 space-y-4">
                   <div className="space-y-2">
-                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                    <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-xl font-bold text-transparent sm:text-2xl md:text-3xl lg:text-4xl">
                       {messages.home.greeting}
                     </h1>
-                    <div className="flex flex-wrap gap-3 sm:gap-4 text-sm sm:text-base text-muted-foreground">
+
+                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground sm:gap-4 sm:text-base">
                       <div className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-primary/70">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                          <circle cx="12" cy="10" r="3"/>
-                        </svg>
+                        <MapPin className="h-4 w-4 text-primary/70" aria-hidden />
                         <span>{messages.home.location}</span>
                       </div>
+
                       <div className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-primary/70">
-                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                          <line x1="8" y1="21" x2="16" y2="21"/>
-                          <line x1="12" y1="17" x2="12" y2="21"/>
-                        </svg>
+                        <MonitorUp className="h-4 w-4 text-primary/70" aria-hidden />
                         <span>{messages.home.remote_worker}</span>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
                     {messages.home.bio}
                   </p>
                 </div>
               </div>
+
               {/* Tech Stack */}
-              <div className="pt-6 sm:pt-8 border-t border-border/40">
+              <div className="border-t border-border/40 pt-6 sm:pt-8">
                 <div className="space-y-4 sm:space-y-6">
                   <div className="space-y-2">
-                    <h2 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{messages.home.tech_stack}</h2>
-                    <p className="text-muted-foreground text-sm sm:text-base">
+                    <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
+                      {messages.home.tech_stack}
+                    </h2>
+                    <p className="text-sm text-muted-foreground sm:text-base">
                       {messages.home.tech_stack_desc}
                     </p>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent z-10" />
-                      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent z-10" />
-                      <Marquee className="py-1 [--duration:110s]" pauseOnHover>
-                        <>
-                        {techStack.map((tech) => (
-                          <div
-                            key={tech.name}
-                            className="mx-1 flex items-center gap-2 rounded-full border border-border/30 px-4 py-1.5 transition-colors duration-300 hover:border-border/50"
-                          >
-                            <tech.icon className={`h-5 w-5 ${tech.color}`} />
-                            <span className="text-base font-medium text-foreground/90">{tech.name}</span>
-                          </div>
-                        ))}
-                        </>
-                      </Marquee>
-                    </div>
-
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent z-10" />
-                      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent z-10" />
-                      <Marquee className="py-1 [--duration:100s]" reverse pauseOnHover>
-                        <>
-                        {techStack.map((tech) => (
-                          <div
-                            key={tech.name}
-                            className="mx-1 flex items-center gap-2 rounded-full border border-border/30 px-4 py-1.5 transition-colors duration-300 hover:border-border/50"
-                          >
-                            <tech.icon className={`h-5 w-5 ${tech.color}`} />
-                            <span className="text-base font-medium text-foreground/90">{tech.name}</span>
-                          </div>
-                        ))}
-                        </>
-                      </Marquee>
-                    </div>
-
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent z-10" />
-                      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent z-10" />
-                      <Marquee className="py-1 [--duration:90s]" pauseOnHover>
-                        <>
-                        {techStack.map((tech) => (
-                          <div
-                            key={tech.name}
-                            className="mx-1 flex items-center gap-2 rounded-full border border-border/30 px-4 py-1.5 transition-colors duration-300 hover:border-border/50"
-                          >
-                            <tech.icon className={`h-5 w-5 ${tech.color}`} />
-                            <span className="text-base font-medium text-foreground/90">{tech.name}</span>
-                          </div>
-                        ))}
-                        </>
-                      </Marquee>
-                    </div>
+                  <div className="space-y-2">
+                    <MarqueeRow durationSeconds={40} reverse />
+                    <MarqueeRow durationSeconds={35} />
+                    <MarqueeRow durationSeconds={30} reverse />
                   </div>
                 </div>
               </div>
 
               {/* What I've Been Working On */}
-              <div className="pt-8 sm:pt-12 border-t border-border/40">
+              <div className="border-t border-border/40 pt-8 sm:pt-12">
                 <div className="space-y-8 sm:space-y-12">
                   <div className="space-y-3 sm:space-y-4">
-                    <h2 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{messages.home.work_title}</h2>
-                    <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl">
+                    <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
+                      {messages.home.work_title}
+                    </h2>
+                    <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
                       {messages.home.work_desc}
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-border/30 p-4 sm:p-6 space-y-3 sm:space-y-4 transition-colors duration-300 hover:border-border/50">
-                    <div className="flex items-center gap-2 text-lg sm:text-xl font-semibold">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary/70">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                      </svg>
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{messages.home.lets_work}</span>
-                    </div>
-                    <p className="text-muted-foreground text-sm sm:text-base">
-                      {messages.home.work_cta}
-                    </p>
-                    <div>
-                      <Button
-                        asChild
-                        variant="secondary"
-                        className="rounded-lg font-medium text-sm sm:text-base bg-primary/10 hover:bg-primary/20 text-primary transition-colors duration-300"
-                      >
-                        <a href="mailto:rendichpras@gmail.com">
-                          {messages.home.contact_me}
-                        </a>
+                  {/* CTA Card pakai shadcn/ui Card + token warna */}
+                  <Card className="border-border/30 transition-colors duration-300 hover:border-border/50">
+                    <CardHeader className="pb-3 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <MessageCircle className="h-5 w-5 text-primary/70" aria-hidden />
+                        <CardTitle className="text-lg sm:text-xl">
+                          <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                            {messages.home.lets_work}
+                          </span>
+                        </CardTitle>
+                      </div>
+
+                      <CardDescription className="text-sm sm:text-base">
+                        {messages.home.work_cta}
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardFooter>
+                      <Button asChild variant="secondary" className="rounded-lg">
+                        <a href="mailto:rendichpras@gmail.com">{messages.home.contact_me}</a>
                       </Button>
-                    </div>
-                  </div>
+                    </CardFooter>
+                  </Card>
                 </div>
               </div>
+              {/* /Working On */}
             </div>
           </div>
         </section>

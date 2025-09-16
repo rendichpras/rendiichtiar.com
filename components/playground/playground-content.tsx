@@ -1,24 +1,35 @@
 "use client"
 
-import { useState, Suspense } from "react"
-import { Trash2, Play, Expand } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import dynamic from "next/dynamic"
-import { Separator } from "@/components/ui/separator"
-import { PageTransition } from "@/components/animations/page-transition"
-import { Card } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { SiJavascript } from "react-icons/si"
 import { motion } from "framer-motion"
+import { Trash2, Play, Expand } from "lucide-react"
+import { SiJavascript } from "react-icons/si"
+
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
+import { PageTransition } from "@/components/animations/page-transition"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import type { OnMount } from "@monaco-editor/react"
 import { useI18n } from "@/lib/i18n"
 
-// Lazy load Monaco Editor
+// =====================
+// Monaco Editor (lazy)
+// =====================
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
-// Daftar kata kunci yang dilarang
+// =====================
+// Constants & Helpers
+// =====================
+const DEFAULT_CODE = `// Try me!
+console.log("Hello 👋");
+const user = { name: "Rendi", skills: ["JS", "TS", "Next.js"] };
+console.log(user)
+`
+
 const BLOCKED_KEYWORDS = [
   "document",
   "window",
@@ -38,32 +49,49 @@ const BLOCKED_KEYWORDS = [
   "alert",
   "confirm",
   "prompt",
-]
+] as const
 
-// Komponen loading untuk editor
+const MAX_LEN = 5000
+
+function escapeRegex(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+// Loading skeleton for Monaco
 const EditorLoading = () => (
-  <div className="flex items-center justify-center w-full h-full min-h-[500px] bg-secondary/20 animate-pulse rounded-md">
-    <Skeleton className="w-full h-full" />
+  <div className="flex h-full min-h-[500px] w-full animate-pulse items-center justify-center rounded-md bg-secondary/20">
+    <Skeleton className="h-full w-full" />
   </div>
 )
 
 function JavaScriptIcon() {
   return (
-    <div className="size-8 flex items-center justify-center">
-      <SiJavascript className="size-8 text-[#F7DF1E]" />
+    <div className="flex size-8 items-center justify-center">
+      <SiJavascript className="size-8 text-[#F7DF1E]" aria-hidden />
     </div>
   )
 }
 
+// =====================
+// Component
+// =====================
 export function PlaygroundContent() {
   const { messages } = useI18n()
-  const [code, setCode] = useState("")
-  const [output, setOutput] = useState("")
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [editorReady, setEditorReady] = useState(false)
+  const [code, setCode] = useState<string>(DEFAULT_CODE)
+  const [output, setOutput] = useState<string>("")
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+  const [editorReady, setEditorReady] = useState<boolean>(false)
 
-  // Handler ketika editor siap
-  const handleEditorDidMount: OnMount = (editor, monaco) => {
+  // Compile once for performance & correctness (escape keywords)
+  const blockedPattern = useMemo(
+    () =>
+      new RegExp(
+        String.raw`\b(?:${BLOCKED_KEYWORDS.map((k) => escapeRegex(k)).join("|")})\b`
+      ),
+    []
+  )
+
+  const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
     try {
       setEditorReady(true)
       editor.updateOptions({
@@ -73,20 +101,16 @@ export function PlaygroundContent() {
         autoClosingQuotes: "always",
         formatOnPaste: true,
         formatOnType: true,
-        quickSuggestions: {
-          other: true,
-          comments: true,
-          strings: true
-        },
+        quickSuggestions: { other: true, comments: true, strings: true },
         snippetSuggestions: "inline",
         acceptSuggestionOnEnter: "on",
         autoClosingOvertype: "always",
         autoIndent: "full",
-        autoSurround: "languageDefined"
+        autoSurround: "languageDefined",
       })
 
-      // Tambahkan snippets
-      monaco.languages.registerCompletionItemProvider('javascript', {
+      // Simple snippet: "cl" -> console.log($1)
+      monaco.languages.registerCompletionItemProvider("javascript", {
         provideCompletionItems: (model, position) => {
           try {
             const word = model.getWordUntilPosition(position)
@@ -94,63 +118,58 @@ export function PlaygroundContent() {
               startLineNumber: position.lineNumber,
               endLineNumber: position.lineNumber,
               startColumn: word.startColumn,
-              endColumn: word.endColumn
+              endColumn: word.endColumn,
             }
-
             return {
               suggestions: [
                 {
-                  label: 'cl',
+                  label: "cl",
                   kind: monaco.languages.CompletionItemKind.Snippet,
-                  insertText: 'console.log($1)',
-                  insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                  detail: 'Console log',
-                  range
-                }
-              ]
+                  insertText: "console.log($1)",
+                  insertTextRules:
+                    monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  detail: "Console log",
+                  range,
+                },
+              ],
             }
           } catch (error) {
-            console.error('Error in completion provider:', error)
+            console.error("Error in completion provider:", error)
             return { suggestions: [] }
           }
-        }
+        },
       })
     } catch (error) {
-      console.error('Error in editor mount:', error)
+      console.error("Error in editor mount:", error)
     }
-  }
+  }, [])
 
-  // Validasi kode sebelum dijalankan
-  const validateCode = (code: string): boolean => {
-    try {
-      if (code.length > 5000) {
-        toast.error(messages.playground.errors.code_too_long)
+  const validateCode = useCallback(
+    (c: string): boolean => {
+      try {
+        if (c.length > MAX_LEN) {
+          toast.error(messages.playground.errors.code_too_long)
+          return false
+        }
+        if (blockedPattern.test(c)) {
+          toast.error(messages.playground.errors.blocked_keyword)
+          return false
+        }
+        return true
+      } catch (error) {
+        console.error("Error in code validation:", error)
+        toast.error(messages.playground.errors.validation_error)
         return false
       }
+    },
+    [blockedPattern, messages.playground.errors.blocked_keyword, messages.playground.errors.code_too_long, messages.playground.errors.validation_error]
+  )
 
-      const containsBlockedKeyword = BLOCKED_KEYWORDS.some(keyword => 
-        new RegExp(`\\b${keyword}\\b`).test(code)
-      )
-
-      if (containsBlockedKeyword) {
-        toast.error(messages.playground.errors.blocked_keyword)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error in code validation:', error)
-      toast.error(messages.playground.errors.validation_error)
-      return false
-    }
-  }
-
-  const runCode = () => {
+  const runCode = useCallback(() => {
     if (!editorReady) {
       toast.error(messages.playground.errors.editor_not_ready)
       return
     }
-    
     try {
       if (!validateCode(code)) return
 
@@ -159,59 +178,67 @@ export function PlaygroundContent() {
         console: {
           log: (...args: any[]) => {
             try {
-              logs.push(args.map(arg => {
-                if (arg instanceof Error) return arg.message
-                if (typeof arg === 'object') return JSON.stringify(arg, null, 2)
-                return String(arg)
-              }).join(" "))
-            } catch (error) {
-              console.error('Error in console.log:', error)
-              logs.push('[Error logging output]')
+              const line = args
+                .map((arg) => {
+                  if (arg instanceof Error) return arg.message
+                  if (typeof arg === "object") return JSON.stringify(arg, null, 2)
+                  return String(arg)
+                })
+                .join(" ")
+              logs.push(line)
+            } catch (err) {
+              console.error("Error in console.log:", err)
+              logs.push("[Error logging output]")
             }
-          }
-        }
+          },
+        },
       }
 
-      const wrappedCode = `
+      // ⬇️ Perbaikan inti: fungsi dinamis menerima `console` sebagai parameter
+      const fn = new Function(
+        "console",
+        `
+        "use strict";
         try {
-          with (sandbox) {
-            ${code}
-          }
+          ${code}
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
       `
-      
-      const result = new Function("sandbox", wrappedCode)(sandbox)
-      setOutput([...logs, result !== undefined ? String(result) : ""].filter(Boolean).join("\n"))
+      ) as (c: Console) => void
+
+      fn(sandbox.console as unknown as Console)
+
+      setOutput(logs.filter(Boolean).join("\n"))
     } catch (error) {
       if (error instanceof Error) {
         setOutput(error.message)
         toast.error(error.message)
       } else {
-        setOutput(String(error))
+        const msg = String(error)
+        setOutput(msg)
         toast.error(messages.playground.errors.runtime_error)
       }
     }
-  }
+  }, [code, editorReady, messages.playground.errors.editor_not_ready, messages.playground.errors.runtime_error, validateCode])
 
   return (
     <PageTransition>
-      <main className="min-h-screen bg-background relative lg:pl-64 pt-16 lg:pt-0">
-        <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
+      <main className="relative min-h-screen bg-background pt-16 lg:pl-64 lg:pt-0">
+        <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
           {/* Header */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-2 max-w-2xl"
+            className="max-w-2xl space-y-2"
           >
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 {messages.playground.title}
               </h1>
             </div>
-            <p className="text-sm sm:text-base text-muted-foreground">
+            <p className="text-sm text-muted-foreground sm:text-base">
               {messages.playground.subtitle}
             </p>
           </motion.div>
@@ -224,15 +251,20 @@ export function PlaygroundContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className={cn(
-              "grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 border-border/30 transition-all duration-300 hover:border-border/50",
-              isFullscreen && "fixed inset-4 z-50 overflow-auto"
-            )}>
+            <Card
+              className={cn(
+                "grid grid-cols-1 gap-4 p-4 transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
+                "border-border/30",
+                isFullscreen && "fixed inset-4 z-50 overflow-auto"
+              )}
+            >
               {/* Editor Panel */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-sm rounded bg-primary/10 text-primary">{messages.playground.editor.language}</span>
+                    <span className="rounded bg-primary/10 px-2 py-1 text-sm text-primary">
+                      {messages.playground.editor.language}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -244,34 +276,41 @@ export function PlaygroundContent() {
                       }}
                       className="size-8 hover:bg-background/80"
                     >
-                      <Trash2 className="size-4" />
-                      <span className="sr-only">{messages.playground.editor.actions.clear}</span>
+                      <Trash2 className="size-4" aria-hidden />
+                      <span className="sr-only">
+                        {messages.playground.editor.actions.clear}
+                      </span>
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      onClick={() => setIsFullscreen((s) => !s)}
                       className="size-8 hover:bg-background/80"
+                      aria-pressed={isFullscreen}
                     >
-                      <Expand className="size-4" />
-                      <span className="sr-only">{messages.playground.editor.actions.fullscreen}</span>
+                      <Expand className="size-4" aria-hidden />
+                      <span className="sr-only">
+                        {messages.playground.editor.actions.fullscreen}
+                      </span>
                     </Button>
                   </div>
                 </div>
-                <div className="relative min-h-[500px] border border-border/30 rounded-md overflow-hidden transition-all duration-300 hover:border-border/50">
+
+                <div className="relative min-h-[500px] overflow-hidden rounded-md border border-border/30 transition-all duration-300 hover:border-border/50">
                   <Suspense fallback={<EditorLoading />}>
                     <MonacoEditor
                       height="500px"
                       defaultLanguage="javascript"
                       theme="vs-dark"
                       value={code}
-                      onChange={value => {
+                      onChange={(value) => {
                         if (!editorReady) return
-                        if (value && value.length > 5000) {
+                        const v = value ?? ""
+                        if (v.length > MAX_LEN) {
                           toast.error(messages.playground.errors.code_too_long)
                           return
                         }
-                        setCode(value ?? "")
+                        setCode(v)
                       }}
                       onMount={handleEditorDidMount}
                       options={{
@@ -290,10 +329,7 @@ export function PlaygroundContent() {
                         detectIndentation: true,
                         folding: true,
                         glyphMargin: false,
-                        guides: {
-                          bracketPairs: true,
-                          indentation: true,
-                        },
+                        guides: { bracketPairs: true, indentation: true },
                         mouseWheelZoom: true,
                         dragAndDrop: true,
                         copyWithSyntaxHighlighting: true,
@@ -302,17 +338,13 @@ export function PlaygroundContent() {
                         autoClosingQuotes: "always",
                         autoIndent: "full",
                         autoSurround: "languageDefined",
-                        quickSuggestions: {
-                          other: true,
-                          comments: true,
-                          strings: true
-                        },
+                        quickSuggestions: { other: true, comments: true, strings: true },
                         snippetSuggestions: "inline",
                         cursorBlinking: "smooth",
                         cursorSmoothCaretAnimation: "on",
                         cursorStyle: "line",
                         renderControlCharacters: true,
-                        renderWhitespace: "selection"
+                        renderWhitespace: "selection",
                       }}
                       loading={<EditorLoading />}
                     />
@@ -324,7 +356,9 @@ export function PlaygroundContent() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-sm rounded bg-primary/10 text-primary">{messages.playground.console.title}</span>
+                    <span className="rounded bg-primary/10 px-2 py-1 text-sm text-primary">
+                      {messages.playground.console.title}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -333,21 +367,30 @@ export function PlaygroundContent() {
                       onClick={() => setOutput("")}
                       className="size-8 hover:bg-background/80"
                     >
-                      <Trash2 className="size-4" />
-                      <span className="sr-only">{messages.playground.console.clear}</span>
+                      <Trash2 className="size-4" aria-hidden />
+                      <span className="sr-only">
+                        {messages.playground.console.clear}
+                      </span>
                     </Button>
                     <Button
                       variant="default"
                       size="icon"
                       onClick={runCode}
-                      className="size-8 bg-primary/10 hover:bg-primary/20 text-primary"
+                      className="size-8 bg-primary/10 text-primary hover:bg-primary/20"
                     >
-                      <Play className="size-4" />
-                      <span className="sr-only">{messages.playground.editor.actions.run}</span>
+                      <Play className="size-4" aria-hidden />
+                      <span className="sr-only">
+                        {messages.playground.editor.actions.run}
+                      </span>
                     </Button>
                   </div>
                 </div>
-                <div className="min-h-[500px] p-4 font-mono text-sm border border-border/30 rounded-md overflow-auto whitespace-pre-wrap transition-all duration-300 hover:border-border/50">
+                <div
+                  className="min-h-[500px] whitespace-pre-wrap overflow-auto rounded-md border border-border/30 p-4 font-mono text-sm transition-all duration-300 hover:border-border/50"
+                  role="region"
+                  aria-live="polite"
+                  aria-label="Console output"
+                >
                   {output}
                 </div>
               </div>

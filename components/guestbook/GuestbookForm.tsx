@@ -1,16 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { addGuestbookEntry } from "@/app/actions/guestbook"
 import { useRouter } from "next/navigation"
-import { containsForbiddenWords, getForbiddenWords } from "@/lib/constants/forbidden-words"
+import {
+  containsForbiddenWords,
+  getForbiddenWords,
+} from "@/lib/constants/forbidden-words"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import { useI18n } from "@/lib/i18n"
+
+const MAX_LEN = 280
 
 export function GuestbookForm() {
   const { data: session } = useSession()
@@ -20,14 +25,31 @@ export function GuestbookForm() {
   const router = useRouter()
   const { messages } = useI18n()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // PENTING: panggil useMemo SELALU (sebelum early return) agar urutan hooks stabil
+  const remainingChars = useMemo(() => Math.max(0, MAX_LEN - message.length), [message])
+
+  // Jika parent sudah mengondisikan <GuestbookForm /> hanya saat session ada,
+  // blok ini sebenarnya tidak diperlukan. Namun kalau ingin tetap aman:
+  if (!session) return null
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newMessage = e.target.value
+    setMessage(newMessage)
+    if (containsForbiddenWords(newMessage)) {
+      setForbiddenWords(getForbiddenWords(newMessage))
+    } else {
+      setForbiddenWords([])
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     if (!message.trim()) {
       toast.error(messages.guestbook.form.empty_error)
       return
     }
-
-    if (!session?.user?.email) {
+    if (!session.user?.email) {
       toast.error(messages.guestbook.form.session_error)
       return
     }
@@ -39,28 +61,14 @@ export function GuestbookForm() {
       setForbiddenWords([])
       toast.success(messages.guestbook.form.success)
       router.refresh()
-    } catch (error) {
+    } catch {
       toast.error(messages.guestbook.form.error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newMessage = e.target.value
-    setMessage(newMessage)
-
-    if (containsForbiddenWords(newMessage)) {
-      const found = getForbiddenWords(newMessage)
-      setForbiddenWords(found)
-    } else {
-      setForbiddenWords([])
-    }
-  }
-
-  if (!session) return null
-
-  const remainingChars = 280 - message.length
+  const isBlocked = forbiddenWords.length > 0
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
@@ -69,24 +77,29 @@ export function GuestbookForm() {
           value={message}
           onChange={handleChange}
           placeholder={messages.guestbook.form.placeholder}
-          className={`min-h-[35px] resize-none focus-visible:ring-primary pr-12 border-border/30 transition-all duration-300 hover:border-border/50 ${
-            forbiddenWords.length > 0 ? "border-destructive focus-visible:ring-destructive" : ""
+          className={`min-h-[35px] resize-none border-border/30 pr-12 transition-all duration-300 hover:border-border/50 focus-visible:ring-primary ${
+            isBlocked ? "border-destructive focus-visible:ring-destructive" : ""
           }`}
-          maxLength={280}
+          maxLength={MAX_LEN}
+          aria-invalid={isBlocked || undefined}
+          aria-describedby={isBlocked ? "forbidden-hint" : undefined}
         />
-        <span 
+        <span
           className={`absolute bottom-2 right-2 text-xs ${
-            remainingChars <= 20 
-              ? "text-destructive" 
-              : "text-muted-foreground"
+            remainingChars <= 20 ? "text-destructive" : "text-muted-foreground"
           }`}
+          aria-live="polite"
         >
           {remainingChars}
         </span>
       </div>
 
-      {forbiddenWords.length > 0 && (
-        <Alert variant="destructive" className="py-2 border-destructive/30 bg-destructive/5">
+      {isBlocked && (
+        <Alert
+          id="forbidden-hint"
+          variant="destructive"
+          className="border-destructive/30 bg-destructive/5 py-2"
+        >
           <div className="flex items-center gap-2 text-sm">
             <ExclamationTriangleIcon className="h-4 w-4 shrink-0" />
             <AlertDescription>
@@ -97,10 +110,10 @@ export function GuestbookForm() {
       )}
 
       <div className="flex justify-end">
-        <Button 
-          type="submit" 
-          disabled={isSubmitting || forbiddenWords.length > 0}
-          className="relative bg-primary/10 hover:bg-primary/20 text-primary"
+        <Button
+          type="submit"
+          disabled={isSubmitting || isBlocked}
+          className="relative bg-primary/10 text-primary hover:bg-primary/20"
         >
           {isSubmitting ? (
             <>
@@ -109,6 +122,7 @@ export function GuestbookForm() {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
+                aria-hidden
               >
                 <circle
                   className="opacity-25"
@@ -133,4 +147,4 @@ export function GuestbookForm() {
       </div>
     </form>
   )
-} 
+}
