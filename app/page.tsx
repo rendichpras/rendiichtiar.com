@@ -1,6 +1,6 @@
 "use client"
 
-import { memo } from "react"
+import { memo, type CSSProperties } from "react"
 import Image from "next/image"
 import { PageTransition } from "@/components/animations/page-transition"
 import { useI18n } from "@/lib/i18n"
@@ -23,17 +23,10 @@ import {
 import { VscCode } from "react-icons/vsc"
 import type { IconType } from "react-icons"
 
-/**
- * Home page (refactored + local marquee)
- * - Konsisten pakai shadcn/ui (Button, Card) dan token warna (bg-background, text-foreground, dll)
- * - Marquee lokal (CSS keyframes) untuk pergerakan stabil
- * - Warna brand HANYA di tech stack marquee (sesuai permintaan)
- */
-
 interface TechItem {
   name: string
   icon: IconType
-  colorClass: string // dikecualikan dari token, sengaja brand colors
+  colorClass: string
 }
 
 const TECH_STACK: readonly TechItem[] = [
@@ -51,7 +44,6 @@ const TECH_STACK: readonly TechItem[] = [
   { name: "VS Code", icon: VscCode, colorClass: "text-primary/90" },
 ] as const
 
-// ---------- Local Marquee (tanpa dependensi eksternal) ----------
 interface LocalMarqueeProps {
   children: React.ReactNode
   durationSeconds?: number
@@ -67,7 +59,8 @@ function LocalMarquee({
   pauseOnHover,
   className = "",
 }: LocalMarqueeProps) {
-  const style = { ["--marquee-duration" as any]: `${durationSeconds}s` }
+  type MarqueeStyle = CSSProperties & { ["--marquee-duration"]?: string }
+  const style: MarqueeStyle = { ["--marquee-duration"]: `${durationSeconds}s` }
 
   return (
     <div
@@ -79,8 +72,6 @@ function LocalMarquee({
       <div className="marquee__track">
         <div className="marquee__group">{children}</div>
       </div>
-
-      {/* Styles khusus untuk marquee */}
       <style jsx>{`
         .marquee {
           --marquee-duration: 30s;
@@ -103,8 +94,12 @@ function LocalMarquee({
           gap: 0.5rem;
         }
         @keyframes marquee {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
         }
       `}</style>
     </div>
@@ -138,10 +133,7 @@ interface MarqueeRowProps {
 }
 
 const MarqueeRow = memo(function MarqueeRow({ reverse, durationSeconds }: MarqueeRowProps) {
-  const items = [...TECH_STACK, ...TECH_STACK].map((t, idx) => (
-    <TechPill key={`${t.name}-${idx}`} {...t} />
-  ))
-
+  const items = [...TECH_STACK, ...TECH_STACK].map((t, idx) => <TechPill key={`${t.name}-${idx}`} {...t} />)
   return (
     <div className="relative">
       <EdgeFades />
@@ -158,13 +150,10 @@ export default function Home() {
   return (
     <PageTransition>
       <main className="relative min-h-screen bg-background pt-16 lg:pt-0 lg:pl-64">
-        {/* Hero Section */}
         <section className="relative py-8 sm:py-12 md:py-16">
           <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
             <div className="space-y-6 sm:space-y-8">
-              {/* Profile Header */}
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-                {/* Avatar */}
                 <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
                   <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
                     <Image
@@ -178,7 +167,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Intro */}
                 <div className="flex-1 space-y-4">
                   <div className="space-y-2">
                     <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-xl font-bold text-transparent sm:text-2xl md:text-3xl lg:text-4xl">
@@ -198,22 +186,17 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {messages.home.bio}
-                  </p>
+                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">{messages.home.bio}</p>
                 </div>
               </div>
 
-              {/* Tech Stack */}
               <div className="border-t border-border/40 pt-6 sm:pt-8">
                 <div className="space-y-4 sm:space-y-6">
                   <div className="space-y-2">
                     <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
                       {messages.home.tech_stack}
                     </h2>
-                    <p className="text-sm text-muted-foreground sm:text-base">
-                      {messages.home.tech_stack_desc}
-                    </p>
+                    <p className="text-sm text-muted-foreground sm:text-base">{messages.home.tech_stack_desc}</p>
                   </div>
 
                   <div className="space-y-2">
@@ -224,7 +207,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* What I've Been Working On */}
               <div className="border-t border-border/40 pt-8 sm:pt-12">
                 <div className="space-y-8 sm:space-y-12">
                   <div className="space-y-3 sm:space-y-4">
@@ -236,7 +218,6 @@ export default function Home() {
                     </p>
                   </div>
 
-                  {/* CTA Card pakai shadcn/ui Card + token warna */}
                   <Card className="border-border/30 transition-colors duration-300 hover:border-border/50">
                     <CardHeader className="pb-3 space-y-1">
                       <div className="flex items-center gap-2">
@@ -247,10 +228,7 @@ export default function Home() {
                           </span>
                         </CardTitle>
                       </div>
-
-                      <CardDescription className="text-sm sm:text-base">
-                        {messages.home.work_cta}
-                      </CardDescription>
+                      <CardDescription className="text-sm sm:text-base">{messages.home.work_cta}</CardDescription>
                     </CardHeader>
 
                     <CardFooter>
@@ -261,7 +239,6 @@ export default function Home() {
                   </Card>
                 </div>
               </div>
-              {/* /Working On */}
             </div>
           </div>
         </section>

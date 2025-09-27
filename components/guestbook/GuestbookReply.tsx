@@ -19,12 +19,7 @@ interface ReplyProps {
   isReplying: boolean
 }
 
-export function GuestbookReply({
-  parentId,
-  onReplyComplete,
-  parentAuthor,
-  isReplying,
-}: ReplyProps) {
+export function GuestbookReply({ parentId, onReplyComplete, parentAuthor, isReplying }: ReplyProps) {
   const { data: session } = useSession()
   const [replyMessage, setReplyMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -34,7 +29,6 @@ export function GuestbookReply({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     if (!replyMessage.trim()) {
       toast.error(messages.guestbook.form.empty_error)
       return
@@ -43,7 +37,6 @@ export function GuestbookReply({
       toast.error(messages.guestbook.form.session_error)
       return
     }
-
     setIsSubmitting(true)
     try {
       const messageWithMention = `@${parentAuthor} ${replyMessage}`
@@ -115,7 +108,6 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [showLoginDialog, setShowLoginDialog] = useState(false)
   const { messages } = useI18n()
-
   const hasLiked = likes.some((l) => l.user.email === userEmail)
 
   const handleLike = async () => {
@@ -124,12 +116,10 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
       return
     }
     if (isLoading) return
-
     setIsLoading(true)
     setIsAnimating(true)
     try {
       await toggleLike(guestbookId, userEmail)
-      // Catatan: bila ingin UX lebih responsif, pertimbangkan optimistic update
     } catch {
       toast.error(messages.guestbook.list.like.error)
     } finally {
@@ -149,9 +139,7 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
         }`}
       >
         <svg
-          className={`h-3 w-3 transition-transform duration-300 sm:h-4 sm:w-4 ${
-            isAnimating ? "scale-125" : ""
-          }`}
+          className={`h-3 w-3 transition-transform duration-300 sm:h-4 sm:w-4 ${isAnimating ? "scale-125" : ""}`}
           fill={hasLiked ? "currentColor" : "none"}
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -192,7 +180,6 @@ interface ReplyListProps {
 export function GuestbookReplyList({ replies, onReplyClick }: ReplyListProps) {
   const { data: session } = useSession()
   const { messages } = useI18n()
-
   if (replies.length === 0) return null
 
   return (
@@ -207,11 +194,9 @@ export function GuestbookReplyList({ replies, onReplyClick }: ReplyListProps) {
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-medium text-foreground/90 sm:text-sm">
-                  {reply.user.name}
-                </span>
+                <span className="text-xs font-medium text-foreground/90 sm:text-sm">{reply.user.name}</span>
                 <span className="text-[10px] text-muted-foreground sm:text-xs">
-                  {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true, locale: localeID })}
+                  {formatDistanceToNow(reply.createdAt, { addSuffix: true, locale: localeID })}
                 </span>
               </div>
 

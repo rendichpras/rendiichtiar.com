@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -20,17 +22,15 @@ function MessageSkeleton() {
 
           <Skeleton className="h-16 w-full" />
 
-          {/* Action Buttons Skeleton */}
           <div className="mt-2 flex items-center gap-4">
             <Skeleton className="h-4 w-12" />
             <Skeleton className="h-4 w-12" />
             <Skeleton className="h-4 w-16" />
           </div>
 
-          {/* Reply List Skeleton */}
           <div className="mt-4 space-y-4 pl-4 sm:pl-8">
-            {[1, 2].map((reply) => (
-              <div key={reply}>
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i}>
                 <div className="flex items-start gap-2 sm:gap-3">
                   <Skeleton className="h-5 w-5 shrink-0 rounded-full sm:h-6 sm:w-6" />
                   <div className="min-w-0 flex-1">
@@ -63,9 +63,7 @@ export function GuestbookSkeleton() {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-lg font-semibold">Pesan Terbaru</h2>
-            <p className="text-sm text-muted-foreground">
-              Lihat apa yang orang lain katakan
-            </p>
+            <p className="text-sm text-muted-foreground">Lihat apa yang orang lain katakan</p>
           </div>
         </div>
       </CardHeader>
@@ -73,8 +71,8 @@ export function GuestbookSkeleton() {
       <ScrollArea className="h-[calc(100%-5rem)]">
         <CardContent>
           <div className="space-y-6 pr-4">
-            {[1, 2, 3].map((item) => (
-              <MessageSkeleton key={item} />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <MessageSkeleton key={i} />
             ))}
           </div>
         </CardContent>

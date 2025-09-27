@@ -11,55 +11,41 @@ import { metadata } from "./metadata"
 import { cn } from "@/lib/utils"
 import { I18nProvider } from "@/lib/i18n"
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-})
-
-const firaCode = Fira_Code({
-  subsets: ["latin"],
-  variable: "--font-fira-code",
-})
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
+const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira-code" })
 
 export { metadata }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+const APPLE_ICON_SIZES = [57, 60, 72, 76, 114, 120, 144, 152] as const
+const PNG_ICON_SIZES = [16, 32, 96] as const
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
-        <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png" />
-        <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png" />
-        <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png" />
-        <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png" />
-        <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png" />
+        {APPLE_ICON_SIZES.map((s) => (
+          <link key={`apple-${s}`} rel="apple-touch-icon" sizes={`${s}x${s}`} href={`/apple-icon-${s}x${s}.png`} />
+        ))}
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="192x192" href="/apple-icon-192x192.png" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        {PNG_ICON_SIZES.map((s) => (
+          <link key={`png-${s}`} rel="icon" type="image/png" sizes={`${s}x${s}`} href={`/favicon-${s}x${s}.png`} />
+        ))}
         <link rel="manifest" href="/manifest.json" />
         <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#09090B" media="(prefers-color-scheme: dark)" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9512419531764594" crossOrigin="anonymous" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9512419531764594"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className={cn(outfit.variable, firaCode.variable, "min-h-screen bg-background font-sans antialiased")}>
         <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <I18nProvider>
               <JsonLd />
               <Navbar />

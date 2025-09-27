@@ -1,28 +1,25 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useCallback, useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import { formatDistanceToNow } from "date-fns"
 import { id as localeID } from "date-fns/locale"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { getGuestbookEntries } from "@/app/actions/guestbook"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useEffect, useState, useCallback } from "react"
 import { GuestbookSkeleton } from "./GuestbookSkeleton"
 import { GuestbookReply, GuestbookReplyList, LikeButton } from "./GuestbookReply"
-import { useSession } from "next-auth/react"
+import { getGuestbookEntries } from "@/app/actions/guestbook"
 import { useI18n } from "@/lib/i18n"
 import { LoginDialog } from "@/components/auth/LoginDialog"
 
-// =====================
-// Types: RAW (API) vs UI
-// =====================
 type RawLike = {
   id: string
   user: { name: string | null; email: string | null }
@@ -47,7 +44,6 @@ type RawEntry = {
   replies: RawReply[]
 }
 
-// Setelah normalisasi untuk konsumsi UI/komponen lain:
 type Reply = Omit<RawReply, "createdAt"> & { createdAt: Date }
 type GuestbookEntry = Omit<RawEntry, "createdAt" | "replies"> & {
   createdAt: Date
@@ -55,7 +51,6 @@ type GuestbookEntry = Omit<RawEntry, "createdAt" | "replies"> & {
 }
 
 const OWNER_EMAIL = "rendiichtiarprasetyo@gmail.com"
-// TODO: Pertimbangkan pindahkan ke env atau konstanta konfigurasi
 
 function ProviderIcon({ provider }: { provider: string }) {
   if (provider === "google") {
@@ -64,7 +59,6 @@ function ProviderIcon({ provider }: { provider: string }) {
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="flex items-center" aria-hidden>
-              {/* Google icon */}
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -85,7 +79,6 @@ function ProviderIcon({ provider }: { provider: string }) {
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="flex items-center" aria-hidden>
-              {/* GitHub icon */}
               <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   fillRule="evenodd"
@@ -126,7 +119,6 @@ export function GuestbookList() {
     void fetchEntries()
     setReplyingTo(null)
     setReplyingToName("")
-    // pastikan thread tetap terbuka
     setExpandedEntries((prev) => new Set([...prev, entryId]))
   }
 
@@ -143,18 +135,13 @@ export function GuestbookList() {
   const fetchEntries = useCallback(async () => {
     try {
       const data = (await getGuestbookEntries()) as RawEntry[]
-      // Normalisasi tanggal agar aman dipakai di date-fns dan sesuai typing UI
       const normalized: GuestbookEntry[] = data.map((e) => ({
         ...e,
         createdAt: new Date(e.createdAt),
-        replies: e.replies.map((r) => ({
-          ...r,
-          createdAt: new Date(r.createdAt),
-        })),
+        replies: e.replies.map((r) => ({ ...r, createdAt: new Date(r.createdAt) })),
       }))
       setEntries(normalized)
-    } catch (error) {
-      console.error("Gagal mengambil data:", error)
+    } catch {
     } finally {
       setLoading(false)
     }
@@ -162,8 +149,7 @@ export function GuestbookList() {
 
   useEffect(() => {
     void fetchEntries()
-    const INTERVAL_MS = 5000
-    const id = setInterval(fetchEntries, INTERVAL_MS)
+    const id = setInterval(fetchEntries, 5000)
     return () => clearInterval(id)
   }, [fetchEntries])
 
@@ -187,12 +173,8 @@ export function GuestbookList() {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-foreground">
-                {messages.guestbook.list.title}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {messages.guestbook.list.subtitle}
-              </p>
+              <h2 className="text-lg font-semibold text-foreground">{messages.guestbook.list.title}</h2>
+              <p className="text-sm text-muted-foreground">{messages.guestbook.list.subtitle}</p>
             </div>
           </div>
         </CardHeader>
@@ -205,9 +187,7 @@ export function GuestbookList() {
                   <div className="flex gap-4">
                     <Avatar className="h-8 w-8 shrink-0 border border-border/30">
                       <AvatarImage src={entry.user.image || ""} alt={entry.user.name || "Avatar"} />
-                      <AvatarFallback aria-hidden>
-                        {entry.user.name?.charAt(0) || "?"}
-                      </AvatarFallback>
+                      <AvatarFallback aria-hidden>{entry.user.name?.charAt(0) || "?"}</AvatarFallback>
                     </Avatar>
 
                     <div className="flex-1 space-y-2">
@@ -234,18 +214,12 @@ export function GuestbookList() {
                         </div>
 
                         <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(entry.createdAt, {
-                            addSuffix: true,
-                            locale: localeID,
-                          })}
+                          {formatDistanceToNow(entry.createdAt, { addSuffix: true, locale: localeID })}
                         </span>
                       </div>
 
-                      <p className="break-words text-sm leading-relaxed text-muted-foreground">
-                        {entry.message}
-                      </p>
+                      <p className="break-words text-sm leading-relaxed text-muted-foreground">{entry.message}</p>
 
-                      {/* Action Buttons */}
                       <div className="mt-2 flex items-center gap-4">
                         <button
                           onClick={() => handleReplyClick(entry.id, entry.user.name || "")}
@@ -258,11 +232,7 @@ export function GuestbookList() {
                           <span>{messages.guestbook.list.reply.button}</span>
                         </button>
 
-                        <LikeButton
-                          guestbookId={entry.id}
-                          likes={entry.likes}
-                          userEmail={session?.user?.email}
-                        />
+                        <LikeButton guestbookId={entry.id} likes={entry.likes} userEmail={session?.user?.email} />
 
                         {entry.replies.length > 0 && (
                           <button
@@ -292,26 +262,18 @@ export function GuestbookList() {
                         )}
                       </div>
 
-                      {/* Reply Form (inline) */}
-                      <GuestbookReply
-                        parentId={entry.id}
-                        parentAuthor={replyingToName || entry.user.name || ""}
-                        onReplyComplete={() => handleReplyComplete(entry.id)}
-                        isReplying={replyingTo === entry.id && !entry.replies.some((r) => r.id === replyingTo)}
-                      />
+                      {replyingTo === entry.id && (
+                        <GuestbookReply
+                          parentId={entry.id}
+                          parentAuthor={replyingToName || entry.user.name || ""}
+                          onReplyComplete={() => handleReplyComplete(entry.id)}
+                          isReplying
+                        />
+                      )}
 
-                      {/* Reply List */}
                       {entry.replies.length > 0 && expandedEntries.has(entry.id) && (
                         <div id={`replies-${entry.id}`}>
                           <GuestbookReplyList replies={entry.replies} onReplyClick={handleReplyClick} />
-                          {entry.replies.some((r) => r.id === replyingTo) && (
-                            <GuestbookReply
-                              parentId={entry.id}
-                              parentAuthor={replyingToName}
-                              onReplyComplete={() => handleReplyComplete(entry.id)}
-                              isReplying
-                            />
-                          )}
                         </div>
                       )}
                     </div>

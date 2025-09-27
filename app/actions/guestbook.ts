@@ -1,183 +1,121 @@
-'use server'
+"use server"
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 
-export async function getGuestbookEntries() {
+type PublicUser = { name: string | null; email: string | null; image: string | null }
+type PublicLike = { id: string; user: PublicUser }
+type PublicReply = {
+  id: string
+  message: string
+  createdAt: Date
+  user: PublicUser
+  mentionedUser?: { name: string | null } | null
+  likes: PublicLike[]
+}
+type PublicEntry = {
+  id: string
+  message: string
+  createdAt: Date
+  user: PublicUser
+  provider: string
+  likes: PublicLike[]
+  replies: PublicReply[]
+}
+
+export async function getGuestbookEntries(): Promise<PublicEntry[]> {
   const entries = await prisma.guestbook.findMany({
-    where: {
-      parentId: null // Hanya ambil pesan utama (bukan reply)
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+    where: { parentId: null },
+    orderBy: { createdAt: "desc" },
     include: {
       user: {
-        include: {
-          accounts: {
-            select: {
-              provider: true
-            }
-          }
-        }
-      },
-      replies: {
-    include: {
-      user: true,
-          mentionedUser: true,
-          likes: {
-            include: {
-              user: true
-            }
-          }
+        select: {
+          name: true,
+          email: true,
+          image: true,
+          accounts: { select: { provider: true }, take: 1 },
         },
-        orderBy: {
-          createdAt: "asc"
-        }
       },
-      likes: {
+      likes: { include: { user: { select: { name: true, email: true, image: true } } } },
+      replies: {
+        orderBy: { createdAt: "asc" },
         include: {
-          user: true
-        }
-      }
+          user: { select: { name: true, image: true, email: true } },
+          mentionedUser: { select: { name: true } },
+          likes: { include: { user: { select: { name: true, email: true, image: true } } } },
+        },
+      },
     },
     take: 50,
   })
 
-  return entries.map(entry => ({
-    id: entry.id,
-    message: entry.message,
-    createdAt: entry.createdAt,
-    user: {
-      name: entry.user.name,
-      image: entry.user.image,
-      email: entry.user.email
-    },
-    provider: entry.user.accounts[0]?.provider || "unknown",
-    likes: entry.likes.map(like => ({
-      id: like.id,
-      user: {
-        name: like.user.name,
-        email: like.user.email
-      }
+  return entries.map((e) => ({
+    id: e.id,
+    message: e.message,
+    createdAt: e.createdAt,
+    user: { name: e.user?.name ?? null, email: e.user?.email ?? null, image: e.user?.image ?? null },
+    provider: (e.user as any)?.accounts?.[0]?.provider ?? "local",
+    likes: e.likes.map((l) => ({
+      id: l.id,
+      user: { name: l.user?.name ?? null, email: l.user?.email ?? null, image: l.user?.image ?? null },
     })),
-    replies: entry.replies.map(reply => ({
-      id: reply.id,
-      message: reply.message,
-      createdAt: reply.createdAt,
-      user: {
-        name: reply.user.name,
-        image: reply.user.image,
-        email: reply.user.email
-      },
-      mentionedUser: reply.mentionedUser ? {
-        name: reply.mentionedUser.name
-      } : null,
-      likes: reply.likes.map(like => ({
-        id: like.id,
-        user: {
-          name: like.user.name,
-          email: like.user.email
-        }
-      }))
-    }))
+    replies: e.replies.map((r) => ({
+      id: r.id,
+      message: r.message,
+      createdAt: r.createdAt,
+      user: { name: r.user?.name ?? null, email: r.user?.email ?? null, image: r.user?.image ?? null },
+      mentionedUser: r.mentionedUser ? { name: r.mentionedUser.name } : null,
+      likes: r.likes.map((l) => ({
+        id: l.id,
+        user: { name: l.user?.name ?? null, email: l.user?.email ?? null, image: l.user?.image ?? null },
+      })),
+    })),
   }))
 }
 
+function sanitizeMessage(s: string) {
+  return s.replace(/\s+/g, " ").trim().slice(0, 280)
+}
+
 export async function addGuestbookEntry(
-  message: string, 
-  email: string, 
-  parentId?: string,
-  mentionedUsername?: string
+  message: string,
+  userEmail: string,
+  parentId?: string | null,
+  parentAuthor?: string | null
 ) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  })
+  const user = await prisma.user.findUnique({ where: { email: userEmail } })
+  if (!user) throw new Error("user_not_found")
+  const text = sanitizeMessage(message)
+  if (!text) throw new Error("empty_message")
 
-  if (!user) {
-    throw new Error("User not found")
-  }
-
-  let mentionedUser = null
-  if (mentionedUsername) {
-    mentionedUser = await prisma.user.findFirst({
-      where: {
-        name: mentionedUsername
-      }
-    })
+  let mentionedUserId: string | null = null
+  if (parentAuthor) {
+    const u = await prisma.user.findFirst({ where: { name: parentAuthor } })
+    mentionedUserId = u?.id ?? null
   }
 
   await prisma.guestbook.create({
     data: {
-      message,
+      message: text,
       userId: user.id,
-      parentId,
-      mentionedUserId: mentionedUser?.id
+      parentId: parentId ?? null,
+      mentionedUserId,
     },
   })
-  
-  revalidatePath('/guestbook')
+
+  revalidatePath("/guestbook")
 }
 
-// Fungsi untuk mendapatkan daftar user untuk mention
-export async function getUsers(search: string) {
-  const users = await prisma.user.findMany({
-    where: {
-      name: {
-        contains: search,
-        mode: 'insensitive'
-      }
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true
-    },
-    take: 5
-  })
+export async function toggleLike(guestbookId: string, userEmail: string) {
+  const user = await prisma.user.findUnique({ where: { email: userEmail } })
+  if (!user) throw new Error("user_not_found")
 
-  return users
-}
-
-// Fungsi untuk toggle like
-export async function toggleLike(guestbookId: string, email: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  })
-
-  if (!user) {
-    throw new Error("User not found")
-  }
-
-  const existingLike = await prisma.like.findUnique({
-    where: {
-      userId_guestbookId: {
-        userId: user.id,
-        guestbookId,
-      },
-    },
-  })
-
-  if (existingLike) {
-    // Unlike jika sudah like
-    await prisma.like.delete({
-      where: {
-        id: existingLike.id,
-      },
-    })
+  const existing = await prisma.like.findFirst({ where: { userId: user.id, guestbookId } })
+  if (existing) {
+    await prisma.like.delete({ where: { id: existing.id } })
   } else {
-    // Like jika belum
-    await prisma.like.create({
-      data: {
-        userId: user.id,
-        guestbookId,
-      },
-    })
+    await prisma.like.create({ data: { userId: user.id, guestbookId } })
   }
 
-  revalidatePath('/guestbook')
-} 
+  revalidatePath("/guestbook")
+}

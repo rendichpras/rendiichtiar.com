@@ -35,12 +35,12 @@
       "education": "Education"
     },
     "intro": {
-      "greeting": "Hello! Thank you for visiting my personal website.",
-      "bio1": "I am a Software Engineer focusing on Frontend development with over 2 years of experience. I have expertise in modern JavaScript ecosystems such as React, Next.js, and TypeScript for building responsive and high-performance web applications. With attention to detail and a deep understanding of user experience, I am committed to delivering digital solutions that are not only functional but also intuitive and enjoyable to use.",
-      "bio2": "My journey in web development began from my interest in technology and design. I've always believed that technology should make life easier, not the other way around. This principle is what I always apply in every project I work on. I enjoy exploring new technologies and always strive to stay up-to-date with the latest developments in web development.",
-      "bio3": "In every project, I focus not only on code but also on business aspects and user experience. I believe that a good application is one that can solve real problems in an elegant and efficient way. I always try to understand user and business needs deeply before starting to develop solutions.",
-      "bio4": "Outside of coding, I am very interested in UI/UX design and software architecture. I believe that a good understanding of design and architecture is key to building applications that not only work well but are also easy to maintain and develop in the future. I also actively contribute to the open source community and enjoy sharing knowledge with fellow developers.",
-      "bio5": "I am always open to collaboration and new opportunities. If you have an interesting project or want to discuss technology, don't hesitate to contact me. Let's create something amazing together!",
+      "greeting": "Hello! Thanks for checking out my personal website.",
+      "bio1": "I'm a Software Engineer who mainly works on the Frontend side of web development, and I've been doing this for more than two years. I specialize in modern JavaScript tools like React, Next.js, and TypeScript to build websites that are fast, responsive, and work well on all devices. I care a lot about how people experience a website, and I make sure the apps I build are not only useful but also easy and fun to use.",
+      "bio2": "My interest in web development started from a love for technology and design. I believe technology should help make life better, not harder. I follow this idea in every project I work on. I like learning new things and keeping up with the latest trends in web development.",
+      "bio3": "When I work on a project, I don't just focus on the code. I also think about the business goals and the user's needs. I want to create apps that solve real problems in a smart and efficient way. Before I start building anything, I make sure I understand what the users and the business really need.",
+      "bio4": "Besides coding, I enjoy learning about UI/UX design and software architecture. I think understanding these areas is important for making apps that are not only functional but also easy to maintain and improve over time. I'm also part of the open source community and like sharing what I know with other developers.",
+      "bio5": "I'm always looking for new opportunities and happy to work with others. If you have a cool project or want to talk about technology, feel free to reach out. Let's make something great together!",
       "closing": "Best regards,"
     },
     "career": {
