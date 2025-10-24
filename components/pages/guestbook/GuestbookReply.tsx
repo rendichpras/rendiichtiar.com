@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { formatDistanceToNow } from "date-fns"
 import { id as localeID } from "date-fns/locale"
 import { toast } from "sonner"
-import { addGuestbookEntry, toggleLike } from "@/app/actions/guestbook"
+import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
 import { LoginDialog } from "@/components/auth/LoginDialog"
 

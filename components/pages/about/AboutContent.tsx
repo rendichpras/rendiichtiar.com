@@ -37,6 +37,7 @@ const SectionNavCard = memo(function SectionNavCard({
       <Card
         role="button"
         tabIndex={0}
+        aria-label={label}
         onClick={onClick}
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
         className={cn(
@@ -123,9 +124,7 @@ const sections: readonly SectionContent[] = [
     titleKey: "career",
     content: ({ messages }) => (
       <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
-        <div className="space-y-4">
-          <p className="text-sm sm:text-base text-muted-foreground text-center">{messages.about.career.empty}</p>
-        </div>
+        <p className="text-sm sm:text-base text-muted-foreground text-center">{messages.about.career.empty}</p>
       </Card>
     ),
   },
@@ -185,7 +184,14 @@ export function AboutContent() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
             {nav.map(({ id, label, icon, delay }) => (
-              <SectionNavCard key={id} icon={icon} label={label} active={activeSection === id} onClick={() => setActiveSection(id)} delay={delay} />
+              <SectionNavCard
+                key={id}
+                icon={icon}
+                label={label}
+                active={activeSection === id}
+                onClick={() => setActiveSection(id)}
+                delay={delay}
+              />
             ))}
           </div>
 

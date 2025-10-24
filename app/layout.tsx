@@ -1,4 +1,4 @@
-import { Outfit, Fira_Code } from "next/font/google"
+import { Sora, IBM_Plex_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { AuthProvider } from "@/components/providers/auth-provider"
@@ -11,8 +11,21 @@ import { metadata } from "./metadata"
 import { cn } from "@/lib/utils"
 import { I18nProvider } from "@/lib/i18n"
 
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
-const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira-code" })
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal"],
+  variable: "--font-sora",
+  display: "swap",
+})
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal"],
+  variable: "--font-ibm-plex-mono",
+  display: "swap",
+})
 
 export { metadata }
 
@@ -43,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous"
         />
       </head>
-      <body className={cn(outfit.variable, firaCode.variable, "min-h-screen bg-background font-sans antialiased")}>
+      <body className={cn(sora.variable, plexMono.variable, "min-h-screen bg-background font-sans antialiased")}>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <I18nProvider>

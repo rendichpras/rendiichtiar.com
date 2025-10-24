@@ -1,6 +1,6 @@
-import { NotFoundContent } from "@/components/error/NotFoundContent"
+import { NotFoundContent } from "@/components/pages/not-found/NotFoundContent"
 import { Metadata } from "next"
-import messages from "@/messages/id" // Gunakan ID sebagai default
+import messages from "@/messages/id"
 
 export const metadata: Metadata = {
   title: messages.error.not_found.title,

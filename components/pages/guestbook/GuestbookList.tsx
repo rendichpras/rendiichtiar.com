@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/tooltip"
 import { GuestbookSkeleton } from "./GuestbookSkeleton"
 import { GuestbookReply, GuestbookReplyList, LikeButton } from "./GuestbookReply"
-import { getGuestbookEntries } from "@/app/actions/guestbook"
+import { getGuestbookEntries } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
 import { LoginDialog } from "@/components/auth/LoginDialog"
 

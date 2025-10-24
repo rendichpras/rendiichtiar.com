@@ -8,39 +8,16 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Calendar, Github, Instagram, Linkedin, Mail, Facebook, Video } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import { Calendar, Video } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { z } from "zod"
-import { useI18n, type Messages } from "@/lib/i18n"
-
-type SocialKey = keyof Messages["contact"]["social"]
-
-type SocialLink = {
-  icon: LucideIcon
-  labelKey: SocialKey
-  href: string
-  color: string
-}
-
-const SOCIAL_LINKS: readonly SocialLink[] = [
-  { icon: Mail, labelKey: "email", href: "mailto:rendichpras@gmail.com", color: "bg-[#EA4335]/10 text-[#EA4335] hover:bg-[#EA4335]/20" },
-  { icon: Linkedin, labelKey: "linkedin", href: "https://linkedin.com/in/rendiichtiar", color: "bg-[#0A66C2]/10 text-[#0A66C2] hover:bg-[#0A66C2]/20" },
-  { icon: Facebook, labelKey: "facebook", href: "https://facebook.com/rendiichtiar", color: "bg-[#1DA1F2]/10 text-[#1DA1F2] hover:bg-[#1DA1F2]/20" },
-  { icon: Instagram, labelKey: "instagram", href: "https://instagram.com/rendiichtiar", color: "bg-[#E4405F]/10 text-[#E4405F] hover:bg-[#E4405F]/20" },
-  {
-    icon: Github,
-    labelKey: "github",
-    href: "https://github.com/rendichpras",
-    color: "bg-[#181717]/10 text-[#181717] hover:bg-[#181717]/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20",
-  },
-] as const
+import { useI18n } from "@/lib/i18n"
 
 type FormData = { name: string; email: string; message: string }
 type FormErrors = Partial<Record<keyof FormData, string>>
 
-function makeContactSchema(messages: Messages) {
+function makeContactSchema(messages: any) {
   return z.object({
     name: z.string().min(2, messages.contact.form.validation.name),
     email: z.string().email(messages.contact.form.validation.email),
@@ -48,36 +25,7 @@ function makeContactSchema(messages: Messages) {
   })
 }
 
-function SocialLinkCard({
-  icon: Icon,
-  label,
-  href,
-  color,
-  delay,
-}: {
-  icon: LucideIcon
-  label: string
-  href: string
-  color: string
-  delay: number
-}) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}>
-      <a href={href} target="_blank" rel="noopener noreferrer" className="block" aria-label={label} title={label}>
-        <Card className={cn("group cursor-pointer bg-card/50 backdrop-blur-sm p-3", "flex items-center gap-3", "border-border/30 transition-all duration-300 hover:border-border/50")}>
-          <div className="flex flex-row items-center gap-2">
-            <div className={cn("size-8 shrink-0 rounded-lg flex items-center justify-center transition-colors duration-300", color)}>
-              <Icon className="size-4" aria-hidden />
-            </div>
-            <span className="text-sm font-medium text-foreground/90 transition-colors group-hover:text-primary">{label}</span>
-          </div>
-        </Card>
-      </a>
-    </motion.div>
-  )
-}
-
-function InfoRow({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
+function InfoRow({ icon: Icon, text }: { icon: any; text: string }) {
   return (
     <div className="flex items-center gap-2 text-sm text-muted-foreground">
       <Icon className="size-4 text-primary/70" aria-hidden />
@@ -144,21 +92,7 @@ export function ContactContent() {
 
           <Separator className="my-6 bg-border/40" />
 
-          <div className="mb-8">
-            <h2 className="mb-4 text-lg font-semibold text-foreground">{messages.contact.social.title}</h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-              {SOCIAL_LINKS.map((s, i) => (
-                <SocialLinkCard
-                  key={s.labelKey}
-                  icon={s.icon}
-                  label={messages.contact.social[s.labelKey]}
-                  href={s.href}
-                  color={s.color}
-                  delay={i * 0.1}
-                />
-              ))}
-            </div>
-          </div>
+          {/* Bagian media sosial DIHAPUS */}
 
           <div className="mb-8">
             <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border/50">
