@@ -70,7 +70,8 @@ type GuestbookEntry = Omit<RawEntry, "createdAt" | "replies"> & {
   replies: Reply[];
 };
 
-const OWNER_EMAIL = "rendiichtiarprasetyo@gmail.com";
+const OWNER_EMAIL =
+  process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
 
 function orderReplies(list: Reply[], rootId: string): Reply[] {
   const byParent = new Map<string, Reply[]>();
@@ -113,7 +114,9 @@ function ProviderIcon({ provider }: { provider: string }) {
               <SiGoogle className="h-4 w-4" />
             </span>
           </TooltipTrigger>
-          <TooltipContent>{messages.common.auth.login.google}</TooltipContent>
+          <TooltipContent>
+            {messages.common.auth.login.google}
+          </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
@@ -131,7 +134,9 @@ function ProviderIcon({ provider }: { provider: string }) {
               <SiGithub className="h-4 w-4" />
             </span>
           </TooltipTrigger>
-          <TooltipContent>{messages.common.auth.login.github}</TooltipContent>
+          <TooltipContent>
+            {messages.common.auth.login.github}
+          </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
@@ -220,11 +225,11 @@ export function GuestbookList({
         const ev = JSON.parse(evt.data) as
           | { type: "guestbook:new"; entry: RawEntry }
           | {
-            type: "guestbook:like";
-            id: string;
-            userEmail: string;
-            action: "like" | "unlike";
-          }
+              type: "guestbook:like";
+              id: string;
+              userEmail: string;
+              action: "like" | "unlike";
+            }
           | { type: "guestbook:reply"; parentId: string; reply: RawReply };
 
         setEntries((prev) => {
@@ -255,7 +260,9 @@ export function GuestbookList({
               r.rootId ||
               prev.find((en) => en.id === ev.parentId)?.id ||
               prev.find((en) =>
-                en.replies.some((x) => x.id === (r.parentId ?? ev.parentId))
+                en.replies.some(
+                  (x) => x.id === (r.parentId ?? ev.parentId)
+                )
               )?.id;
 
             if (!targetRootId) return prev;
@@ -273,7 +280,9 @@ export function GuestbookList({
 
             return prev.map((en) => {
               if (en.id === id) {
-                const liked = en.likes.some((l) => l.user.email === userEmail);
+                const liked = en.likes.some(
+                  (l) => l.user.email === userEmail
+                );
                 let likes = en.likes;
                 if (action === "like" && !liked) {
                   likes = [
@@ -285,14 +294,18 @@ export function GuestbookList({
                   ];
                 }
                 if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail);
+                  likes = likes.filter(
+                    (l) => l.user.email !== userEmail
+                  );
                 }
                 return { ...en, likes };
               }
 
               const replies = en.replies.map((rr) => {
                 if (rr.id !== id) return rr;
-                const liked = rr.likes.some((l) => l.user.email === userEmail);
+                const liked = rr.likes.some(
+                  (l) => l.user.email === userEmail
+                );
                 let likes = rr.likes;
                 if (action === "like" && !liked) {
                   likes = [
@@ -304,7 +317,9 @@ export function GuestbookList({
                   ];
                 }
                 if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail);
+                  likes = likes.filter(
+                    (l) => l.user.email !== userEmail
+                  );
                 }
                 return { ...rr, likes };
               });
@@ -387,7 +402,9 @@ export function GuestbookList({
                           <TooltipTrigger asChild>
                             <span
                               className="flex items-center text-primary"
-                              aria-label={messages.pages.guestbook.list.owner}
+                              aria-label={
+                                messages.pages.guestbook.list.owner
+                              }
                             >
                               <BadgeCheck
                                 className="h-4 w-4"
@@ -420,17 +437,26 @@ export function GuestbookList({
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      handleReplyClick(entry.id, entry.user.name || "")
+                      handleReplyClick(
+                        entry.id,
+                        entry.user.name || ""
+                      )
                     }
                     className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${messages.pages.guestbook.list.reply.button
-                      } ${entry.user.name || ""}`}
+                    aria-label={`${messages.pages.guestbook.list.reply.button} ${
+                      entry.user.name || ""
+                    }`}
                   >
                     <ReplyIcon
                       className="h-4 w-4 sm:h-5 sm:w-5"
                       aria-hidden="true"
                     />
-                    <span>{messages.pages.guestbook.list.reply.button}</span>
+                    <span>
+                      {
+                        messages.pages.guestbook.list.reply
+                          .button
+                      }
+                    </span>
                   </Button>
 
                   <LikeButton
@@ -443,9 +469,13 @@ export function GuestbookList({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => toggleReplies(entry.id)}
+                      onClick={() =>
+                        toggleReplies(entry.id)
+                      }
                       className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                      aria-expanded={expandedEntries.has(entry.id)}
+                      aria-expanded={expandedEntries.has(
+                        entry.id
+                      )}
                       aria-controls={`replies-${entry.id}`}
                     >
                       {expandedEntries.has(entry.id) ? (
@@ -455,7 +485,10 @@ export function GuestbookList({
                             aria-hidden="true"
                           />
                           <span>
-                            {messages.pages.guestbook.list.hide_replies}
+                            {
+                              messages.pages.guestbook.list
+                                .hide_replies
+                            }
                           </span>
                         </span>
                       ) : (
@@ -467,7 +500,9 @@ export function GuestbookList({
                           <span>
                             {messages.pages.guestbook.list.show_replies.replace(
                               "{count}",
-                              String(entry.replies.length)
+                              String(
+                                entry.replies.length
+                              )
                             )}
                           </span>
                         </span>
@@ -479,25 +514,34 @@ export function GuestbookList({
                 {replyingTo === entry.id && (
                   <GuestbookReply
                     parentId={entry.id}
-                    parentAuthor={entry.user.name || ""}
-                    onReplyComplete={() => handleReplyComplete(entry.id)}
+                    parentAuthor={
+                      entry.user.name || ""
+                    }
+                    onReplyComplete={() =>
+                      handleReplyComplete(entry.id)
+                    }
                     isReplying
                   />
                 )}
 
-                {entry.replies.length > 0 && expandedEntries.has(entry.id) && (
-                  <div id={`replies-${entry.id}`}>
-                    <GuestbookReplyList
-                      replies={entry.replies}
-                      onReplyClick={handleReplyClick}
-                      rootId={entry.id}
-                      rootAuthor={entry.user.name || ""}
-                      activeReplyId={replyingTo}
-                      activeReplyAuthor={replyingToName}
-                      onReplyComplete={() => handleReplyComplete(entry.id)}
-                    />
-                  </div>
-                )}
+                {entry.replies.length > 0 &&
+                  expandedEntries.has(entry.id) && (
+                    <div id={`replies-${entry.id}`}>
+                      <GuestbookReplyList
+                        replies={entry.replies}
+                        onReplyClick={handleReplyClick}
+                        rootId={entry.id}
+                        rootAuthor={
+                          entry.user.name || ""
+                        }
+                        activeReplyId={replyingTo}
+                        activeReplyAuthor={replyingToName}
+                        onReplyComplete={() =>
+                          handleReplyComplete(entry.id)
+                        }
+                      />
+                    </div>
+                  )}
               </div>
             </div>
 

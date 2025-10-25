@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const site = process.env.NEXTAUTH_URL;
+  const site = process.env.NEXT_PUBLIC_URL ?? '';
 
   const posts = await prisma.post.findMany({
     where: { status: "PUBLISHED" },

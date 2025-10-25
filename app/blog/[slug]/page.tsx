@@ -22,7 +22,7 @@ function stripMarkdown(md: string): string {
 
 function absoluteUrl(pathOrUrl: string | null | undefined): string | undefined {
   if (!pathOrUrl) return undefined
-  const base = process.env.NEXTAUTH_URL?.replace(/\/+$/, "")
+  const base = process.env.NEXT_PUBLIC_URL?.replace(/\/+$/, "")
   if (!base) return undefined
 
   if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
@@ -45,7 +45,7 @@ export async function generateMetadata({
     return {}
   }
 
-  const siteUrl = process.env.NEXTAUTH_URL?.replace(/\/+$/, "") || ""
+  const siteUrl = process.env.NEXT_PUBLIC_URL?.replace(/\/+$/, "") || ""
   const canonical = `${siteUrl}/blog/${data.slug}`
 
   const raw = stripMarkdown(data.content ?? "")

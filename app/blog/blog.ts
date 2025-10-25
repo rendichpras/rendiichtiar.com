@@ -49,7 +49,7 @@ async function requireSession(): Promise<{
     userId = u.id;
   }
 
-  const isAdmin = session.user.email === process.env.ADMIN_EMAIL;
+  const isAdmin = session.user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   return { userId, isAdmin };
 }
 
