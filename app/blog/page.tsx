@@ -1,22 +1,24 @@
-import { getPosts } from "../blog/blog";
-import { BlogContent } from "@/components/pages/blog/BlogContent";
+import { getPosts } from "../blog/blog"
+import { BlogContent } from "@/components/pages/blog/BlogContent"
 
-export const revalidate = 60;
-export const dynamic = "force-static";
+export const revalidate = 60
+export const dynamic = "force-static"
 
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams?: { tag?: string; page?: string };
+  searchParams?: Promise<{ tag?: string; page?: string }>
 }) {
-  const tag = searchParams?.tag;
-  const page = Number(searchParams?.page ?? 1);
+  const resolved = searchParams ? await searchParams : {}
+
+  const tag = resolved.tag
+  const page = Number(resolved.page ?? 1)
 
   const { items, hasMore } = await getPosts({
     tag,
     page,
     pageSize: 10,
-  });
+  })
 
-  return <BlogContent items={items as any} page={page} hasMore={hasMore} />;
+  return <BlogContent items={items as any} page={page} hasMore={hasMore} />
 }
