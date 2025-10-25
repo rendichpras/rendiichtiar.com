@@ -36,7 +36,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ContactSkeleton } from "@/components/admin/contact/ContactSkeleton"
+import { ContactSkeleton } from "@/components/pages/admin/contact/ContactSkeleton"
 import {
   ColumnDef,
   ColumnFiltersState,

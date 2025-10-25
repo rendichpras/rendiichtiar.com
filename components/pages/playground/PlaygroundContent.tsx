@@ -1,28 +1,25 @@
-"use client"
+"use client";
 
-import { Suspense, useCallback, useMemo, useState } from "react"
-import dynamic from "next/dynamic"
-import { motion } from "framer-motion"
-import { Trash2, Play, Expand } from "lucide-react"
-import { SiJavascript } from "react-icons/si"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
-import { PageTransition } from "@/components/animations/page-transition"
-import { cn } from "@/lib/utils"
-import { toast } from "sonner"
-import type { OnMount } from "@monaco-editor/react"
-import { useI18n } from "@/lib/i18n"
+import { Suspense, useCallback, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
+import { Trash2, Play, Expand } from "lucide-react";
+import { SiJavascript } from "react-icons/si";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageTransition } from "@/components/animations/page-transition";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import type { OnMount } from "@monaco-editor/react";
+import { useI18n } from "@/lib/i18n";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-})
+});
 
-const DEFAULT_CODE = `console.log("Hello");`
+const DEFAULT_CODE = `console.log("Hello");`;
 
 const BLOCKED_KEYWORDS = [
   "document",
@@ -43,12 +40,12 @@ const BLOCKED_KEYWORDS = [
   "alert",
   "confirm",
   "prompt",
-] as const
+] as const;
 
-const MAX_LEN = 5000
+const MAX_LEN = 5000;
 
 function escapeRegex(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function EditorLoading() {
@@ -56,7 +53,7 @@ function EditorLoading() {
     <div className="flex h-full min-h-[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm">
       <Skeleton className="h-full w-full rounded-xl" />
     </div>
-  )
+  );
 }
 
 function JavaScriptIcon() {
@@ -64,28 +61,30 @@ function JavaScriptIcon() {
     <div className="flex size-8 items-center justify-center">
       <SiJavascript className="size-8 text-[#F7DF1E]" aria-hidden="true" />
     </div>
-  )
+  );
 }
 
 export function PlaygroundContent() {
-  const { messages } = useI18n()
+  const { messages } = useI18n();
 
-  const [code, setCode] = useState<string>(DEFAULT_CODE)
-  const [output, setOutput] = useState<string>("")
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
-  const [editorReady, setEditorReady] = useState<boolean>(false)
+  const [code, setCode] = useState<string>(DEFAULT_CODE);
+  const [output, setOutput] = useState<string>("");
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [editorReady, setEditorReady] = useState<boolean>(false);
 
   const blockedPattern = useMemo(
     () =>
       new RegExp(
-        String.raw`\b(?:${BLOCKED_KEYWORDS.map((k) => escapeRegex(k)).join("|")})\b`
+        String.raw`\b(?:${BLOCKED_KEYWORDS.map((k) => escapeRegex(k)).join(
+          "|"
+        )})\b`
       ),
     []
-  )
+  );
 
   const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
     try {
-      setEditorReady(true)
+      setEditorReady(true);
       editor.updateOptions({
         tabSize: 2,
         insertSpaces: true,
@@ -99,18 +98,18 @@ export function PlaygroundContent() {
         autoClosingOvertype: "always",
         autoIndent: "full",
         autoSurround: "languageDefined",
-      })
+      });
 
       monaco.languages.registerCompletionItemProvider("javascript", {
         provideCompletionItems: (model, position) => {
           try {
-            const word = model.getWordUntilPosition(position)
+            const word = model.getWordUntilPosition(position);
             const range = {
               startLineNumber: position.lineNumber,
               endLineNumber: position.lineNumber,
               startColumn: word.startColumn,
               endColumn: word.endColumn,
-            }
+            };
             return {
               suggestions: [
                 {
@@ -118,57 +117,58 @@ export function PlaygroundContent() {
                   kind: monaco.languages.CompletionItemKind.Snippet,
                   insertText: "console.log($1)",
                   insertTextRules:
-                    monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    monaco.languages.CompletionItemInsertTextRule
+                      .InsertAsSnippet,
                   detail: "Console log",
                   range,
                 },
               ],
-            }
+            };
           } catch {
-            return { suggestions: [] }
+            return { suggestions: [] };
           }
         },
-      })
+      });
     } catch {
       // silent
     }
-  }, [])
+  }, []);
 
   const validateCode = useCallback(
     (c: string): boolean => {
       try {
         if (c.length > MAX_LEN) {
-          toast.error(messages.playground.errors.code_too_long)
-          return false
+          toast.error(messages.pages.playground.errors.code_too_long);
+          return false;
         }
         if (blockedPattern.test(c)) {
-          toast.error(messages.playground.errors.blocked_keyword)
-          return false
+          toast.error(messages.pages.playground.errors.blocked_keyword);
+          return false;
         }
-        return true
+        return true;
       } catch {
-        toast.error(messages.playground.errors.validation_error)
-        return false
+        toast.error(messages.pages.playground.errors.validation_error);
+        return false;
       }
     },
     [
       blockedPattern,
-      messages.playground.errors.blocked_keyword,
-      messages.playground.errors.code_too_long,
-      messages.playground.errors.validation_error,
+      messages.pages.playground.errors.blocked_keyword,
+      messages.pages.playground.errors.code_too_long,
+      messages.pages.playground.errors.validation_error,
     ]
-  )
+  );
 
   const runCode = useCallback(() => {
     if (!editorReady) {
-      toast.error(messages.playground.errors.editor_not_ready)
-      return
+      toast.error(messages.pages.playground.errors.editor_not_ready);
+      return;
     }
 
     try {
-      if (!validateCode(code)) return
+      if (!validateCode(code)) return;
 
-      const logs: string[] = []
+      const logs: string[] = [];
 
       const sandbox = {
         console: {
@@ -176,19 +176,19 @@ export function PlaygroundContent() {
             try {
               const line = args
                 .map((arg) => {
-                  if (arg instanceof Error) return arg.message
+                  if (arg instanceof Error) return arg.message;
                   if (typeof arg === "object")
-                    return JSON.stringify(arg, null, 2)
-                  return String(arg)
+                    return JSON.stringify(arg, null, 2);
+                  return String(arg);
                 })
-                .join(" ")
-              logs.push(line)
+                .join(" ");
+              logs.push(line);
             } catch {
-              logs.push("[Error logging output]")
+              logs.push("[Error logging output]");
             }
           },
         },
-      }
+      };
 
       const fn = new Function(
         "console",
@@ -200,32 +200,31 @@ export function PlaygroundContent() {
           console.log(error);
         }
       `
-      ) as (c: Console) => void
+      ) as (c: Console) => void;
 
-      fn(sandbox.console as unknown as Console)
-      setOutput(logs.filter(Boolean).join("\n"))
+      fn(sandbox.console as unknown as Console);
+      setOutput(logs.filter(Boolean).join("\n"));
     } catch (error) {
       if (error instanceof Error) {
-        setOutput(error.message)
-        toast.error(error.message)
+        setOutput(error.message);
+        toast.error(error.message);
       } else {
-        setOutput(String(error))
-        toast.error(messages.playground.errors.runtime_error)
+        setOutput(String(error));
+        toast.error(messages.pages.playground.errors.runtime_error);
       }
     }
   }, [
     code,
     editorReady,
-    messages.playground.errors.editor_not_ready,
-    messages.playground.errors.runtime_error,
+    messages.pages.playground.errors.editor_not_ready,
+    messages.pages.playground.errors.runtime_error,
     validateCode,
-  ])
+  ]);
 
   return (
     <PageTransition>
       <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
         <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -234,18 +233,17 @@ export function PlaygroundContent() {
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {messages.playground.title}
+                {messages.pages.playground.title}
               </h1>
             </div>
 
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.playground.subtitle}
+              {messages.pages.playground.subtitle}
             </p>
           </motion.div>
 
           <Separator className="my-6 bg-border/40" />
 
-          {/* Playground container */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -255,15 +253,14 @@ export function PlaygroundContent() {
               className={cn(
                 "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card/50 p-4 text-foreground backdrop-blur-sm transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
                 isFullscreen &&
-                  "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
+                "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
               )}
             >
-              {/* Editor side */}
               <CardContent className="space-y-2 p-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      {messages.playground.editor.language}
+                      {messages.pages.playground.editor.language}
                     </span>
                   </div>
 
@@ -272,14 +269,14 @@ export function PlaygroundContent() {
                       variant="ghost"
                       size="icon"
                       onClick={() => {
-                        setCode("")
-                        setOutput("")
+                        setCode("");
+                        setOutput("");
                       }}
                       className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
                       <span className="sr-only">
-                        {messages.playground.editor.actions.clear}
+                        {messages.pages.playground.editor.actions.clear}
                       </span>
                     </Button>
 
@@ -292,7 +289,7 @@ export function PlaygroundContent() {
                     >
                       <Expand className="size-4" aria-hidden="true" />
                       <span className="sr-only">
-                        {messages.playground.editor.actions.fullscreen}
+                        {messages.pages.playground.editor.actions.fullscreen}
                       </span>
                     </Button>
                   </div>
@@ -306,15 +303,15 @@ export function PlaygroundContent() {
                       theme="vs-dark"
                       value={code}
                       onChange={(value) => {
-                        if (!editorReady) return
-                        const next = value ?? ""
+                        if (!editorReady) return;
+                        const next = value ?? "";
                         if (next.length > MAX_LEN) {
                           toast.error(
-                            messages.playground.errors.code_too_long
-                          )
-                          return
+                            messages.pages.playground.errors.code_too_long
+                          );
+                          return;
                         }
-                        setCode(next)
+                        setCode(next);
                       }}
                       onMount={handleEditorDidMount}
                       options={{
@@ -362,13 +359,11 @@ export function PlaygroundContent() {
                   </Suspense>
                 </div>
               </CardContent>
-
-              {/* Console side */}
               <CardContent className="space-y-2 p-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      {messages.playground.console.title}
+                      {messages.pages.playground.console.title}
                     </span>
                   </div>
 
@@ -381,7 +376,7 @@ export function PlaygroundContent() {
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
                       <span className="sr-only">
-                        {messages.playground.console.clear}
+                        {messages.pages.playground.console.clear}
                       </span>
                     </Button>
 
@@ -392,7 +387,7 @@ export function PlaygroundContent() {
                     >
                       <Play className="size-4" aria-hidden="true" />
                       <span className="sr-only">
-                        {messages.playground.editor.actions.run}
+                        {messages.pages.playground.editor.actions.run}
                       </span>
                     </Button>
                   </div>
@@ -402,7 +397,7 @@ export function PlaygroundContent() {
                   className="min-h-[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
                   role="region"
                   aria-live="polite"
-                  aria-label="Console output"
+                  aria-label={messages.pages.playground.console.output_label}
                 >
                   {output}
                 </div>
@@ -412,5 +407,5 @@ export function PlaygroundContent() {
         </section>
       </main>
     </PageTransition>
-  )
+  );
 }

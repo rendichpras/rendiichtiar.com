@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   memo,
@@ -6,30 +6,30 @@ import {
   useState,
   type ComponentType,
   type ReactNode,
-} from "react"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Separator } from "@/components/ui/separator"
-import { PageTransition } from "@/components/animations/page-transition"
-import { BookOpen, GraduationCap, User2 } from "lucide-react"
+} from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Separator } from "@/components/ui/separator";
+import { PageTransition } from "@/components/animations/page-transition";
+import { BookOpen, GraduationCap, User2 } from "lucide-react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardDescription,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { useI18n, type Messages } from "@/lib/i18n"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useI18n, type Messages } from "@/lib/i18n";
 
-type SectionId = "intro" | "career" | "education"
+type SectionId = "intro" | "career" | "education";
 
 interface SectionContent {
-  id: SectionId
-  icon: ComponentType<{ className?: string }>
-  titleKey: keyof Messages["about"]["sections"]
-  content: (props: { messages: Messages }) => ReactNode
+  id: SectionId;
+  icon: ComponentType<{ className?: string }>;
+  titleKey: keyof Messages["pages"]["about"]["sections"];
+  content: (props: { messages: Messages }) => ReactNode;
 }
 
 const SectionNavCard = memo(function SectionNavCard({
@@ -39,11 +39,11 @@ const SectionNavCard = memo(function SectionNavCard({
   onClick,
   delay = 0,
 }: {
-  icon: ComponentType<{ className?: string }>
-  label: string
-  active: boolean
-  onClick: () => void
-  delay?: number
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  delay?: number;
 }) {
   return (
     <motion.div
@@ -60,15 +60,14 @@ const SectionNavCard = memo(function SectionNavCard({
           "border-border/30 bg-card/30 hover:border-border/50 hover:bg-card/50",
           "focus-visible:ring-2 focus-visible:ring-primary/40",
           active &&
-            "border-primary/50 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/10"
+          "border-primary/50 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/10"
         )}
       >
         <div className="flex items-center gap-3 text-sm font-medium">
           <Icon
             className={cn(
-              "size-5 text-foreground/80 transition-transform",
-              active && "text-primary",
-              "group-hover:scale-110"
+              "size-5 text-foreground/80 transition-transform group-hover:scale-110",
+              active && "text-primary"
             )}
             aria-hidden="true"
           />
@@ -76,8 +75,8 @@ const SectionNavCard = memo(function SectionNavCard({
         </div>
       </Button>
     </motion.div>
-  )
-})
+  );
+});
 
 function EducationItem({
   src,
@@ -87,12 +86,12 @@ function EducationItem({
   location,
   sizes = "(max-width: 640px) 48px, 56px",
 }: {
-  src: string
-  name: string
-  major: string
-  period: string
-  location: string
-  sizes?: string
+  src: string;
+  name: string;
+  major: string;
+  period: string;
+  location: string;
+  sizes?: string;
 }) {
   return (
     <Card className="rounded-xl border-border/30 bg-card/30 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50 hover:bg-card/50">
@@ -113,9 +112,7 @@ function EducationItem({
               {name}
             </h3>
 
-            <p className="text-xs text-foreground/80 sm:text-sm">
-              {major}
-            </p>
+            <p className="text-xs text-foreground/80 sm:text-sm">{major}</p>
 
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
               <span>{period}</span>
@@ -126,7 +123,7 @@ function EducationItem({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 const sections: readonly SectionContent[] = [
@@ -138,27 +135,27 @@ const sections: readonly SectionContent[] = [
       <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
-            {messages.about.sections.intro}
+            {messages.pages.about.sections.intro}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground sm:text-base">
-            {messages.about.intro.headline}
+            {messages.pages.about.intro.headline}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4 text-sm leading-relaxed text-foreground/90 sm:text-base">
           {[
-            messages.about.intro.greeting,
-            messages.about.intro.bio1,
-            messages.about.intro.bio2,
-            messages.about.intro.bio3,
-            messages.about.intro.bio4,
-            messages.about.intro.bio5,
+            messages.pages.about.intro.greeting,
+            messages.pages.about.intro.bio1,
+            messages.pages.about.intro.bio2,
+            messages.pages.about.intro.bio3,
+            messages.pages.about.intro.bio4,
+            messages.pages.about.intro.bio5,
           ].map((t, i) => (
             <p key={i}>{t}</p>
           ))}
 
           <p className="text-sm text-muted-foreground">
-            {messages.about.intro.closing}
+            {messages.pages.about.intro.closing}
           </p>
         </CardContent>
       </Card>
@@ -172,15 +169,15 @@ const sections: readonly SectionContent[] = [
       <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
-            {messages.about.sections.career}
+            {messages.pages.about.sections.career}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground sm:text-base">
-            {messages.about.career.headline}
+            {messages.pages.about.career.headline}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="p-6 pt-0 text-center text-sm text-muted-foreground sm:text-base">
-          {messages.about.career.empty}
+          {messages.pages.about.career.empty}
         </CardContent>
       </Card>
     ),
@@ -193,65 +190,66 @@ const sections: readonly SectionContent[] = [
       <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
-            {messages.about.sections.education}
+            {messages.pages.about.sections.education}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground sm:text-base">
-            {messages.about.education.headline}
+            {messages.pages.about.education.headline}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <EducationItem
             src="/upb.png"
-            name={messages.about.education.upb.name}
-            major={messages.about.education.upb.major}
-            period={messages.about.education.upb.period}
-            location={messages.about.education.upb.location}
+            name={messages.pages.about.education.upb.name}
+            major={messages.pages.about.education.upb.major}
+            period={messages.pages.about.education.upb.period}
+            location={messages.pages.about.education.upb.location}
           />
 
           <EducationItem
             src="/smkhsagung.png"
-            name={messages.about.education.smk.name}
-            major={messages.about.education.smk.major}
-            period={messages.about.education.smk.period}
-            location={messages.about.education.smk.location}
+            name={messages.pages.about.education.smk.name}
+            major={messages.pages.about.education.smk.major}
+            period={messages.pages.about.education.smk.period}
+            location={messages.pages.about.education.smk.location}
           />
         </CardContent>
       </Card>
     ),
   },
-] as const
+] as const;
 
 export function AboutContent() {
-  const { messages } = useI18n()
-  const [activeSection, setActiveSection] = useState<SectionId>("intro")
+  const { messages } = useI18n();
+  const [activeSection, setActiveSection] = useState<SectionId>("intro");
 
   const nav = sections.map((s, i) => ({
     id: s.id,
-    label: messages.about.sections[s.titleKey],
+    label: messages.pages.about.sections[s.titleKey],
     icon: s.icon,
     delay: i * 0.1,
-  }))
+  }));
 
   const contentById = useMemo(
     () =>
-      Object.fromEntries(
-        sections.map((s) => [s.id, s.content])
-      ) as Record<SectionId, SectionContent["content"]>,
+      Object.fromEntries(sections.map((s) => [s.id, s.content])) as Record<
+        SectionId,
+        SectionContent["content"]
+      >,
     []
-  )
+  );
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pt-0 lg:pl-64">
+      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
         <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
           <header className="max-w-2xl space-y-2">
             <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
-              {messages.about.title}
+              {messages.pages.about.title}
             </h1>
 
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.about.subtitle}
+              {messages.pages.about.subtitle}
             </p>
           </header>
 
@@ -282,5 +280,5 @@ export function AboutContent() {
         </section>
       </main>
     </PageTransition>
-  )
+  );
 }

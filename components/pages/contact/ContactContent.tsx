@@ -1,154 +1,156 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import { PageTransition } from "@/components/animations/page-transition"
-import { Separator } from "@/components/ui/separator"
+import { useMemo, useState } from "react";
+import { PageTransition } from "@/components/animations/page-transition";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Calendar, Video } from "lucide-react"
-import { toast } from "sonner"
-import { z } from "zod"
-import { useI18n, type Messages } from "@/lib/i18n"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Calendar, Video } from "lucide-react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useI18n, type Messages } from "@/lib/i18n";
 
 type ContactFormData = {
-  name: string
-  email: string
-  message: string
-}
+  name: string;
+  email: string;
+  message: string;
+};
 
-type FormErrors = Partial<Record<keyof ContactFormData, string>>
+type FormErrors = Partial<Record<keyof ContactFormData, string>>;
 
 function makeContactSchema(messages: Messages) {
   return z.object({
-    name: z.string().min(2, messages.contact.form.validation.name),
-    email: z.string().email(messages.contact.form.validation.email),
-    message: z.string().min(10, messages.contact.form.validation.message),
-  })
+    name: z.string().min(2, messages.pages.contact.form.validation.name),
+    email: z.string().email(messages.pages.contact.form.validation.email),
+    message: z.string().min(10, messages.pages.contact.form.validation.message),
+  });
 }
 
 function InfoRow({
   icon: Icon,
   text,
 }: {
-  icon: React.ComponentType<{ className?: string }>
-  text: string
+  icon: React.ComponentType<{ className?: string }>;
+  text: string;
 }) {
   return (
     <div className="flex items-center gap-2 text-sm text-muted-foreground">
       <Icon className="size-4 text-primary/70" aria-hidden="true" />
       <span>{text}</span>
     </div>
-  )
+  );
 }
 
 export function ContactContent() {
-  const { messages } = useI18n()
+  const { messages } = useI18n();
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: "",
-  })
-  const [errors, setErrors] = useState<FormErrors>({})
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const contactSchema = useMemo(() => makeContactSchema(messages), [messages])
+  const contactSchema = useMemo(() => makeContactSchema(messages), [messages]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    setErrors((prev) => ({ ...prev, [name]: undefined }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setErrors({})
+    e.preventDefault();
+    setIsLoading(true);
+    setErrors({});
 
     try {
-      const validated = contactSchema.parse(formData)
+      const validated = contactSchema.parse(formData);
 
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(validated),
-      })
+      });
 
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
         throw new Error(
-          data?.message || messages.contact.form.error.general
-        )
+          data?.message || messages.pages.contact.form.error.general
+        );
       }
 
-      setFormData({ name: "", email: "", message: "" })
-      toast.success(messages.contact.form.success)
+      setFormData({ name: "", email: "", message: "" });
+      toast.success(messages.pages.contact.form.success);
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const fieldErrors: FormErrors = {}
+        const fieldErrors: FormErrors = {};
         for (const issue of err.errors) {
-          const field = issue.path[0] as keyof ContactFormData
+          const field = issue.path[0] as keyof ContactFormData;
           if (!fieldErrors[field]) {
-            fieldErrors[field] = issue.message
+            fieldErrors[field] = issue.message;
           }
-          toast.error(issue.message)
+          toast.error(issue.message);
         }
-        setErrors(fieldErrors)
+        setErrors(fieldErrors);
       } else {
-        toast.error(messages.contact.form.error.general)
+        toast.error(messages.pages.contact.form.error.general);
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pt-0 lg:pl-64">
+      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
         <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
+          {/* Page heading */}
           <header className="max-w-3xl space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {messages.contact.title}
+              {messages.pages.contact.title}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.contact.subtitle}
+              {messages.pages.contact.subtitle}
             </p>
           </header>
 
           <Separator className="my-6 bg-border/40" />
 
+          {/* Call / meeting card */}
           <Card className="border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <CardTitle className="text-lg font-semibold text-foreground">
-                    {messages.contact.call.title}
+                    {messages.pages.contact.call.title}
                   </CardTitle>
 
                   <CardDescription className="text-sm text-muted-foreground">
-                    {messages.contact.call.subtitle}
+                    {messages.pages.contact.call.subtitle}
                   </CardDescription>
 
                   <div className="mt-4 flex flex-wrap gap-4">
                     <InfoRow
                       icon={Video}
-                      text={messages.contact.call.platform}
+                      text={messages.pages.contact.call.platform}
                     />
                     <InfoRow
                       icon={Calendar}
-                      text={messages.contact.call.duration}
+                      text={messages.pages.contact.call.duration}
                     />
                   </div>
                 </div>
@@ -163,20 +165,21 @@ export function ContactContent() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {messages.contact.call.button}
+                    {messages.pages.contact.call.button}
                   </a>
                 </Button>
               </div>
             </CardHeader>
           </Card>
 
+          {/* Message form card */}
           <Card className="mt-8 border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-foreground">
-                {messages.contact.title}
+                {messages.pages.contact.form.title}
               </CardTitle>
               <CardDescription className="text-sm text-muted-foreground">
-                {messages.contact.subtitle}
+                {messages.pages.contact.subtitle}
               </CardDescription>
             </CardHeader>
 
@@ -188,53 +191,52 @@ export function ContactContent() {
                 noValidate
               >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {/* Name */}
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
                       className="text-sm font-medium text-foreground/90"
                     >
-                      {messages.contact.form.name.label}
+                      {messages.pages.contact.form.name.label}
                     </Label>
 
                     <Input
                       id="name"
                       name="name"
-                      placeholder={messages.contact.form.name.placeholder}
+                      placeholder={messages.pages.contact.form.name.placeholder}
                       autoComplete="name"
                       required
                       value={formData.name}
                       onChange={handleChange}
                       disabled={isLoading}
                       aria-invalid={!!errors.name || undefined}
-                      aria-describedby={
-                        errors.name ? "name-error" : undefined
-                      }
+                      aria-describedby={errors.name ? "name-error" : undefined}
                       className="rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
                     />
 
                     {errors.name ? (
-                      <p
-                        id="name-error"
-                        className="text-xs text-destructive"
-                      >
+                      <p id="name-error" className="text-xs text-destructive">
                         {errors.name}
                       </p>
                     ) : null}
                   </div>
 
+                  {/* Email */}
                   <div className="space-y-2">
                     <Label
                       htmlFor="email"
                       className="text-sm font-medium text-foreground/90"
                     >
-                      {messages.contact.form.email.label}
+                      {messages.pages.contact.form.email.label}
                     </Label>
 
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      placeholder={messages.contact.form.email.placeholder}
+                      placeholder={
+                        messages.pages.contact.form.email.placeholder
+                      }
                       autoComplete="email"
                       required
                       value={formData.email}
@@ -248,28 +250,28 @@ export function ContactContent() {
                     />
 
                     {errors.email ? (
-                      <p
-                        id="email-error"
-                        className="text-xs text-destructive"
-                      >
+                      <p id="email-error" className="text-xs text-destructive">
                         {errors.email}
                       </p>
                     ) : null}
                   </div>
                 </div>
 
+                {/* Message */}
                 <div className="space-y-2">
                   <Label
                     htmlFor="message"
                     className="text-sm font-medium text-foreground/90"
                   >
-                    {messages.contact.form.message.label}
+                    {messages.pages.contact.form.message.label}
                   </Label>
 
                   <Textarea
                     id="message"
                     name="message"
-                    placeholder={messages.contact.form.message.placeholder}
+                    placeholder={
+                      messages.pages.contact.form.message.placeholder
+                    }
                     rows={6}
                     required
                     value={formData.message}
@@ -283,15 +285,13 @@ export function ContactContent() {
                   />
 
                   {errors.message ? (
-                    <p
-                      id="message-error"
-                      className="text-xs text-destructive"
-                    >
+                    <p id="message-error" className="text-xs text-destructive">
                       {errors.message}
                     </p>
                   ) : null}
                 </div>
 
+                {/* Submit */}
                 <div className="flex items-center">
                   <Button
                     type="submit"
@@ -300,8 +300,8 @@ export function ContactContent() {
                     className="ml-auto rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
                   >
                     {isLoading
-                      ? messages.contact.form.sending
-                      : messages.contact.form.send}
+                      ? messages.pages.contact.form.sending
+                      : messages.pages.contact.form.send}
                   </Button>
                 </div>
               </form>
@@ -310,5 +310,5 @@ export function ContactContent() {
         </section>
       </main>
     </PageTransition>
-  )
+  );
 }

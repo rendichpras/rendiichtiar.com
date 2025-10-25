@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { memo, type CSSProperties } from "react"
-import Image from "next/image"
-import { PageTransition } from "@/components/animations/page-transition"
-import { useI18n } from "@/lib/i18n"
+import { memo, type CSSProperties } from "react";
+import Image from "next/image";
+import { PageTransition } from "@/components/animations/page-transition";
+import { useI18n } from "@/lib/i18n";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
-import { MapPin, MonitorUp, MessageCircle } from "lucide-react"
+import { MapPin, MonitorUp, MessageCircle } from "lucide-react";
 import {
   SiTypescript,
   SiNodedotjs,
@@ -29,14 +29,14 @@ import {
   SiNginx,
   SiDocker,
   SiMongodb,
-} from "react-icons/si"
-import { VscCode } from "react-icons/vsc"
-import type { IconType } from "react-icons"
+} from "react-icons/si";
+import { VscCode } from "react-icons/vsc";
+import type { IconType } from "react-icons";
 
 interface TechItem {
-  name: string
-  icon: IconType
-  colorClass: string
+  name: string;
+  icon: IconType;
+  colorClass: string;
 }
 
 const TECH_STACK: readonly TechItem[] = [
@@ -52,14 +52,14 @@ const TECH_STACK: readonly TechItem[] = [
   { name: "Docker", icon: SiDocker, colorClass: "text-primary/90" },
   { name: "MongoDB", icon: SiMongodb, colorClass: "text-[#47A248]/90" },
   { name: "VS Code", icon: VscCode, colorClass: "text-primary/90" },
-] as const
+] as const;
 
 interface LocalMarqueeProps {
-  children: React.ReactNode
-  durationSeconds?: number
-  reverse?: boolean
-  pauseOnHover?: boolean
-  className?: string
+  children: React.ReactNode;
+  durationSeconds?: number;
+  reverse?: boolean;
+  pauseOnHover?: boolean;
+  className?: string;
 }
 
 function LocalMarquee({
@@ -69,8 +69,8 @@ function LocalMarquee({
   pauseOnHover,
   className = "",
 }: LocalMarqueeProps) {
-  type MarqueeStyle = CSSProperties & { ["--marquee-duration"]?: string }
-  const style: MarqueeStyle = { ["--marquee-duration"]: `${durationSeconds}s` }
+  type MarqueeStyle = CSSProperties & { ["--marquee-duration"]?: string };
+  const style: MarqueeStyle = { ["--marquee-duration"]: `${durationSeconds}s` };
 
   return (
     <div
@@ -114,7 +114,7 @@ function LocalMarquee({
         }
       `}</style>
     </div>
-  )
+  );
 }
 
 const EdgeFades = memo(function EdgeFades() {
@@ -123,8 +123,8 @@ const EdgeFades = memo(function EdgeFades() {
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent" />
     </>
-  )
-})
+  );
+});
 
 const TechPill = memo(function TechPill({
   name,
@@ -136,18 +136,15 @@ const TechPill = memo(function TechPill({
       variant="outline"
       className="mx-1 flex items-center gap-2 rounded-full border-border/30 bg-background/50 px-4 py-1.5 text-foreground/90 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 hover:bg-background/80"
     >
-      <Icon
-        className={`h-5 w-5 ${colorClass}`}
-        aria-hidden="true"
-      />
+      <Icon className={`h-5 w-5 ${colorClass}`} aria-hidden="true" />
       <span className="text-base font-medium leading-none">{name}</span>
     </Badge>
-  )
-})
+  );
+});
 
 interface MarqueeRowProps {
-  reverse?: boolean
-  durationSeconds: number
+  reverse?: boolean;
+  durationSeconds: number;
 }
 
 const MarqueeRow = memo(function MarqueeRow({
@@ -156,7 +153,7 @@ const MarqueeRow = memo(function MarqueeRow({
 }: MarqueeRowProps) {
   const items = [...TECH_STACK, ...TECH_STACK].map((t, idx) => (
     <TechPill key={`${t.name}-${idx}`} {...t} />
-  ))
+  ));
 
   return (
     <div className="relative">
@@ -170,11 +167,11 @@ const MarqueeRow = memo(function MarqueeRow({
         {items}
       </LocalMarquee>
     </div>
-  )
-})
+  );
+});
 
 export default function HomeContent() {
-  const { messages } = useI18n()
+  const { messages } = useI18n();
 
   return (
     <PageTransition>
@@ -200,7 +197,7 @@ export default function HomeContent() {
                 <div className="flex-1 space-y-4">
                   <div className="space-y-2">
                     <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
-                      {messages.home.greeting}
+                      {messages.pages.home.greeting}
                     </h1>
 
                     <div className="flex flex-wrap gap-3 text-sm text-muted-foreground sm:gap-4 sm:text-base">
@@ -209,7 +206,7 @@ export default function HomeContent() {
                           className="h-4 w-4 text-primary/70"
                           aria-hidden="true"
                         />
-                        <span>{messages.home.location}</span>
+                        <span>{messages.pages.home.location}</span>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -217,13 +214,13 @@ export default function HomeContent() {
                           className="h-4 w-4 text-primary/70"
                           aria-hidden="true"
                         />
-                        <span>{messages.home.remote_worker}</span>
+                        <span>{messages.pages.home.remote_worker}</span>
                       </div>
                     </div>
                   </div>
 
                   <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {messages.home.bio}
+                    {messages.pages.home.bio}
                   </p>
                 </div>
               </div>
@@ -234,10 +231,10 @@ export default function HomeContent() {
               <div className="space-y-6 sm:space-y-8">
                 <div className="space-y-2">
                   <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                    {messages.home.tech_stack}
+                    {messages.pages.home.tech_stack}
                   </h2>
                   <p className="text-sm text-muted-foreground sm:text-base">
-                    {messages.home.tech_stack_desc}
+                    {messages.pages.home.tech_stack_desc}
                   </p>
                 </div>
 
@@ -254,11 +251,11 @@ export default function HomeContent() {
               <div className="space-y-8 sm:space-y-12">
                 <div className="space-y-4 sm:space-y-6">
                   <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                    {messages.home.work_title}
+                    {messages.pages.home.work_title}
                   </h2>
 
                   <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-                    {messages.home.work_desc}
+                    {messages.pages.home.work_desc}
                   </p>
                 </div>
 
@@ -270,25 +267,25 @@ export default function HomeContent() {
                         aria-hidden="true"
                       />
                       <CardTitle className="text-lg font-semibold text-foreground sm:text-xl">
-                        {messages.home.lets_work}
+                        {messages.pages.home.lets_work}
                       </CardTitle>
                     </div>
 
                     <CardDescription className="text-sm text-muted-foreground sm:text-base">
-                      {messages.home.work_cta}
+                      {messages.pages.home.work_cta}
                     </CardDescription>
                   </CardHeader>
 
-                    <CardFooter>
-                      <Button
-                        asChild
-                        className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
-                      >
-                        <a href="mailto:rendichpras@gmail.com">
-                          {messages.home.contact_me}
-                        </a>
-                      </Button>
-                    </CardFooter>
+                  <CardFooter>
+                    <Button
+                      asChild
+                      className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
+                    >
+                      <a href="mailto:rendichpras@gmail.com">
+                        {messages.pages.home.contact_me}
+                      </a>
+                    </Button>
+                  </CardFooter>
                 </Card>
               </div>
             </div>
@@ -296,5 +293,5 @@ export default function HomeContent() {
         </section>
       </main>
     </PageTransition>
-  )
+  );
 }

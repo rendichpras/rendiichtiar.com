@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Card,
@@ -6,21 +6,18 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 function MessageSkeleton() {
   return (
     <div className="group">
       <div className="flex gap-4">
-        {/* avatar */}
         <Skeleton className="h-8 w-8 shrink-0 rounded-full border border-border/30 sm:h-9 sm:w-9" />
 
-        {/* main body */}
         <div className="flex-1 space-y-2">
-          {/* name / provider / badge / time */}
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 w-24 rounded-md" />
@@ -30,35 +27,28 @@ function MessageSkeleton() {
             <Skeleton className="h-3 w-24 rounded-md" />
           </div>
 
-          {/* message */}
           <Skeleton className="h-16 w-full rounded-md" />
 
-          {/* actions row */}
           <div className="mt-2 flex flex-wrap items-center gap-4">
             <Skeleton className="h-4 w-12 rounded-md" />
             <Skeleton className="h-4 w-12 rounded-md" />
             <Skeleton className="h-4 w-16 rounded-md" />
           </div>
 
-          {/* replies skeleton */}
           <div className="mt-4 space-y-4 pl-4 sm:pl-8">
             {Array.from({ length: 2 }).map((_, i) => (
               <div key={i}>
                 <div className="flex items-start gap-2 sm:gap-3">
-                  {/* reply avatar */}
                   <Skeleton className="h-5 w-5 shrink-0 rounded-full border border-border/30 sm:h-6 sm:w-6" />
 
                   <div className="min-w-0 flex-1">
-                    {/* reply header */}
                     <div className="flex flex-wrap items-center gap-2">
                       <Skeleton className="h-3 w-20 rounded-md sm:h-4" />
                       <Skeleton className="h-3 w-16 rounded-md" />
                     </div>
 
-                    {/* reply text */}
                     <Skeleton className="mt-1 h-12 w-full rounded-md" />
 
-                    {/* reply actions */}
                     <div className="mt-2 flex flex-wrap items-center gap-4">
                       <Skeleton className="h-3 w-12 rounded-md sm:h-4" />
                       <Skeleton className="h-3 w-12 rounded-md sm:h-4" />
@@ -73,7 +63,7 @@ function MessageSkeleton() {
 
       <Separator className="mt-6 bg-border/40" />
     </div>
-  )
+  );
 }
 
 export function GuestbookSkeleton() {
@@ -100,5 +90,5 @@ export function GuestbookSkeleton() {
         </CardContent>
       </ScrollArea>
     </Card>
-  )
+  );
 }

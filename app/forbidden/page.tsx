@@ -3,14 +3,14 @@ import { Metadata } from "next"
 import messages from "@/messages/id"
 
 export const metadata: Metadata = {
-  title: messages.error.forbidden.title,
-  description: messages.error.forbidden.message,
+  title: messages.common.error.forbidden.title,
+  description: messages.common.error.forbidden.message,
   alternates: {
-    canonical: "https://rendiichtiar.com/forbidden"
+    canonical: "https://rendiichtiar.com/forbidden",
   },
   openGraph: {
-    title: messages.error.forbidden.title,
-    description: messages.error.forbidden.message,
+    title: messages.common.error.forbidden.title,
+    description: messages.common.error.forbidden.message,
     url: "https://rendiichtiar.com/forbidden",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: messages.error.forbidden.title,
-    description: messages.error.forbidden.message,
+    title: messages.common.error.forbidden.title,
+    description: messages.common.error.forbidden.message,
     card: "summary_large_image",
     creator: "@rendiichtiar",
     site: "@rendiichtiar",
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
       follow: false,
       "max-snippet": -1,
       "max-image-preview": "large",
-      "max-video-preview": -1
+      "max-video-preview": -1,
     },
   },
   verification: {
-    google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y", 
-  }
-} 
+    google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
+  },
+}
 
 export default function ForbiddenPage() {
   return <ForbiddenContent />
-} 
+}

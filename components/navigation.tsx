@@ -21,6 +21,7 @@ import {
   BadgeCheck,
   MessageSquareText,
 } from "lucide-react"
+
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useI18n, type Messages } from "@/lib/i18n"
@@ -38,15 +39,23 @@ type IconComp = React.ComponentType<{ className?: string }>
 type NavItem = { path: string; nameKey: string; icon: IconComp }
 
 const MAIN_NAV: readonly NavItem[] = [
-  { path: "/", nameKey: "navigation.home", icon: Home },
-  { path: "/about", nameKey: "navigation.about", icon: User },
-  { path: "/guestbook", nameKey: "navigation.guestbook", icon: MessageSquareText },
-  { path: "/contact", nameKey: "navigation.contact", icon: Mail },
-  { path: "/blog", nameKey: "navigation.blog", icon: BookOpen },
+  { path: "/", nameKey: "common.navigation.home", icon: Home },
+  { path: "/about", nameKey: "common.navigation.about", icon: User },
+  {
+    path: "/guestbook",
+    nameKey: "common.navigation.guestbook",
+    icon: MessageSquareText,
+  },
+  { path: "/contact", nameKey: "common.navigation.contact", icon: Mail },
+  { path: "/blog", nameKey: "common.navigation.blog", icon: BookOpen },
 ] as const
 
 const APP_NAV: readonly NavItem[] = [
-  { path: "/playground", nameKey: "navigation.playground", icon: Code },
+  {
+    path: "/playground",
+    nameKey: "common.navigation.playground",
+    icon: Code,
+  },
 ] as const
 
 type SocialItem = { name: string; href: string }
@@ -61,12 +70,23 @@ const SOCIAL_NAV: readonly SocialItem[] = [
 const BASE_DELAY = 0.1
 
 function t(messages: Messages, key: string) {
-  const [s, k] = key.split(".")
-  // @ts-expect-error index access
-  return messages?.[s]?.[k] ?? key
+  const parts = key.split(".")
+  let cur: any = messages
+  for (const p of parts) {
+    if (cur && typeof cur === "object" && p in cur) {
+      cur = cur[p]
+    } else {
+      return key
+    }
+  }
+  return typeof cur === "string" ? cur : key
 }
 
-const VerifiedBadge = memo(function VerifiedBadge() {
+const VerifiedBadge = memo(function VerifiedBadge({
+  label,
+}: {
+  label: string
+}) {
   return (
     <TooltipProvider>
       <Tooltip>
@@ -74,18 +94,26 @@ const VerifiedBadge = memo(function VerifiedBadge() {
           <div
             className="flex cursor-pointer items-center text-primary"
             role="button"
-            aria-label="Badge Terverifikasi"
+            aria-label={label}
           >
             <BadgeCheck className="size-4 text-primary" aria-hidden="true" />
           </div>
         </TooltipTrigger>
-        <TooltipContent>Terverifikasi</TooltipContent>
+        <TooltipContent>{label}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   )
 })
 
-const Logo = memo(function Logo({ className }: { className?: string }) {
+const Logo = memo(function Logo({
+  className,
+  homeLabel,
+  verifiedLabel,
+}: {
+  className?: string
+  homeLabel: string
+  verifiedLabel: string
+}) {
   return (
     <Link
       href="/"
@@ -93,10 +121,10 @@ const Logo = memo(function Logo({ className }: { className?: string }) {
         "group inline-flex items-center gap-1.5 font-medium hover:text-primary",
         className
       )}
-      aria-label="Ke Beranda"
+      aria-label={homeLabel}
     >
       <span>rendiichtiar</span>
-      <VerifiedBadge />
+      <VerifiedBadge label={verifiedLabel} />
     </Link>
   )
 })
@@ -105,14 +133,16 @@ const MobileNavItem = memo(function MobileNavItem({
   item,
   pathname,
   onNavigate,
+  label,
 }: {
   item: NavItem
   pathname: string
   onNavigate: (path: string) => void
+  label: string
 }) {
-  const { messages } = useI18n()
   const active = pathname === item.path
   const Icon = item.icon
+
   return (
     <button
       onClick={() => onNavigate(item.path)}
@@ -126,7 +156,7 @@ const MobileNavItem = memo(function MobileNavItem({
       role="menuitem"
     >
       <Icon className="size-5" aria-hidden="true" />
-      <span className="font-medium">{t(messages, item.nameKey)}</span>
+      <span className="font-medium">{label}</span>
     </button>
   )
 })
@@ -152,14 +182,18 @@ const MobileExternalItem = memo(function MobileExternalItem({
 const MobileNavContent = memo(function MobileNavContent({
   pathname,
   onNavigate,
+  messages,
 }: {
   pathname: string
   onNavigate: (path: string) => void
+  messages: Messages
 }) {
   const year = new Date().getFullYear()
-  const { messages } = useI18n()
-  const socialsLabel =
-    (messages as any)?.navigation?.socials ?? "Media Sosial"
+
+  const appsLabel = messages.common.navigation.apps
+  const socialsLabel = messages.common.navigation.socials
+  const verifiedLabel = messages.pages.home.verified
+  const homeAria = messages.pages.home.to_home
 
   return (
     <div className="flex h-full flex-col">
@@ -167,18 +201,19 @@ const MobileNavContent = memo(function MobileNavContent({
         <button
           onClick={() => onNavigate("/")}
           className="group inline-flex items-center gap-2 hover:text-primary"
+          aria-label={homeAria}
         >
           <span className="text-xl font-semibold tracking-tight">
             rendiichtiar
           </span>
-          <VerifiedBadge />
+          <VerifiedBadge label={verifiedLabel} />
         </button>
       </div>
 
       <nav
         className="flex-1 space-y-2 p-3"
         role="menu"
-        aria-label="Menu Utama (Mobile)"
+        aria-label={messages.common.navigation.main_menu}
       >
         {MAIN_NAV.map((it) => (
           <MobileNavItem
@@ -186,24 +221,28 @@ const MobileNavContent = memo(function MobileNavContent({
             item={it}
             pathname={pathname}
             onNavigate={onNavigate}
+            label={t(messages, it.nameKey)}
           />
         ))}
 
         <div className="px-4 pt-2 text-xs font-medium text-muted-foreground">
-          {(messages as any)?.navigation?.apps ?? "Apps"}
+          {appsLabel}
         </div>
+
         {APP_NAV.map((it) => (
           <MobileNavItem
             key={it.path}
             item={it}
             pathname={pathname}
             onNavigate={onNavigate}
+            label={t(messages, it.nameKey)}
           />
         ))}
 
         <div className="px-4 pt-2 text-xs font-medium text-muted-foreground">
           {socialsLabel}
         </div>
+
         {SOCIAL_NAV.map((s) => (
           <MobileExternalItem key={s.name} {...s} />
         ))}
@@ -241,8 +280,9 @@ export function MobileNav() {
 
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) =>
-      e.key === "Escape" && setOpen(false)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false)
+    }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [open])
@@ -256,8 +296,8 @@ export function MobileNav() {
         onClick={() => setOpen((v) => !v)}
         aria-label={
           open
-            ? messages.navigation.close_menu
-            : messages.navigation.open_menu
+            ? messages.common.navigation.close_menu
+            : messages.common.navigation.open_menu
         }
         aria-expanded={open}
         aria-controls="mobile-menu"
@@ -293,7 +333,7 @@ export function MobileNav() {
               className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
               role="dialog"
               aria-modal="true"
-              aria-label="Menu Navigasi"
+              aria-label={messages.common.navigation.nav_menu}
               id="mobile-menu"
             >
               <div className="flex h-full flex-col">
@@ -301,12 +341,12 @@ export function MobileNav() {
                   <button
                     onClick={() => navigate("/")}
                     className="group inline-flex items-center gap-2 hover:text-primary"
-                    aria-label="Ke Beranda"
+                    aria-label={messages.pages.home.to_home}
                   >
                     <span className="text-xl font-semibold tracking-tight">
                       rendiichtiar
                     </span>
-                    <VerifiedBadge />
+                    <VerifiedBadge label={messages.pages.home.verified} />
                   </button>
 
                   <Button
@@ -314,7 +354,7 @@ export function MobileNav() {
                     size="icon"
                     className="rounded-full"
                     onClick={() => setOpen(false)}
-                    aria-label="Tutup Menu"
+                    aria-label={messages.common.navigation.close_menu}
                   >
                     <X className="size-5" aria-hidden="true" />
                   </Button>
@@ -323,6 +363,7 @@ export function MobileNav() {
                 <nav
                   className="flex-1 space-y-4 overflow-y-auto p-4"
                   role="menu"
+                  aria-label={messages.common.navigation.main_menu}
                 >
                   <div className="space-y-1">
                     {MAIN_NAV.map((it) => (
@@ -331,34 +372,34 @@ export function MobileNav() {
                         item={it}
                         pathname={pathname}
                         onNavigate={navigate}
+                        label={t(messages, it.nameKey)}
                       />
                     ))}
                   </div>
 
                   <div className="space-y-1">
                     <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                      {(messages as any)?.navigation?.apps ?? "Apps"}
+                      {messages.common.navigation.apps}
                     </div>
+
                     {APP_NAV.map((it) => (
                       <MobileNavItem
                         key={it.path}
                         item={it}
                         pathname={pathname}
                         onNavigate={navigate}
+                        label={t(messages, it.nameKey)}
                       />
                     ))}
                   </div>
 
                   <div className="space-y-1">
                     <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                      {(messages as any)?.navigation?.socials ??
-                        "Media Sosial"}
+                      {messages.common.navigation.socials}
                     </div>
+
                     {SOCIAL_NAV.map((s) => (
-                      <MobileExternalItem
-                        key={s.name}
-                        {...s}
-                      />
+                      <MobileExternalItem key={s.name} {...s} />
                     ))}
                   </div>
                 </nav>
@@ -382,7 +423,9 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { messages } = useI18n()
 
-  useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 50))
+  useMotionValueEvent(scrollY, "change", (y) => {
+    setScrolled(y > 50)
+  })
 
   return (
     <>
@@ -397,20 +440,22 @@ export function Navbar() {
             scrolled ? "bg-background/90" : "bg-transparent"
           )}
           style={{
-            boxShadow: scrolled
-              ? "0 0 20px rgba(0,0,0,0.1)"
-              : "none",
+            boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
           }}
         />
         <div className="container relative mx-auto px-6">
           <nav
             className="flex h-16 items-center justify-between"
             role="navigation"
-            aria-label="Menu Utama"
+            aria-label={messages.common.navigation.main_menu}
           >
             <div className="flex items-center gap-2">
               <MobileNav />
-              <Logo className="text-lg" />
+              <Logo
+                className="text-lg"
+                homeLabel={messages.pages.home.to_home}
+                verifiedLabel={messages.pages.home.verified}
+              />
             </div>
           </nav>
         </div>
@@ -420,7 +465,7 @@ export function Navbar() {
       <motion.aside
         className="fixed left-0 top-0 bottom-0 z-50 hidden w-64 flex-col border-r border-border/30 lg:flex"
         role="complementary"
-        aria-label={messages.navigation.nav_menu}
+        aria-label={messages.common.navigation.nav_menu}
       >
         <motion.div
           className={cn(
@@ -428,20 +473,22 @@ export function Navbar() {
             scrolled ? "bg-background/90" : "bg-transparent"
           )}
           style={{
-            boxShadow: scrolled
-              ? "0 0 20px rgba(0,0,0,0.1)"
-              : "none",
+            boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
           }}
         />
         <div className="relative flex flex-1 flex-col p-6">
-          <Logo className="text-xl" />
+          <Logo
+            className="text-xl"
+            homeLabel={messages.pages.home.to_home}
+            verifiedLabel={messages.pages.home.verified}
+          />
 
           <Separator className="my-6 bg-border/30" />
 
           <nav
             className="flex-1 space-y-4"
             role="navigation"
-            aria-label={messages.navigation.main_menu}
+            aria-label={messages.common.navigation.main_menu}
           >
             <div className="space-y-1">
               {MAIN_NAV.map((it, i) => {
@@ -464,10 +511,7 @@ export function Navbar() {
                       )}
                       aria-current={active ? "page" : undefined}
                     >
-                      <Icon
-                        className="size-4"
-                        aria-hidden="true"
-                      />
+                      <Icon className="size-4" aria-hidden="true" />
                       <span>{t(messages, it.nameKey)}</span>
                     </Link>
                   </motion.div>
@@ -485,8 +529,7 @@ export function Navbar() {
                 className="px-3 py-2"
               >
                 <p className="text-xs font-medium text-muted-foreground">
-                  {(messages as any)?.navigation?.apps ??
-                    "Apps"}
+                  {messages.common.navigation.apps}
                 </p>
               </motion.div>
 
@@ -499,9 +542,7 @@ export function Navbar() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
-                      delay:
-                        (MAIN_NAV.length + i) *
-                        BASE_DELAY,
+                      delay: (MAIN_NAV.length + i) * BASE_DELAY,
                     }}
                   >
                     <Link
@@ -514,10 +555,7 @@ export function Navbar() {
                       )}
                       aria-current={active ? "page" : undefined}
                     >
-                      <Icon
-                        className="size-4"
-                        aria-hidden="true"
-                      />
+                      <Icon className="size-4" aria-hidden="true" />
                       <span>{t(messages, it.nameKey)}</span>
                     </Link>
                   </motion.div>
@@ -530,15 +568,12 @@ export function Navbar() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay:
-                    (MAIN_NAV.length + APP_NAV.length) *
-                    BASE_DELAY,
+                  delay: (MAIN_NAV.length + APP_NAV.length) * BASE_DELAY,
                 }}
                 className="px-3 py-2"
               >
                 <p className="text-xs font-medium text-muted-foreground">
-                  {(messages as any)?.navigation?.socials ??
-                    "Media Sosial"}
+                  {messages.common.navigation.socials}
                 </p>
               </motion.div>
 
@@ -549,9 +584,7 @@ export function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
                     delay:
-                      (MAIN_NAV.length +
-                        APP_NAV.length +
-                        i) *
+                      (MAIN_NAV.length + APP_NAV.length + i) *
                       BASE_DELAY,
                   }}
                 >

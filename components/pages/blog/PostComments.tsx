@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -33,8 +32,10 @@ function toDate(input: string | Date | null | undefined) {
 
 function getInitials(name: string | null | undefined) {
   if (!name) return "?";
-  const parts = name?.trim().split(" ") ?? [];
-  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0]!.slice(0, 2).toUpperCase();
+  }
   return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
 
@@ -67,19 +68,19 @@ export function PostComments({
                 id="comments-heading"
                 className="text-base font-semibold text-foreground sm:text-lg"
               >
-                {messages.postComments.heading}
+                {messages.components.postComments.heading}
               </h2>
 
               {isAuthed ? (
                 <p className="text-xs text-muted-foreground sm:text-sm">
-                  {messages.postComments.logged_in_as}{" "}
+                  {messages.components.postComments.logged_in_as}{" "}
                   <span className="font-medium text-foreground">
                     {displayName}
                   </span>
                 </p>
               ) : (
                 <p className="text-xs text-muted-foreground sm:text-sm">
-                  {messages.postComments.must_login}
+                  {messages.components.postComments.must_login}
                 </p>
               )}
             </div>
@@ -95,7 +96,7 @@ export function PostComments({
             >
               <div className="space-y-2">
                 <Label htmlFor="message" className="sr-only">
-                  {messages.postComments.placeholder}
+                  {messages.components.postComments.placeholder}
                 </Label>
 
                 <Textarea
@@ -103,7 +104,7 @@ export function PostComments({
                   name="message"
                   required
                   maxLength={280}
-                  placeholder={messages.postComments.placeholder}
+                  placeholder={messages.components.postComments.placeholder}
                   className={cn(
                     "min-h-[90px] resize-none rounded-xl border-border/30 bg-background",
                     "text-sm text-foreground placeholder:text-muted-foreground"
@@ -116,7 +117,7 @@ export function PostComments({
                 variant="outline"
                 className="rounded-xl border-border/30 text-xs font-medium hover:border-border/50 sm:text-sm"
               >
-                {messages.postComments.send}
+                {messages.components.postComments.send}
               </Button>
             </form>
           ) : (
@@ -126,13 +127,13 @@ export function PostComments({
                 variant="outline"
                 className="w-fit rounded-xl border-border/30 text-xs font-medium hover:border-border/50 sm:text-sm"
                 onClick={() => setShowLoginDialog(true)}
-                aria-label={messages.postComments.login_btn}
+                aria-label={messages.components.postComments.login_btn}
               >
-                {messages.postComments.login_btn}
+                {messages.components.postComments.login_btn}
               </Button>
 
               <p className="text-[11px] text-muted-foreground sm:text-xs">
-                {messages.postComments.login_safe}
+                {messages.components.postComments.login_safe}
               </p>
             </div>
           )}
@@ -158,7 +159,7 @@ export function PostComments({
                     )}
                   >
                     <Avatar className="mt-1 size-8 shrink-0 border border-border/30">
-                      <AvatarImage src={""} alt={name} />
+                      <AvatarImage src="" alt={name} />
                       <AvatarFallback className="text-[10px] font-medium">
                         {getInitials(name)}
                       </AvatarFallback>

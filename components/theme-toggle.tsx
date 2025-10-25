@@ -1,40 +1,40 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
+import * as React from "react"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { motion } from "framer-motion"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"
 
-import { cn } from "@/lib/utils";
-import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 
 interface ThemeToggleProps {
-  className?: string;
-  variant?: "default" | "compact";
+  className?: string
+  variant?: "default" | "compact"
 }
 
 export function ThemeToggle({
   className,
   variant = "default",
 }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-  const { messages } = useI18n();
-  const isCompact = variant === "compact";
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+  const { messages } = useI18n()
+
+  const isCompact = variant === "compact"
+  const isDark = theme === "dark"
 
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isDark = theme === "dark";
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
     return (
@@ -46,11 +46,11 @@ export function ThemeToggle({
           isCompact ? "size-8" : "size-9",
           className
         )}
-        aria-label={messages.theme.toggle}
+        aria-label={messages.common.theme.toggle}
       >
         <Sun className="size-4 text-primary" aria-hidden="true" />
       </Button>
-    );
+    )
   }
 
   return (
@@ -66,10 +66,9 @@ export function ThemeToggle({
               isCompact ? "size-8" : "size-9",
               className
             )}
-            aria-label={messages.theme.toggle}
+            aria-label={messages.common.theme.toggle}
             aria-pressed={isDark}
           >
-            {/* icon sun */}
             <motion.div
               initial={false}
               animate={{
@@ -83,7 +82,6 @@ export function ThemeToggle({
               <Sun className="size-4 text-primary" aria-hidden="true" />
             </motion.div>
 
-            {/* icon moon */}
             <motion.div
               initial={false}
               animate={{
@@ -102,11 +100,11 @@ export function ThemeToggle({
         <TooltipContent side="top">
           <p className="text-xs">
             {isDark
-              ? messages.theme.current_dark
-              : messages.theme.current_light}
+              ? messages.common.theme.current_dark
+              : messages.common.theme.current_light}
           </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

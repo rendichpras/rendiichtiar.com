@@ -16,16 +16,16 @@ export function SignInButton() {
         onClick={() => signIn("google", { callbackUrl: "/guestbook" })}
         variant="outline"
         className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
-        aria-label={messages.auth.login.google}
+        aria-label={messages.common.auth.login.google}
       >
         <SiGoogle className="h-4 w-4 text-foreground" aria-hidden="true" />
-        <span>{messages.auth.login.google}</span>
+        <span>{messages.common.auth.login.google}</span>
       </Button>
 
       <div className="relative flex items-center">
         <Separator className="bg-border/60" />
         <span className="absolute left-1/2 -translate-x-1/2 bg-background px-2 text-[10px] uppercase text-muted-foreground">
-          atau
+          {messages.common.auth.login.or}
         </span>
       </div>
 
@@ -34,10 +34,10 @@ export function SignInButton() {
         onClick={() => signIn("github", { callbackUrl: "/guestbook" })}
         variant="outline"
         className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
-        aria-label={messages.auth.login.github}
+        aria-label={messages.common.auth.login.github}
       >
         <SiGithub className="h-4 w-4 text-foreground" aria-hidden="true" />
-        <span>{messages.auth.login.github}</span>
+        <span>{messages.common.auth.login.github}</span>
       </Button>
     </div>
   )

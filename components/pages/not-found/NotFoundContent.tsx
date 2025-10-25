@@ -50,11 +50,11 @@ export function NotFoundContent() {
 
                 <div className="space-y-4 text-center">
                   <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-                    {messages.error.not_found.heading}
+                    {messages.common.error.not_found.heading}
                   </h2>
 
                   <p className="mx-auto max-w-sm text-sm text-muted-foreground sm:text-base">
-                    {messages.error.not_found.message}
+                    {messages.common.error.not_found.message}
                   </p>
 
                   <Button
@@ -62,7 +62,7 @@ export function NotFoundContent() {
                     onClick={() => router.push("/")}
                     className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                   >
-                    {messages.error.not_found.back_home}
+                    {messages.common.error.not_found.back_home}
                   </Button>
                 </div>
               </motion.div>

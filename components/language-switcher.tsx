@@ -1,33 +1,38 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip"
-import { useI18n } from "@/lib/i18n"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/tooltip";
+import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 interface LanguageSwitcherProps {
-  variant?: "default" | "compact"
-  className?: string
+  variant?: "default" | "compact";
+  className?: string;
 }
 
 export function LanguageSwitcher({
   variant = "default",
   className,
 }: LanguageSwitcherProps) {
-  const { language, setLanguage } = useI18n()
-  const isCompact = variant === "compact"
-  const nextLang = language === "id" ? "en" : "id"
+  const { language, setLanguage, messages } = useI18n();
+  const isCompact = variant === "compact";
+  const nextLang = language === "id" ? "en" : "id";
 
-  const label =
+  const ariaLabel =
     language === "id"
-      ? "Switch to English"
-      : "Ganti ke Bahasa Indonesia"
+      ? messages.common.language_switcher.aria_to_en
+      : messages.common.language_switcher.aria_to_id;
+
+  const tooltipText =
+    language === "id"
+      ? messages.common.language_switcher.tooltip_id
+      : messages.common.language_switcher.tooltip_en;
 
   return (
     <TooltipProvider>
@@ -42,10 +47,9 @@ export function LanguageSwitcher({
               isCompact ? "size-8" : "h-9 min-w-[2.25rem] px-3",
               className
             )}
-            aria-label={label}
+            aria-label={ariaLabel}
             aria-pressed={language === "en"}
           >
-            {/* ID state */}
             <motion.div
               className="absolute inset-0 flex items-center justify-center"
               initial={false}
@@ -59,7 +63,7 @@ export function LanguageSwitcher({
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
                   <img
                     src="https://flagcdn.com/id.svg"
-                    alt="Bahasa Indonesia"
+                    alt={messages.common.language_switcher.flag_id_alt}
                     className="h-full w-full object-cover"
                   />
                 </span>
@@ -70,8 +74,6 @@ export function LanguageSwitcher({
                 )}
               </div>
             </motion.div>
-
-            {/* EN state */}
             <motion.div
               className="absolute inset-0 flex items-center justify-center"
               initial={false}
@@ -85,7 +87,7 @@ export function LanguageSwitcher({
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
                   <img
                     src="https://flagcdn.com/gb.svg"
-                    alt="English"
+                    alt={messages.common.language_switcher.flag_en_alt}
                     className="h-full w-full object-cover"
                   />
                 </span>
@@ -100,11 +102,9 @@ export function LanguageSwitcher({
         </TooltipTrigger>
 
         <TooltipContent side="top">
-          <p className="text-xs font-medium text-foreground">
-            {language === "id" ? "Bahasa Indonesia" : "English"}
-          </p>
+          <p className="text-xs font-medium text-foreground">{tooltipText}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

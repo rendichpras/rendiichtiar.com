@@ -98,7 +98,9 @@ function orderReplies(list: Reply[], rootId: string): Reply[] {
   return out;
 }
 
-export function ProviderIcon({ provider }: { provider: string }) {
+function ProviderIcon({ provider }: { provider: string }) {
+  const { messages } = useI18n();
+
   if (provider === "google") {
     return (
       <TooltipProvider>
@@ -111,7 +113,7 @@ export function ProviderIcon({ provider }: { provider: string }) {
               <SiGoogle className="h-4 w-4" />
             </span>
           </TooltipTrigger>
-          <TooltipContent>Login dengan Google</TooltipContent>
+          <TooltipContent>{messages.common.auth.login.google}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
@@ -129,7 +131,7 @@ export function ProviderIcon({ provider }: { provider: string }) {
               <SiGithub className="h-4 w-4" />
             </span>
           </TooltipTrigger>
-          <TooltipContent>Login dengan GitHub</TooltipContent>
+          <TooltipContent>{messages.common.auth.login.github}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
@@ -218,11 +220,11 @@ export function GuestbookList({
         const ev = JSON.parse(evt.data) as
           | { type: "guestbook:new"; entry: RawEntry }
           | {
-              type: "guestbook:like";
-              id: string;
-              userEmail: string;
-              action: "like" | "unlike";
-            }
+            type: "guestbook:like";
+            id: string;
+            userEmail: string;
+            action: "like" | "unlike";
+          }
           | { type: "guestbook:reply"; parentId: string; reply: RawReply };
 
         setEntries((prev) => {
@@ -334,7 +336,7 @@ export function GuestbookList({
     return (
       <div className="flex h-full items-center justify-center py-8 text-center">
         <p className="text-sm text-muted-foreground">
-          {messages.guestbook.list.empty}
+          {messages.pages.guestbook.list.empty}
         </p>
       </div>
     );
@@ -345,10 +347,10 @@ export function GuestbookList({
       {showHeader && (
         <div className="mb-4 space-y-1">
           <p className="text-sm font-semibold text-foreground">
-            {messages.guestbook.list.title}
+            {messages.pages.guestbook.list.title}
           </p>
           <p className="text-xs text-muted-foreground">
-            {messages.guestbook.list.subtitle}
+            {messages.pages.guestbook.list.subtitle}
           </p>
         </div>
       )}
@@ -385,7 +387,7 @@ export function GuestbookList({
                           <TooltipTrigger asChild>
                             <span
                               className="flex items-center text-primary"
-                              aria-label={messages.guestbook.list.owner}
+                              aria-label={messages.pages.guestbook.list.owner}
                             >
                               <BadgeCheck
                                 className="h-4 w-4"
@@ -394,7 +396,7 @@ export function GuestbookList({
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            {messages.guestbook.list.owner}
+                            {messages.pages.guestbook.list.owner}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -421,15 +423,14 @@ export function GuestbookList({
                       handleReplyClick(entry.id, entry.user.name || "")
                     }
                     className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${messages.guestbook.list.reply.button} ${
-                      entry.user.name || ""
-                    }`}
+                    aria-label={`${messages.pages.guestbook.list.reply.button
+                      } ${entry.user.name || ""}`}
                   >
                     <ReplyIcon
                       className="h-4 w-4 sm:h-5 sm:w-5"
                       aria-hidden="true"
                     />
-                    <span>{messages.guestbook.list.reply.button}</span>
+                    <span>{messages.pages.guestbook.list.reply.button}</span>
                   </Button>
 
                   <LikeButton
@@ -453,7 +454,9 @@ export function GuestbookList({
                             className="h-4 w-4 sm:h-5 sm:w-5"
                             aria-hidden="true"
                           />
-                          <span>{messages.guestbook.list.hide_replies}</span>
+                          <span>
+                            {messages.pages.guestbook.list.hide_replies}
+                          </span>
                         </span>
                       ) : (
                         <span className="flex items-center gap-1.5">
@@ -462,7 +465,7 @@ export function GuestbookList({
                             aria-hidden="true"
                           />
                           <span>
-                            {messages.guestbook.list.show_replies.replace(
+                            {messages.pages.guestbook.list.show_replies.replace(
                               "{count}",
                               String(entry.replies.length)
                             )}

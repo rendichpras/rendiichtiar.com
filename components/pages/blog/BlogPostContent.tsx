@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -33,6 +32,11 @@ type CommentVM = {
   rootId?: string | null;
 };
 
+function toDate(input: string | Date | null | undefined) {
+  if (!input) return null;
+  return input instanceof Date ? input : new Date(input);
+}
+
 export function BlogPostContent({
   post,
   comments,
@@ -44,16 +48,11 @@ export function BlogPostContent({
 }) {
   const { messages } = useI18n();
 
-  function toDate(input: string | Date | null | undefined) {
-    if (!input) return null;
-    return input instanceof Date ? input : new Date(input);
-  }
-
   const publishedDate = toDate(post.publishedAt);
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pt-0 lg:pl-64">
+      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
         <section className="py-8 sm:py-12 md:py-16">
           <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
             <article
@@ -71,7 +70,7 @@ export function BlogPostContent({
 
                   <div className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground sm:text-sm">
                     <span>
-                      {post.readingTime} {messages.metadata.blog.read_time}
+                      {post.readingTime} {messages.pages.blog.list.read_time}
                     </span>
 
                     {publishedDate ? (
@@ -94,7 +93,7 @@ export function BlogPostContent({
                       <>
                         <span aria-hidden="true">•</span>
                         <span className="whitespace-nowrap">
-                          {post.views} {messages.metadata.blog.views}
+                          {post.views} {messages.pages.blog.list.views}
                         </span>
                       </>
                     ) : null}
@@ -104,6 +103,7 @@ export function BlogPostContent({
 
               {post.coverUrl ? (
                 <figure className="mb-8 overflow-hidden rounded-2xl border border-border/30">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={post.coverUrl}
                     alt={post.title}

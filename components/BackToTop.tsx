@@ -10,9 +10,11 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 
 export function BackToTop() {
   const [visible, setVisible] = useState(false)
+  const { messages } = useI18n()
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -39,19 +41,25 @@ export function BackToTop() {
             variant="outline"
             size="icon"
             onClick={handleClick}
-            aria-label="Kembali ke atas"
+            aria-label={messages.common.back_to_top.aria_label}
             className={cn(
               "fixed bottom-8 right-8 z-50 translate-y-16 rounded-full border-border/30 bg-background/80 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-border/50 hover:bg-background/90",
               "opacity-0",
               visible && "translate-y-0 opacity-100"
             )}
           >
-            <ArrowUp className="h-5 w-5 text-foreground" aria-hidden="true" />
+            <ArrowUp
+              className="h-5 w-5 text-foreground"
+              aria-hidden="true"
+            />
           </Button>
         </TooltipTrigger>
 
-        <TooltipContent side="left" className="text-xs font-medium">
-          Ke atas
+        <TooltipContent
+          side="left"
+          className="text-xs font-medium"
+        >
+          {messages.common.back_to_top.tooltip}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

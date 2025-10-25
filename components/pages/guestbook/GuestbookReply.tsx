@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { formatDistanceToNow } from "date-fns"
-import { id as localeID } from "date-fns/locale"
-import { toast } from "sonner"
-import { CornerUpRight, Loader2, Heart } from "lucide-react"
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { formatDistanceToNow } from "date-fns";
+import { id as localeID } from "date-fns/locale";
+import { toast } from "sonner";
+import { CornerUpRight, Loader2, Heart } from "lucide-react";
 
-import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook"
-import { useI18n } from "@/lib/i18n"
-import { cn } from "@/lib/utils"
+import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook";
+import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { LoginDialog } from "@/components/auth/LoginDialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { LoginDialog } from "@/components/auth/LoginDialog";
 
 interface ReplyProps {
-  parentId: string
-  onReplyComplete: () => void
-  parentAuthor: string
-  isReplying: boolean
+  parentId: string;
+  onReplyComplete: () => void;
+  parentAuthor: string;
+  isReplying: boolean;
 }
 
 export function GuestbookReply({
@@ -30,45 +30,45 @@ export function GuestbookReply({
   parentAuthor,
   isReplying,
 }: ReplyProps) {
-  const { data: session } = useSession()
-  const [replyMessage, setReplyMessage] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { messages } = useI18n()
+  const { data: session } = useSession();
+  const [replyMessage, setReplyMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { messages } = useI18n();
 
-  if (!session || !isReplying) return null
+  if (!session || !isReplying) return null;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!replyMessage.trim()) {
-      toast.error(messages.guestbook.form.empty_error)
-      return
+      toast.error(messages.pages.guestbook.form.empty_error);
+      return;
     }
     if (!session.user?.email) {
-      toast.error(messages.guestbook.form.session_error)
-      return
+      toast.error(messages.pages.guestbook.form.session_error);
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      const messageWithMention = `@${parentAuthor} ${replyMessage}`
+      const messageWithMention = `@${parentAuthor} ${replyMessage}`;
       await addGuestbookEntry(
         messageWithMention,
         session.user.email,
         parentId,
         parentAuthor
-      )
+      );
 
-      setReplyMessage("")
-      onReplyComplete()
-      toast.success(messages.guestbook.list.reply.success)
+      setReplyMessage("");
+      onReplyComplete();
+      toast.success(messages.pages.guestbook.list.reply.success);
     } catch {
-      toast.error(messages.guestbook.list.reply.error)
+      toast.error(messages.pages.guestbook.list.reply.error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="mt-4 pl-4 sm:pl-8">
@@ -95,15 +95,14 @@ export function GuestbookReply({
           <div className="min-w-0 flex-1">
             <div className="space-y-2">
               <Label htmlFor={`reply-${parentId}`} className="sr-only">
-                {messages.guestbook?.list?.reply?.placeholder ??
-                  messages.guestbook.list.reply.placeholder}
+                {messages.pages.guestbook.list.reply.placeholder}
               </Label>
 
               <Textarea
                 id={`reply-${parentId}`}
                 value={replyMessage}
                 onChange={(e) => setReplyMessage(e.target.value)}
-                placeholder={messages.guestbook.list.reply.placeholder.replace(
+                placeholder={messages.pages.guestbook.list.reply.placeholder.replace(
                   "{name}",
                   parentAuthor
                 )}
@@ -124,7 +123,7 @@ export function GuestbookReply({
                 disabled={isSubmitting}
                 className="h-7 rounded-xl px-2 text-[10px] text-muted-foreground hover:bg-background/80 hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
               >
-                {messages.guestbook.list.reply.cancel}
+                {messages.pages.guestbook.list.reply.cancel}
               </Button>
 
               <Button
@@ -139,10 +138,10 @@ export function GuestbookReply({
                       className="h-3 w-3 animate-spin sm:h-4 sm:w-4"
                       aria-hidden="true"
                     />
-                    <span>{messages.guestbook.list.reply.sending}</span>
+                    <span>{messages.pages.guestbook.list.reply.sending}</span>
                   </span>
                 ) : (
-                  messages.guestbook.list.reply.send
+                  messages.pages.guestbook.list.reply.send
                 )}
               </Button>
             </div>
@@ -150,71 +149,65 @@ export function GuestbookReply({
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 interface LikeButtonProps {
-  guestbookId: string
+  guestbookId: string;
   likes: {
-    id: string
-    user: { name: string | null; email: string | null }
-  }[]
-  userEmail?: string | null
+    id: string;
+    user: { name: string | null; email: string | null };
+  }[];
+  userEmail?: string | null;
 }
 
-export function LikeButton({
-  guestbookId,
-  likes,
-  userEmail,
-}: LikeButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [localLikes, setLocalLikes] = useState(likes)
+export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [localLikes, setLocalLikes] = useState(likes);
   const [liked, setLiked] = useState(() =>
     localLikes.some((l) => l.user.email === userEmail)
-  )
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [showLoginDialog, setShowLoginDialog] = useState(false)
-  const { messages } = useI18n()
+  );
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const { messages } = useI18n();
 
   const handleLike = async () => {
     if (!userEmail) {
-      setShowLoginDialog(true)
-      return
+      setShowLoginDialog(true);
+      return;
     }
-    if (isLoading) return
+    if (isLoading) return;
 
-    setIsLoading(true)
-    setIsAnimating(true)
+    setIsLoading(true);
+    setIsAnimating(true);
 
-    const prev = { liked, localLikes }
+    const prev = { liked, localLikes };
 
     try {
       if (liked) {
-        setLiked(false)
-        setLocalLikes((ls) =>
-          ls.filter((l) => l.user.email !== userEmail)
-        )
+        setLiked(false);
+        setLocalLikes((ls) => ls.filter((l) => l.user.email !== userEmail));
       } else {
-        setLiked(true)
+        setLiked(true);
         setLocalLikes((ls) => [
           ...ls,
           {
             id: crypto.randomUUID(),
             user: { name: null, email: userEmail },
           },
-        ])
+        ]);
       }
 
-      await toggleLike(guestbookId, userEmail)
+      await toggleLike(guestbookId, userEmail);
     } catch {
-      setLiked(prev.liked)
-      setLocalLikes(prev.localLikes)
-      toast.error(messages.guestbook.list.like.error)
+      setLiked(prev.liked);
+      setLocalLikes(prev.localLikes);
+      toast.error(messages.pages.guestbook.list.like.error);
     } finally {
-      setIsLoading(false)
-      setTimeout(() => setIsAnimating(false), 200)
+      setIsLoading(false);
+      setTimeout(() => setIsAnimating(false), 200);
     }
-  }
+  };
 
   return (
     <>
@@ -252,33 +245,29 @@ export function LikeButton({
         onClose={() => setShowLoginDialog(false)}
       />
     </>
-  )
+  );
 }
 
 interface ReplyListProps {
   replies: {
-    id: string
-    message: string
-    createdAt: Date
-    user: { name: string | null; image: string | null }
-    mentionedUser?: { name: string | null } | null
+    id: string;
+    message: string;
+    createdAt: Date;
+    user: { name: string | null; image: string | null };
+    mentionedUser?: { name: string | null } | null;
     likes: {
-      id: string
-      user: { name: string | null; email: string | null }
-    }[]
-    parentId?: string | null
-    rootId?: string | null
-  }[]
-  onReplyClick: (
-    targetId: string,
-    authorName: string,
-    rootId: string
-  ) => void
-  rootId: string
-  rootAuthor: string
-  activeReplyId: string | null
-  activeReplyAuthor: string
-  onReplyComplete: () => void
+      id: string;
+      user: { name: string | null; email: string | null };
+    }[];
+    parentId?: string | null;
+    rootId?: string | null;
+  }[];
+  onReplyClick: (targetId: string, authorName: string, rootId: string) => void;
+  rootId: string;
+  rootAuthor: string;
+  activeReplyId: string | null;
+  activeReplyAuthor: string;
+  onReplyComplete: () => void;
 }
 
 export function GuestbookReplyList({
@@ -290,25 +279,23 @@ export function GuestbookReplyList({
   activeReplyAuthor,
   onReplyComplete,
 }: ReplyListProps) {
-  const { data: session } = useSession()
-  const { messages } = useI18n()
+  const { data: session } = useSession();
+  const { messages } = useI18n();
 
-  if (replies.length === 0) return null
+  if (replies.length === 0) return null;
 
   return (
     <div className="mt-4 space-y-4 pl-4 sm:pl-8">
       {replies.map((reply) => {
-        const isReplyToReply =
-          !!reply.parentId && reply.parentId !== rootId
-        const isActive = activeReplyId === reply.id
+        const isReplyToReply = !!reply.parentId && reply.parentId !== rootId;
+        const isActive = activeReplyId === reply.id;
 
         return (
           <div
             key={reply.id}
             className={cn(
               "space-y-1",
-              isReplyToReply &&
-                "border-l border-border/30 pl-6 sm:pl-10"
+              isReplyToReply && "border-l border-border/30 pl-6 sm:pl-10"
             )}
           >
             <div className="flex items-start gap-2 sm:gap-3">
@@ -345,9 +332,7 @@ export function GuestbookReplyList({
                       <span className="text-primary">
                         @{reply.mentionedUser.name}
                       </span>{" "}
-                      {reply.message.split(
-                        `@${reply.mentionedUser.name} `
-                      )[1]}
+                      {reply.message.split(`@${reply.mentionedUser.name} `)[1]}
                     </>
                   ) : (
                     reply.message
@@ -359,11 +344,7 @@ export function GuestbookReplyList({
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      onReplyClick(
-                        reply.id,
-                        reply.user.name || "",
-                        rootId
-                      )
+                      onReplyClick(reply.id, reply.user.name || "", rootId)
                     }
                     className="flex items-center gap-1 p-0 text-[10px] text-muted-foreground hover:text-primary sm:text-xs"
                   >
@@ -371,7 +352,7 @@ export function GuestbookReplyList({
                       className="h-3 w-3 sm:h-4 sm:w-4"
                       aria-hidden="true"
                     />
-                    {messages.guestbook.list.reply.button}
+                    {messages.pages.guestbook.list.reply.button}
                   </Button>
 
                   <LikeButton
@@ -385,9 +366,7 @@ export function GuestbookReplyList({
                   <GuestbookReply
                     parentId={reply.id}
                     parentAuthor={
-                      activeReplyAuthor ||
-                      reply.user.name ||
-                      rootAuthor
+                      activeReplyAuthor || reply.user.name || rootAuthor
                     }
                     onReplyComplete={onReplyComplete}
                     isReplying
@@ -396,8 +375,8 @@ export function GuestbookReplyList({
               </div>
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

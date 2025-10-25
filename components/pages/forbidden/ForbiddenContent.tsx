@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { PageTransition } from "@/components/animations/page-transition"
-import { useI18n } from "@/lib/i18n"
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { PageTransition } from "@/components/animations/page-transition";
+import { useI18n } from "@/lib/i18n";
 
 export function ForbiddenContent() {
-  const router = useRouter()
-  const { messages } = useI18n()
+  const router = useRouter();
+  const { messages } = useI18n();
 
   return (
     <PageTransition>
@@ -50,11 +50,11 @@ export function ForbiddenContent() {
 
                 <div className="space-y-4 text-center">
                   <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-                    {messages.error.forbidden.heading}
+                    {messages.common.error.forbidden.heading}
                   </h2>
 
                   <p className="mx-auto max-w-sm text-sm text-muted-foreground sm:text-base">
-                    {messages.error.forbidden.message}
+                    {messages.common.error.forbidden.message}
                   </p>
 
                   <Button
@@ -62,7 +62,7 @@ export function ForbiddenContent() {
                     onClick={() => router.push("/")}
                     className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                   >
-                    {messages.error.forbidden.back_home}
+                    {messages.common.error.forbidden.back_home}
                   </Button>
                 </div>
               </motion.div>
@@ -71,5 +71,5 @@ export function ForbiddenContent() {
         </section>
       </main>
     </PageTransition>
-  )
+  );
 }

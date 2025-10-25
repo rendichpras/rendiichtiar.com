@@ -1,188 +1,316 @@
 {
-  "navigation": {
-    "home": "Beranda",
-    "about": "Tentang",
-    "guestbook": "Buku Tamu",
-    "contact": "Kontak",
-    "blog": "Blog",
-    "playground": "JS Playground",
-    "apps": "Aplikasi",
-    "socials": "Media Sosial",
-    "close_menu": "Tutup Menu",
-    "open_menu": "Buka Menu",
-    "nav_menu": "Menu Navigasi",
-    "main_menu": "Menu Utama"
-  },
-  "postComments": {
-    "heading": "Komentar",
-    "logged_in_as": "Komentar sebagai",
-    "must_login": "Anda harus login untuk berkomentar",
-    "login_btn": "Login untuk berkomentar",
-    "login_safe": "Login aman via Google atau GitHub",
-    "placeholder": "Tulis komentar kamu…",
-    "send": "Kirim",
-    "logout": "Keluar"
-  },
-  "home": {
-    "greeting": "Hai, saya Rendi 👋",
-    "location": "Bekasi, Indonesia",
-    "remote_worker": "Remote Worker",
-    "bio": "Seorang Software Engineer yang berfokus pada pengembangan Frontend dengan pengalaman lebih dari 2 tahun. Saya memiliki keahlian dalam ekosistem JavaScript modern seperti React, Next.js, dan TypeScript untuk membangun aplikasi web yang responsif dan berkinerja tinggi. Dengan perhatian terhadap detail dan pemahaman mendalam tentang pengalaman pengguna, saya berkomitmen untuk menghadirkan solusi digital yang tidak hanya fungsional, tetapi juga intuitif dan menyenangkan untuk digunakan.",
-    "tech_stack": "Teknologi yang Saya Gunakan",
-    "tech_stack_desc": "Teknologi yang saya gunakan untuk membangun aplikasi modern dan scalable",
-    "work_title": "Yang Telah Saya Kerjakan",
-    "work_desc": "Saya membantu brand, perusahaan, institusi, dan startup dalam menciptakan pengalaman digital yang luar biasa untuk bisnis mereka melalui layanan pengembangan yang strategis.",
-    "lets_work": "Mari Bekerja Sama!",
-    "work_cta": "Saya terbuka untuk proyek freelance, silakan hubungi saya melalui email untuk melihat bagaimana kita bisa berkolaborasi.",
-    "contact_me": "Hubungi saya",
-    "verified": "Terverifikasi",
-    "to_home": "Ke Beranda"
-  },
-  "about": {
-    "title": "Tentang",
-    "subtitle": "Sekilas tentang siapa saya – karena setiap detail menambah kedalaman dalam kanvas kehidupan.",
-    "sections": {
-      "intro": "Intro",
-      "career": "Karir",
-      "education": "Pendidikan"
+  "common": {
+    "navigation": {
+      "home": "Beranda",
+      "about": "Tentang",
+      "guestbook": "Buku Tamu",
+      "contact": "Kontak",
+      "blog": "Blog",
+      "playground": "JS Playground",
+      "apps": "Aplikasi",
+      "socials": "Media Sosial",
+      "close_menu": "Tutup Menu",
+      "open_menu": "Buka Menu",
+      "nav_menu": "Menu Navigasi",
+      "main_menu": "Menu Utama"
     },
-    "intro": {
-      "headline": "Kenali saya lebih dekat!",
-      "greeting": "Halo! Terima kasih telah mengunjungi website personal saya.",
-      "bio1": "Saya seorang Software Engineer yang berfokus pada pengembangan Frontend dengan pengalaman lebih dari 2 tahun. Saya memiliki keahlian dalam ekosistem JavaScript modern seperti React, Next.js, dan TypeScript untuk membangun aplikasi web yang responsif dan profesional. Saya tidak hanya memahami jumlah pengguna, tetapi juga berkomitmen untuk menghadirkan solusi digital yang tidak hanya fungsional, tetapi juga intuitif dan menyenangkan untuk digunakan.",
-      "bio2": "Perjalanan saya di dunia pengembangan web dimulai dari ketertarikan saya pada teknologi dan desain. Saya selalu percaya bahwa teknologi harus membuat hidup lebih mudah, bukan sebaliknya. Prinsip ini yang selalu saya terapkan dalam setiap proyek yang saya kerjakan. Saya senang mengeksplorasi teknologi-teknologi baru dan selalu berusaha untuk tetap up-to-date dengan perkembangan terbaru di dunia web development.",
-      "bio3": "Dalam setiap proyek, saya tidak hanya fokus pada kode, tetapi juga pada aspek bisnis dan pengalaman pengguna. Saya percaya bahwa aplikasi yang baik adalah yang dapat memecahkan masalah nyata dengan cara yang elegan dan efisien. Saya selalu berusaha untuk memahami kebutuhan pengguna dan bisnis secara mendalam sebelum mulai mengembangkan solusi.",
-      "bio4": "Di luar coding, saya sangat tertarik dengan UI/UX design dan arsitektur software. Saya percaya bahwa pemahaman yang baik tentang desain dan arsitektur adalah kunci untuk membangun aplikasi yang tidak hanya berfungsi dengan baik tetapi juga mudah dimaintain dan dikembangkan di masa depan. Saya juga aktif berkontribusi pada komunitas open source dan senang berbagi pengetahuan dengan sesama developer.",
-      "bio5": "Saya selalu terbuka untuk kolaborasi dan kesempatan baru. Jika Anda memiliki proyek menarik atau ingin berdiskusi tentang teknologi, jangan ragu untuk menghubungi saya. Mari kita ciptakan sesuatu yang luar biasa bersama!",
-      "closing": "Salam hangat,"
+    "theme": {
+      "toggle": "Ubah tema",
+      "light": "Terang",
+      "dark": "Gelap",
+      "system": "Sistem",
+      "current_dark": "Gelap",
+      "current_light": "Terang"
     },
-    "career": {
-      "empty": "Belum ada karir yang ditampilkan",
-      "headline" : "Berikut adalah ringkasan pengalaman profesional saya sejauh ini."
-    },
-    "education": {
-      "headline": "Berikut adalah ringkasan latar belakang pendidikan saya.",
-      "upb": {
-        "name": "Universitas Pelita Bangsa",
-        "major": "Teknik Informatika",
-        "period": "2025 - Sekarang",
-        "location": "Bekasi, Indonesia"
-      },
-      "smk": {
-        "name": "SMK HS AGUNG",
-        "major": "Teknik Komputer dan Jaringan",
-        "period": "2022 - 2025",
-        "location": "Bekasi, Indonesia"
+    "footer": {
+      "copyright": "© {year} Rendi Ichtiar Prasetyo",
+      "aria_label": "Media sosial",
+      "social": {
+        "github": "Kunjungi profil GitHub Rendi Ichtiar",
+        "linkedin": "Kunjungi profil LinkedIn Rendi Ichtiar",
+        "instagram": "Kunjungi profil Instagram Rendi Ichtiar"
       }
-    }
-  },
-  "guestbook": {
-    "title": "Buku Tamu",
-    "subtitle": "Tinggalkan pesan, kesan, atau saran Anda di buku tamu saya.",
-    "form": {
-      "placeholder": "Tulis pesan Anda di sini...",
-      "empty_error": "Pesan tidak boleh kosong!",
-      "session_error": "Sesi tidak valid, silakan masuk kembali",
-      "success": "Pesan Anda telah ditambahkan ke buku tamu!",
-      "error": "Gagal menambahkan pesan. Silakan coba lagi.",
-      "forbidden_words": "Pesan mengandung kata-kata yang tidak diizinkan",
-      "sending": "Mengirim...",
-      "send": "Kirim Pesan"
+    },
+    "language_switcher": {
+      "aria_to_en": "Switch to English",
+      "aria_to_id": "Ganti ke Bahasa Indonesia",
+      "tooltip_id": "Bahasa Indonesia",
+      "tooltip_en": "English",
+      "flag_id_alt": "Bahasa Indonesia",
+      "flag_en_alt": "English"
+    },
+    "back_to_top": {
+      "aria_label": "Kembali ke atas",
+      "tooltip": "Ke atas"
+    },
+    "error": {
+      "forbidden": {
+        "title": "403 Forbidden",
+        "heading": "Akses Ditolak",
+        "message": "Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.",
+        "back_home": "Kembali ke Beranda"
+      },
+      "not_found": {
+        "title": "404 Not Found",
+        "heading": "Halaman Tidak Ditemukan",
+        "message": "Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.",
+        "back_home": "Kembali ke Beranda"
+      }
+    },
+    "validation": {
+      "forbidden_words": {
+        "error": "Pesan mengandung kata-kata yang tidak diizinkan"
+      }
     },
     "auth": {
-      "sign_in_message": "Masuk untuk mengirim pesan di buku tamu"
+      "login": {
+        "title": "Masuk ke Akun",
+        "description": "Silakan masuk menggunakan akun Google atau GitHub untuk berinteraksi dengan fitur website.",
+        "google": "Masuk dengan Google",
+        "github": "Masuk dengan GitHub",
+        "or": "atau"
+      }
+    }
+  },
+
+  "pages": {
+    "home": {
+      "greeting": "Hai, saya Rendi 👋",
+      "location": "Bekasi, Indonesia",
+      "remote_worker": "Remote Worker",
+      "bio": "Seorang Software Engineer yang berfokus pada pengembangan Frontend dengan pengalaman lebih dari 2 tahun. Saya memiliki keahlian dalam ekosistem JavaScript modern seperti React, Next.js, dan TypeScript untuk membangun aplikasi web yang responsif dan berkinerja tinggi. Dengan perhatian terhadap detail dan pemahaman mendalam tentang pengalaman pengguna, saya berkomitmen untuk menghadirkan solusi digital yang tidak hanya fungsional, tetapi juga intuitif dan menyenangkan untuk digunakan.",
+      "tech_stack": "Teknologi yang Saya Gunakan",
+      "tech_stack_desc": "Teknologi yang saya gunakan untuk membangun aplikasi modern dan scalable",
+      "work_title": "Yang Telah Saya Kerjakan",
+      "work_desc": "Saya membantu brand, perusahaan, institusi, dan startup dalam menciptakan pengalaman digital yang luar biasa untuk bisnis mereka melalui layanan pengembangan yang strategis.",
+      "lets_work": "Mari Bekerja Sama!",
+      "work_cta": "Saya terbuka untuk proyek freelance, silakan hubungi saya melalui email untuk melihat bagaimana kita bisa berkolaborasi.",
+      "contact_me": "Hubungi saya",
+      "verified": "Terverifikasi",
+      "to_home": "Ke Beranda"
     },
-    "list": {
-      "title": "Pesan Terbaru",
-      "subtitle": "Lihat apa yang orang lain katakan",
-      "empty": "Belum ada pesan. Jadilah yang pertama!",
-      "owner": "Pemilik",
-      "reply": {
-        "button": "Balas",
-        "placeholder": "Balas ke @{name}...",
-        "cancel": "Batal",
+
+    "about": {
+      "title": "Tentang",
+      "subtitle": "Sekilas tentang siapa saya – karena setiap detail menambah kedalaman dalam kanvas kehidupan.",
+      "sections": {
+        "intro": "Intro",
+        "career": "Karir",
+        "education": "Pendidikan"
+      },
+      "intro": {
+        "headline": "Kenali saya lebih dekat!",
+        "greeting": "Halo! Terima kasih telah mengunjungi website personal saya.",
+        "bio1": "Saya seorang Software Engineer yang berfokus pada pengembangan Frontend dengan pengalaman lebih dari 2 tahun. Saya memiliki keahlian dalam ekosistem JavaScript modern seperti React, Next.js, dan TypeScript untuk membangun aplikasi web yang responsif dan profesional. Saya tidak hanya memahami jumlah pengguna, tetapi juga berkomitmen untuk menghadirkan solusi digital yang tidak hanya fungsional, tetapi juga intuitif dan menyenangkan untuk digunakan.",
+        "bio2": "Perjalanan saya di dunia pengembangan web dimulai dari ketertarikan saya pada teknologi dan desain. Saya selalu percaya bahwa teknologi harus membuat hidup lebih mudah, bukan sebaliknya. Prinsip ini yang selalu saya terapkan dalam setiap proyek yang saya kerjakan. Saya senang mengeksplorasi teknologi-teknologi baru dan selalu berusaha untuk tetap up-to-date dengan perkembangan terbaru di dunia web development.",
+        "bio3": "Dalam setiap proyek, saya tidak hanya fokus pada kode, tetapi juga pada aspek bisnis dan pengalaman pengguna. Saya percaya bahwa aplikasi yang baik adalah yang dapat memecahkan masalah nyata dengan cara yang elegan dan efisien. Saya selalu berusaha untuk memahami kebutuhan pengguna dan bisnis secara mendalam sebelum mulai mengembangkan solusi.",
+        "bio4": "Di luar coding, saya sangat tertarik dengan UI/UX design dan arsitektur software. Saya percaya bahwa pemahaman yang baik tentang desain dan arsitektur adalah kunci untuk membangun aplikasi yang tidak hanya berfungsi dengan baik tetapi juga mudah dimaintain dan dikembangkan di masa depan. Saya juga aktif berkontribusi pada komunitas open source dan senang berbagi pengetahuan dengan sesama developer.",
+        "bio5": "Saya selalu terbuka untuk kolaborasi dan kesempatan baru. Jika Anda memiliki proyek menarik atau ingin berdiskusi tentang teknologi, jangan ragu untuk menghubungi saya. Mari kita ciptakan sesuatu yang luar biasa bersama!",
+        "closing": "Salam hangat,"
+      },
+      "career": {
+        "empty": "Belum ada karir yang ditampilkan",
+        "headline": "Berikut adalah ringkasan pengalaman profesional saya sejauh ini."
+      },
+      "education": {
+        "headline": "Berikut adalah ringkasan latar belakang pendidikan saya.",
+        "upb": {
+          "name": "Universitas Pelita Bangsa",
+          "major": "Teknik Informatika",
+          "period": "2025 - Sekarang",
+          "location": "Bekasi, Indonesia"
+        },
+        "smk": {
+          "name": "SMK HS AGUNG",
+          "major": "Teknik Komputer dan Jaringan",
+          "period": "2022 - 2025",
+          "location": "Bekasi, Indonesia"
+        }
+      }
+    },
+
+    "blog": {
+      "list": {
+        "title": "Blog",
+        "subtitle": "Tulisan terbaru dan catatan teknis",
+        "empty": "Belum ada artikel.",
+        "prev": "Sebelumnya",
+        "next": "Berikutnya",
+        "read_time": "menit baca",
+        "views": "kali dibaca",
+        "no_image": "Gambar tidak tersedia",
+        "load_more": "Muat Lebih Banyak Artikel",
+        "no_more_posts": "Tidak ada artikel lagi untuk dimuat"
+      }
+    },
+
+    "guestbook": {
+      "title": "Buku Tamu",
+      "subtitle": "Tinggalkan pesan, kesan, atau saran Anda di buku tamu saya.",
+      "form": {
+        "placeholder": "Tulis pesan Anda di sini...",
+        "empty_error": "Pesan tidak boleh kosong!",
+        "session_error": "Sesi tidak valid, silakan masuk kembali",
+        "success": "Pesan Anda telah ditambahkan ke buku tamu!",
+        "error": "Gagal menambahkan pesan. Silakan coba lagi.",
+        "forbidden_words": "Pesan mengandung kata-kata yang tidak diizinkan",
         "sending": "Mengirim...",
-        "send": "Kirim",
-        "success": "Balasan Anda telah ditambahkan!",
-        "error": "Gagal menambahkan balasan. Silakan coba lagi."
+        "send": "Kirim Pesan"
       },
-      "like": {
-        "error": "Gagal memberikan like"
+      "auth": {
+        "sign_in_message": "Masuk untuk mengirim pesan di buku tamu"
       },
-      "show_replies": "{count} Balasan",
-      "hide_replies": "Sembunyikan"
-    }
-  },
-  "contact": {
-    "title": "Kontak",
-    "subtitle": "Mari terhubung dan diskusikan bagaimana kita bisa berkolaborasi bersama.",
-    "social": {
-      "title": "Temukan saya di media sosial",
-      "email": "Email",
-      "linkedin": "LinkedIn",
-      "facebook": "Facebook",
-      "instagram": "Instagram",
-      "github": "Github"
+      "list": {
+        "title": "Pesan Terbaru",
+        "subtitle": "Lihat apa yang orang lain katakan",
+        "empty": "Belum ada pesan. Jadilah yang pertama!",
+        "owner": "Pemilik",
+        "reply": {
+          "button": "Balas",
+          "placeholder": "Balas ke @{name}...",
+          "cancel": "Batal",
+          "sending": "Mengirim...",
+          "send": "Kirim",
+          "success": "Balasan Anda telah ditambahkan!",
+          "error": "Gagal menambahkan balasan. Silakan coba lagi."
+        },
+        "like": {
+          "error": "Gagal memberikan like"
+        },
+        "show_replies": "{count} Balasan",
+        "hide_replies": "Sembunyikan"
+      }
     },
-    "call": {
-      "title": "Sesi Obrolan 1 on 1",
-      "subtitle": "Mari luangkan waktu untuk berdiskusi tentang apa saja",
-      "platform": "Google Meet",
-      "duration": "30 Menit",
-      "button": "Jadwalkan Sekarang"
+
+    "contact": {
+      "title": "Kontak",
+      "subtitle": "Mari terhubung dan diskusikan bagaimana kita bisa berkolaborasi bersama.",
+      "social": {
+        "title": "Temukan saya di media sosial",
+        "email": "Email",
+        "linkedin": "LinkedIn",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "github": "Github"
+      },
+      "call": {
+        "title": "Sesi Obrolan 1 on 1",
+        "subtitle": "Mari luangkan waktu untuk berdiskusi tentang apa saja",
+        "platform": "Google Meet",
+        "duration": "30 Menit",
+        "button": "Jadwalkan Sekarang"
+      },
+      "form": {
+        "title": "Atau kirim pesan",
+        "name": {
+          "label": "Nama*",
+          "placeholder": "Nama lengkap"
+        },
+        "email": {
+          "label": "Email*",
+          "placeholder": "email@kamu.com"
+        },
+        "message": {
+          "label": "Pesan*",
+          "placeholder": "Tulis pesan Anda di sini..."
+        },
+        "response_time": "Rata-rata respon: 1-2 Jam (Jam Kerja, GMT+7)",
+        "sending": "Mengirim...",
+        "send": "Kirim Pesan",
+        "success": "Pesan berhasil dikirim! Terima kasih telah menghubungi saya.",
+        "validation": {
+          "name": "Nama minimal 2 karakter",
+          "email": "Email tidak valid",
+          "message": "Pesan minimal 10 karakter"
+        },
+        "error": {
+          "general": "Terjadi kesalahan. Silakan coba lagi nanti."
+        }
+      }
     },
-    "form": {
-      "title": "Atau kirim pesan",
-      "name": {
-        "label": "Nama*",
-        "placeholder": "Nama lengkap"
+
+    "playground": {
+      "title": "JavaScript Playground",
+      "subtitle": "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.",
+      "editor": {
+        "language": "JavaScript",
+        "actions": {
+          "clear": "Hapus kode",
+          "fullscreen": "Toggle fullscreen",
+          "run": "Jalankan kode"
+        }
       },
-      "email": {
-        "label": "Email*",
-        "placeholder": "email@kamu.com"
+      "console": {
+        "title": "Console",
+        "clear": "Hapus output",
+        "output_label": "Keluaran console"
       },
-      "message": {
-        "label": "Pesan*",
-        "placeholder": "Tulis pesan Anda di sini..."
-      },
-      "response_time": "Rata-rata respon: 1-2 Jam (Jam Kerja, GMT+7)",
-      "sending": "Mengirim...",
-      "send": "Kirim Pesan",
-      "success": "Pesan berhasil dikirim! Terima kasih telah menghubungi saya.",
-      "validation": {
-        "name": "Nama minimal 2 karakter",
-        "email": "Email tidak valid",
-        "message": "Pesan minimal 10 karakter"
-      },
-      "error": {
-        "general": "Terjadi kesalahan. Silakan coba lagi nanti."
+      "errors": {
+        "code_too_long": "Kode terlalu panjang (maksimal 5000 karakter)",
+        "blocked_keyword": "Kode mengandung fungsi yang tidak diizinkan untuk keamanan",
+        "validation_error": "Terjadi kesalahan saat validasi kode",
+        "editor_not_ready": "Editor belum siap. Mohon tunggu sebentar.",
+        "runtime_error": "Terjadi kesalahan saat menjalankan kode"
       }
     }
   },
-  "playground": {
-    "title": "JavaScript Playground",
-    "subtitle": "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan.",
-    "editor": {
-      "language": "JavaScript",
-      "actions": {
-        "clear": "Hapus kode",
-        "fullscreen": "Toggle fullscreen",
-        "run": "Jalankan kode"
-      }
-    },
-    "console": {
-      "title": "Console",
-      "clear": "Hapus output"
-    },
-    "errors": {
-      "code_too_long": "Kode terlalu panjang (maksimal 5000 karakter)",
-      "blocked_keyword": "Kode mengandung fungsi yang tidak diizinkan untuk keamanan",
-      "validation_error": "Terjadi kesalahan saat validasi kode",
-      "editor_not_ready": "Editor belum siap. Mohon tunggu sebentar.",
-      "runtime_error": "Terjadi kesalahan saat menjalankan kode"
+
+  "components": {
+    "postComments": {
+      "heading": "Komentar",
+      "logged_in_as": "Komentar sebagai",
+      "must_login": "Anda harus login untuk berkomentar",
+      "login_btn": "Login untuk berkomentar",
+      "login_safe": "Login aman via Google atau GitHub",
+      "placeholder": "Tulis komentar kamu…",
+      "send": "Kirim",
+      "logout": "Keluar"
     }
   },
+
   "admin": {
+    "blogList": {
+      "title": "Blog Admin",
+      "subtitle": "Kelola artikel",
+      "new_post": "Tulis Baru",
+      "empty": "Belum ada artikel.",
+      "published_at": "Terbit",
+      "draft_updated": "Draf • diperbarui",
+      "edit": "Edit",
+      "view": "Lihat"
+    },
+    "blogEditor": {
+      "form": {
+        "title_label": "Judul",
+        "title_placeholder": "Judul artikel",
+        "content_label": "Konten Artikel",
+        "content_hint": "Gunakan toolbar untuk heading, bold, kode, list, dan kutipan.",
+        "cover_label": "URL Cover",
+        "cover_placeholder": "https://...",
+        "cover_helper": "Gambar ini akan dipakai di kartu blog dan header artikel.",
+        "cover_preview_empty": "Preview cover",
+        "tags_label": "Tag",
+        "tags_placeholder": "nextjs,react,typescript",
+        "tags_helper": "Pisahkan dengan koma.",
+        "status_label": "Status",
+        "actions": {
+          "save_changes": "Simpan Perubahan",
+          "create_draft": "Buat Draft",
+          "publish": "Publish",
+          "delete": "Hapus"
+        },
+        "confirm_delete": "Hapus artikel ini?",
+        "toast": {
+          "updated": "Draft diperbarui",
+          "created": "Draft dibuat",
+          "error_save": "Gagal menyimpan",
+          "published": "Artikel dipublish",
+          "error_publish": "Gagal publish",
+          "deleted": "Artikel dihapus",
+          "error_delete": "Gagal hapus"
+        }
+      }
+    },
     "contact": {
       "title": "Manajemen Pesan",
       "subtitle": "Kelola dan balas pesan dari pengunjung website.",
@@ -229,25 +357,7 @@
       }
     }
   },
-  "error": {
-    "forbidden": {
-      "title": "403 Forbidden",
-      "heading": "Akses Ditolak",
-      "message": "Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.",
-      "back_home": "Kembali ke Beranda"
-    },
-    "not_found": {
-      "title": "404 Not Found",
-      "heading": "Halaman Tidak Ditemukan",
-      "message": "Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.",
-      "back_home": "Kembali ke Beranda"
-    }
-  },
-  "validation": {
-    "forbidden_words": {
-      "error": "Pesan mengandung kata-kata yang tidak diizinkan"
-    }
-  },
+
   "api": {
     "contact": {
       "validation": {
@@ -303,11 +413,20 @@
       }
     }
   },
+
   "metadata": {
     "home": {
       "title": "Rendi Ichtiar Prasetyo | Frontend Engineer",
       "description": "Seorang Frontend Engineer yang berfokus pada pengembangan aplikasi web modern dengan React, Next.js, dan TypeScript.",
-      "keywords": ["Full Stack Developer", "Web Developer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Portfolio"],
+      "keywords": [
+        "Full Stack Developer",
+        "Web Developer",
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "Portfolio"
+      ],
       "og_alt": "Rendi Ichtiar Prasetyo - Personal Website"
     },
     "about": {
@@ -325,42 +444,6 @@
     "playground": {
       "title": "JavaScript Playground | Rendi Ichtiar Prasetyo",
       "description": "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan."
-    },
-    "blog": {
-    "title": "Blog",
-    "subtitle": "Tulisan terbaru dan catatan teknis",
-    "empty": "Belum ada artikel.",
-    "prev": "Sebelumnya",
-    "next": "Berikutnya",
-    "read_time": "menit baca",
-    "views": "kali dibaca",
-    "no_image": "Gambar tidak tersedia",
-    "load_more": "Muat Lebih Banyak Artikel",
-    "no_more_posts": "Tidak ada artikel lagi untuk dimuat"
-  }
-  },
-  "theme": {
-    "toggle": "Ubah tema",
-    "light": "Terang",
-    "dark": "Gelap",
-    "system": "Sistem",
-    "current_dark": "Gelap",
-    "current_light": "Terang"
-  },
-  "footer": {
-    "copyright": "© {year} Rendi Ichtiar Prasetyo",
-    "social": {
-      "github": "Kunjungi profil GitHub Rendi Ichtiar",
-      "linkedin": "Kunjungi profil LinkedIn Rendi Ichtiar",
-      "instagram": "Kunjungi profil Instagram Rendi Ichtiar"
-    }
-  },
-  "auth": {
-    "login": {
-      "title": "Masuk ke Akun",
-      "description": "Silakan masuk menggunakan akun Google atau GitHub untuk berinteraksi dengan fitur website.",
-      "google": "Masuk dengan Google",
-      "github": "Masuk dengan GitHub"
     }
   }
 }

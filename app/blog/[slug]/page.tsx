@@ -5,6 +5,7 @@ import {
   addPostComment,
 } from "../blog"
 import { BlogPostContent } from "@/components/pages/blog/BlogPostContent"
+import type { Metadata } from "next"
 
 export const revalidate = 60
 
@@ -19,32 +20,71 @@ function stripMarkdown(md: string): string {
     .trim()
 }
 
+function absoluteUrl(pathOrUrl: string | null | undefined): string | undefined {
+  if (!pathOrUrl) return undefined
+  const base = process.env.NEXTAUTH_URL?.replace(/\/+$/, "")
+  if (!base) return undefined
+
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return pathOrUrl
+  }
+  if (pathOrUrl.startsWith("/")) {
+    return `${base}${pathOrUrl}`
+  }
+  return `${base}/${pathOrUrl}`
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>
-}) {
+}): Promise<Metadata> {
   const { slug } = await params
   const data = await getPostBySlug(slug)
-  if (!data) return {}
+  if (!data) {
+    return {}
+  }
 
-  const site = process.env.NEXTAUTH_URL
-  const canonical = `${site}/blog/${data.slug}`
+  const siteUrl = process.env.NEXTAUTH_URL?.replace(/\/+$/, "") || ""
+  const canonical = `${siteUrl}/blog/${data.slug}`
 
   const raw = stripMarkdown(data.content ?? "")
   const description =
     raw.length > 160 ? raw.slice(0, 159).trimEnd() + "…" : raw
 
+  const ogImage = absoluteUrl(data.coverUrl) || absoluteUrl("/og-image.png")
+
   return {
     title: data.title,
     description,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+    },
     openGraph: {
       title: data.title,
       description,
       url: canonical,
-      images: data.coverUrl ? [{ url: data.coverUrl }] : undefined,
       type: "article",
+      siteName: "Rendi Ichtiar Prasetyo",
+      locale: "id_ID",
+      images: ogImage
+        ? [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: data.title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title,
+      description,
+      creator: "@rendiichtiar",
+      site: "@rendiichtiar",
+      images: ogImage ? [ogImage] : undefined,
     },
   }
 }
@@ -59,7 +99,7 @@ export default async function PostPage({
 
   if (!data || data.status !== "PUBLISHED") {
     return (
-      <div className="relative min-h-screen bg-background pt-16 lg:pt-0 lg:pl-64">
+      <div className="relative min-h-screen bg-background pt-16 text-foreground lg:pt-0 lg:pl-64">
         <section className="py-8 sm:py-12 md:py-16">
           <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
             <div className="rounded-2xl border border-border/30 p-6 text-sm text-muted-foreground">
@@ -71,8 +111,7 @@ export default async function PostPage({
     )
   }
 
-  // data sekarang pasti ada dan status PUBLISHED
-  const post = data!
+  const post = data
 
   void incrementView(slug)
 

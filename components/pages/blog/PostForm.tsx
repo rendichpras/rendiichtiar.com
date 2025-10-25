@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -54,6 +55,8 @@ function generateExcerpt(md: string, maxLen = 220) {
 }
 
 export function PostForm({ initial }: { initial?: PostInput }) {
+  const { messages } = useI18n();
+
   const [data, setData] = useState<PostInput>({
     title: initial?.title ?? "",
     coverUrl: initial?.coverUrl ?? "",
@@ -88,15 +91,15 @@ export function PostForm({ initial }: { initial?: PostInput }) {
       try {
         if (initial?.id) {
           await updatePost(initial.id, payload);
-          toast.success("Draft diperbarui");
+          toast.success(messages.admin.blogEditor.form.toast.updated);
           return;
         }
 
         const res = await createPost(payload);
-        toast.success("Draft dibuat");
+        toast.success(messages.admin.blogEditor.form.toast.created);
         window.location.href = `/admin/blog/${res.id}/edit`;
       } catch (err) {
-        toast.error("Gagal menyimpan");
+        toast.error(messages.admin.blogEditor.form.toast.error_save);
         console.error(err);
       }
     });
@@ -107,12 +110,12 @@ export function PostForm({ initial }: { initial?: PostInput }) {
       if (!initial?.id) return;
       try {
         const res = await publishPost(initial.id);
-        toast.success("Artikel dipublish");
+        toast.success(messages.admin.blogEditor.form.toast.published);
         if (res?.slug) {
           window.location.href = `/blog/${res.slug}`;
         }
       } catch (err) {
-        toast.error("Gagal publish");
+        toast.error(messages.admin.blogEditor.form.toast.error_publish);
         console.error(err);
       }
     });
@@ -121,14 +124,14 @@ export function PostForm({ initial }: { initial?: PostInput }) {
   function handleDelete() {
     startTransition(async () => {
       if (!initial?.id) return;
-      const ok = window.confirm("Hapus artikel ini?");
+      const ok = window.confirm(messages.admin.blogEditor.form.confirm_delete);
       if (!ok) return;
       try {
         await deletePost(initial.id);
-        toast.success("Artikel dihapus");
+        toast.success(messages.admin.blogEditor.form.toast.deleted);
         window.location.href = "/admin/blog";
       } catch (err) {
-        toast.error("Gagal hapus");
+        toast.error(messages.admin.blogEditor.form.toast.error_delete);
         console.error(err);
       }
     });
@@ -136,7 +139,9 @@ export function PostForm({ initial }: { initial?: PostInput }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      {/* LEFT: Title + Content */}
       <section className="space-y-6">
+        {/* Title */}
         <Card className="rounded-2xl border border-border/30 bg-background text-foreground shadow-sm transition-colors duration-300 hover:border-border/50">
           <CardHeader className="space-y-4">
             <div className="space-y-2">
@@ -144,26 +149,29 @@ export function PostForm({ initial }: { initial?: PostInput }) {
                 htmlFor="title"
                 className="text-sm font-medium text-foreground"
               >
-                Judul
+                {messages.admin.blogEditor.form.title_label}
               </Label>
+
               <Input
                 id="title"
                 value={data.title}
                 onChange={(e) => setData({ ...data, title: e.target.value })}
-                placeholder="Judul artikel"
+                placeholder={messages.admin.blogEditor.form.title_placeholder}
                 className="rounded-xl border-border/30 bg-background text-base font-semibold text-foreground placeholder:text-muted-foreground"
               />
             </div>
           </CardHeader>
         </Card>
 
+        {/* Content */}
         <Card className="rounded-2xl border border-border/30 bg-background text-foreground shadow-sm transition-colors duration-300 hover:border-border/50">
           <CardHeader className="space-y-2">
             <Label className="text-sm font-medium text-foreground">
-              Konten Artikel
+              {messages.admin.blogEditor.form.content_label}
             </Label>
+
             <p className="text-xs text-muted-foreground">
-              Gunakan toolbar untuk heading, bold, kode, list, kutipan.
+              {messages.admin.blogEditor.form.content_hint}
             </p>
           </CardHeader>
 
@@ -193,75 +201,91 @@ export function PostForm({ initial }: { initial?: PostInput }) {
         </Card>
       </section>
 
+      {/* RIGHT: Meta + Actions */}
       <aside className="space-y-6">
         <Card className="rounded-2xl border border-border/30 bg-background text-foreground shadow-sm transition-colors duration-300 hover:border-border/50">
           <CardHeader className="space-y-4">
+            {/* Cover URL */}
             <div className="space-y-2">
               <Label
                 htmlFor="cover"
                 className="text-sm font-medium text-foreground"
               >
-                Cover URL
+                {messages.admin.blogEditor.form.cover_label}
               </Label>
 
               <Input
                 id="cover"
                 value={data.coverUrl}
-                onChange={(e) => setData({ ...data, coverUrl: e.target.value })}
-                placeholder="https://..."
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    coverUrl: e.target.value,
+                  })
+                }
+                placeholder={messages.admin.blogEditor.form.cover_placeholder}
                 className="rounded-xl border-border/30 bg-background text-foreground placeholder:text-muted-foreground"
               />
 
               <div className="overflow-hidden rounded-xl border border-border/30 bg-muted/10">
                 <AspectRatio ratio={16 / 9} className="relative">
                   {data.coverUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={data.coverUrl}
-                      alt="Preview cover"
+                      alt={messages.admin.blogEditor.form.cover_preview_empty}
                       className="absolute inset-0 h-full w-full object-cover"
                     />
                   ) : (
                     <div className="absolute inset-0 flex h-full w-full items-center justify-center text-[11px] text-muted-foreground">
-                      Preview cover
+                      {messages.admin.blogEditor.form.cover_preview_empty}
                     </div>
                   )}
                 </AspectRatio>
               </div>
 
               <p className="text-[11px] text-muted-foreground">
-                Gambar utama kartu blog dan header artikel.
+                {messages.admin.blogEditor.form.cover_helper}
               </p>
             </div>
 
+            {/* Tags */}
             <div className="space-y-2">
               <Label
                 htmlFor="tags"
                 className="text-sm font-medium text-foreground"
               >
-                Tags
+                {messages.admin.blogEditor.form.tags_label}
               </Label>
+
               <Input
                 id="tags"
                 value={data.tags}
                 onChange={(e) => setData({ ...data, tags: e.target.value })}
-                placeholder="nextjs,react,typescript"
+                placeholder={messages.admin.blogEditor.form.tags_placeholder}
                 className="rounded-xl border-border/30 bg-background text-foreground placeholder:text-muted-foreground"
               />
+
               <p className="text-[11px] text-muted-foreground">
-                Pisahkan dengan koma.
+                {messages.admin.blogEditor.form.tags_helper}
               </p>
             </div>
 
+            {/* Status */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-foreground">
-                Status
+                {messages.admin.blogEditor.form.status_label}
               </Label>
+
               <Select
                 value={data.status}
                 onValueChange={(v) =>
                   setData({
                     ...data,
-                    status: v.toUpperCase() as any,
+                    status: v.toUpperCase() as
+                      | "DRAFT"
+                      | "PUBLISHED"
+                      | "SCHEDULED",
                   })
                 }
               >
@@ -278,13 +302,16 @@ export function PostForm({ initial }: { initial?: PostInput }) {
 
             <Separator className="bg-border/30" />
 
+            {/* Actions */}
             <div className="flex flex-col gap-2">
               <Button
                 disabled={pending}
                 onClick={handleSave}
                 className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
               >
-                {initial?.id ? "Simpan Perubahan" : "Buat Draft"}
+                {initial?.id
+                  ? messages.admin.blogEditor.form.actions.save_changes
+                  : messages.admin.blogEditor.form.actions.create_draft}
               </Button>
 
               {initial?.id ? (
@@ -295,7 +322,7 @@ export function PostForm({ initial }: { initial?: PostInput }) {
                     variant="outline"
                     className="w-full rounded-xl border-border/30 text-xs font-medium hover:border-border/50 sm:text-sm"
                   >
-                    Publish
+                    {messages.admin.blogEditor.form.actions.publish}
                   </Button>
 
                   <Button
@@ -304,7 +331,7 @@ export function PostForm({ initial }: { initial?: PostInput }) {
                     variant="outline"
                     className="w-full rounded-xl border-border/30 text-xs font-medium text-red-500 hover:border-border/50 hover:text-red-600 sm:text-sm"
                   >
-                    Hapus
+                    {messages.admin.blogEditor.form.actions.delete}
                   </Button>
                 </>
               ) : null}
