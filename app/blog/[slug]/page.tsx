@@ -3,44 +3,59 @@ import {
   incrementView,
   getPostComments,
   addPostComment,
-} from "../blog"
-import { BlogPostContent } from "@/components/pages/blog/BlogPostContent"
+} from "../blog";
+import { BlogPostContent } from "@/components/pages/blog/BlogPostContent";
 
-export const revalidate = 60
+export const revalidate = 60;
+
+function stripMarkdown(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`{1,3}[^`]*`{1,3}/g, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_~`-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: { slug: string };
 }) {
-  const { slug } = await params
-  const data = await getPostBySlug(slug)
-  if (!data) return {}
+  const { slug } = params;
+  const data = await getPostBySlug(slug);
+  if (!data) return {};
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com"
-  const canonical = `${site}/blog/${data.slug}`
+  const site = process.env.NEXTAUTH_URL;
+  const canonical = `${site}/blog/${data.slug}`;
+
+  const raw = stripMarkdown(data.content ?? "");
+  const description =
+    raw.length > 160 ? raw.slice(0, 159).trimEnd() + "…" : raw;
 
   return {
     title: data.title,
-    description: data.excerpt,
+    description,
     alternates: { canonical },
     openGraph: {
       title: data.title,
-      description: data.excerpt,
+      description,
       url: canonical,
       images: data.coverUrl ? [{ url: data.coverUrl }] : undefined,
       type: "article",
     },
-  }
+  };
 }
 
 export default async function PostPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: { slug: string };
 }) {
-  const { slug } = await params
-  const data = await getPostBySlug(slug)
+  const { slug } = params;
+  const data = await getPostBySlug(slug);
 
   if (!data || data.status !== "PUBLISHED") {
     return (
@@ -53,27 +68,25 @@ export default async function PostPage({
           </div>
         </section>
       </div>
-    )
+    );
   }
 
-  const postData = data
+  const postData = data!;
 
-  void incrementView(slug)
+  void incrementView(slug);
 
-  const commentsRaw = await getPostComments(postData.id)
+  const commentsRaw = await getPostComments(postData.id);
 
   async function onSubmit(fd: FormData) {
-    "use server"
-    const message = String(fd.get("message") || "")
-    await addPostComment({ postId: postData.id, message })
+    "use server";
+    const message = String(fd.get("message") || "");
+    await addPostComment({ postId: postData.id, message });
   }
 
   const postVM = {
     id: postData.id,
     slug: postData.slug,
     title: postData.title,
-    subtitle: postData.subtitle,
-    excerpt: postData.excerpt,
     content: postData.content,
     coverUrl: postData.coverUrl,
     publishedAt: postData.publishedAt,
@@ -83,7 +96,7 @@ export default async function PostPage({
       slug: t.tag.slug,
       name: t.tag.name,
     })),
-  }
+  };
 
   const commentVM = commentsRaw.map((c) => ({
     id: c.id,
@@ -92,13 +105,9 @@ export default async function PostPage({
     user: { name: c.user?.name ?? null },
     parentId: c.parentId,
     rootId: c.rootId,
-  }))
+  }));
 
   return (
-    <BlogPostContent
-      post={postVM}
-      comments={commentVM}
-      onSubmit={onSubmit}
-    />
-  )
+    <BlogPostContent post={postVM} comments={commentVM} onSubmit={onSubmit} />
+  );
 }

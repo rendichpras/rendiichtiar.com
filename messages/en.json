@@ -13,6 +13,16 @@
     "nav_menu": "Navigation Menu",
     "main_menu": "Main Menu"
   },
+  "postComments": {
+    "heading": "Comments",
+    "logged_in_as": "Commenting as",
+    "must_login": "You must sign in to comment",
+    "login_btn": "Sign in to comment",
+    "login_safe": "Secure sign in via Google or GitHub",
+    "placeholder": "Write your comment…",
+    "send": "Send",
+    "logout": "Sign out"
+  },
   "home": {
     "greeting": "Hi, I'm Rendi 👋",
     "location": "Bekasi, Indonesia",
@@ -323,7 +333,10 @@
     "prev": "Previous",
     "next": "Next",
     "read_time": "min read",
-    "views": "views"
+    "views": "views",
+    "no_image": "No image available",
+    "load_more": "Load More Posts",
+    "no_more_posts": "No more posts to load"
   }
   },
   "footer": {

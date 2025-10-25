@@ -1,42 +1,41 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
-import { motion } from "framer-motion"
+import * as React from "react";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 
-import { cn } from "@/lib/utils"
-import { useI18n } from "@/lib/i18n"
+import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 interface ThemeToggleProps {
-  className?: string
-  variant?: "default" | "compact"
+  className?: string;
+  variant?: "default" | "compact";
 }
 
 export function ThemeToggle({
   className,
   variant = "default",
 }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-  const { messages } = useI18n()
-  const isCompact = variant === "compact"
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  const { messages } = useI18n();
+  const isCompact = variant === "compact";
 
   React.useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  const isDark = theme === "dark"
+  const isDark = theme === "dark";
 
-  // fallback sebelum hydration
   if (!mounted) {
     return (
       <Button
@@ -51,7 +50,7 @@ export function ThemeToggle({
       >
         <Sun className="size-4 text-primary" aria-hidden="true" />
       </Button>
-    )
+    );
   }
 
   return (
@@ -81,10 +80,7 @@ export function ThemeToggle({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="absolute inset-0 flex items-center justify-center"
             >
-              <Sun
-                className="size-4 text-primary"
-                aria-hidden="true"
-              />
+              <Sun className="size-4 text-primary" aria-hidden="true" />
             </motion.div>
 
             {/* icon moon */}
@@ -98,10 +94,7 @@ export function ThemeToggle({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="absolute inset-0 flex items-center justify-center"
             >
-              <Moon
-                className="size-4 text-primary"
-                aria-hidden="true"
-              />
+              <Moon className="size-4 text-primary" aria-hidden="true" />
             </motion.div>
           </Button>
         </TooltipTrigger>
@@ -115,5 +108,5 @@ export function ThemeToggle({
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

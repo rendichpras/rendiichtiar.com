@@ -13,6 +13,16 @@
     "nav_menu": "Menu Navigasi",
     "main_menu": "Menu Utama"
   },
+  "postComments": {
+    "heading": "Komentar",
+    "logged_in_as": "Komentar sebagai",
+    "must_login": "Anda harus login untuk berkomentar",
+    "login_btn": "Login untuk berkomentar",
+    "login_safe": "Login aman via Google atau GitHub",
+    "placeholder": "Tulis komentar kamu…",
+    "send": "Kirim",
+    "logout": "Keluar"
+  },
   "home": {
     "greeting": "Hai, saya Rendi 👋",
     "location": "Bekasi, Indonesia",
@@ -323,7 +333,10 @@
     "prev": "Sebelumnya",
     "next": "Berikutnya",
     "read_time": "menit baca",
-    "views": "kali dibaca"
+    "views": "kali dibaca",
+    "no_image": "Gambar tidak tersedia",
+    "load_more": "Muat Lebih Banyak Artikel",
+    "no_more_posts": "Tidak ada artikel lagi untuk dimuat"
   }
   },
   "theme": {

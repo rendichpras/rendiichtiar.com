@@ -19,6 +19,7 @@ import {
   Code,
   ArrowUpRight,
   BadgeCheck,
+  MessageSquareText,
 } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -39,7 +40,7 @@ type NavItem = { path: string; nameKey: string; icon: IconComp }
 const MAIN_NAV: readonly NavItem[] = [
   { path: "/", nameKey: "navigation.home", icon: Home },
   { path: "/about", nameKey: "navigation.about", icon: User },
-  { path: "/guestbook", nameKey: "navigation.guestbook", icon: BookOpen },
+  { path: "/guestbook", nameKey: "navigation.guestbook", icon: MessageSquareText },
   { path: "/contact", nameKey: "navigation.contact", icon: Mail },
   { path: "/blog", nameKey: "navigation.blog", icon: BookOpen },
 ] as const

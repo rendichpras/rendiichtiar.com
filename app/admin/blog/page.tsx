@@ -1,12 +1,12 @@
-import Link from "next/link"
-import { prisma } from "@/lib/prisma"
-import { PageTransition } from "@/components/animations/page-transition"
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { PageTransition } from "@/components/animations/page-transition";
 
 export default async function AdminBlogList() {
   const posts = await prisma.post.findMany({
     orderBy: [{ status: "asc" }, { updatedAt: "desc" }],
     include: { tags: { include: { tag: true } } },
-  })
+  });
 
   return (
     <PageTransition>
@@ -46,12 +46,18 @@ export default async function AdminBlogList() {
                             {p.title}
                           </Link>
                           {p.subtitle && (
-                            <p className="text-sm text-muted-foreground">{p.subtitle}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {p.subtitle}
+                            </p>
                           )}
                           <div className="text-xs text-muted-foreground sm:text-sm">
                             {p.publishedAt
-                              ? `Terbit ${new Date(p.publishedAt).toLocaleDateString("id-ID")}`
-                              : `Draf • diperbarui ${new Date(p.updatedAt).toLocaleDateString("id-ID")}`}
+                              ? `Terbit ${new Date(
+                                  p.publishedAt
+                                ).toLocaleDateString("id-ID")}`
+                              : `Draf • diperbarui ${new Date(
+                                  p.updatedAt
+                                ).toLocaleDateString("id-ID")}`}
                           </div>
                         </div>
 
@@ -82,10 +88,17 @@ export default async function AdminBlogList() {
                       )}
 
                       <div className="mt-4 flex items-center gap-3 text-sm">
-                        <Link href={`/admin/blog/${p.id}/edit`} className="underline">
+                        <Link
+                          href={`/admin/blog/${p.id}/edit`}
+                          className="underline"
+                        >
                           Edit
                         </Link>
-                        <Link href={`/blog/${p.slug}`} className="underline" target="_blank">
+                        <Link
+                          href={`/blog/${p.slug}`}
+                          className="underline"
+                          target="_blank"
+                        >
                           Lihat
                         </Link>
                       </div>
@@ -98,5 +111,5 @@ export default async function AdminBlogList() {
         </section>
       </main>
     </PageTransition>
-  )
+  );
 }

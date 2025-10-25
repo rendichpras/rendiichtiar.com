@@ -1,74 +1,317 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { createPost, updatePost, publishPost, deletePost } from "@/app/blog/blog"
+import { useState, useTransition } from "react";
+import dynamic from "next/dynamic";
+import { toast } from "sonner";
 
-type PostInput = {
-    id?: string
-    title?: string
-    subtitle?: string
-    coverUrl?: string
-    excerpt?: string
-    content?: string
-    tags?: string
-    status?: "DRAFT" | "PUBLISHED" | "SCHEDULED"
+import {
+  createPost,
+  updatePost,
+  publishPost,
+  deletePost,
+} from "@/app/blog/blog";
+
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { cn } from "@/lib/utils";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
+  ssr: false,
+});
+
+export type PostInput = {
+  id?: string;
+  title?: string;
+  coverUrl?: string;
+  content?: string;
+  tags?: string;
+  status?: "DRAFT" | "PUBLISHED" | "SCHEDULED";
+};
+
+function generateExcerpt(md: string, maxLen = 220) {
+  if (!md) return "";
+  const plain = md
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`[^`]*`/g, "")
+    .replace(/[*_>#-]+/g, " ")
+    .replace(/\[(.*?)\]\((.*?)\)/g, "$1")
+    .replace(/\n+/g, " ")
+    .trim();
+
+  if (plain.length <= maxLen) return plain;
+  return plain.slice(0, maxLen - 1).trimEnd() + "…";
 }
 
 export function PostForm({ initial }: { initial?: PostInput }) {
-    const [data, setData] = useState<PostInput>({
-        title: initial?.title ?? "",
-        subtitle: initial?.subtitle ?? "",
-        coverUrl: initial?.coverUrl ?? "",
-        excerpt: initial?.excerpt ?? "",
-        content: initial?.content ?? "",
-        tags: initial?.tags ?? "",
-        status: (initial?.status as any) ?? "DRAFT",
-    })
-    const [pending, start] = useTransition()
+  const [data, setData] = useState<PostInput>({
+    title: initial?.title ?? "",
+    coverUrl: initial?.coverUrl ?? "",
+    content: initial?.content ?? "",
+    tags: initial?.tags ?? "",
+    status: initial?.status ?? "DRAFT",
+  });
 
-    const onSubmit = () => start(async () => {
-        const payload = {
-            title: data.title!.trim(),
-            subtitle: data.subtitle?.trim() || undefined,
-            excerpt: data.excerpt!.trim(),
-            content: data.content!,
-            coverUrl: data.coverUrl?.trim() || undefined,
-            tags: (data.tags || "").split(",").map((s) => s.trim()).filter(Boolean),
-            status: data.status!,
-        }
+  const [pending, startTransition] = useTransition();
+
+  function handleSave() {
+    startTransition(async () => {
+      const safeStatus = (data.status || "DRAFT").toUpperCase() as
+        | "DRAFT"
+        | "PUBLISHED"
+        | "SCHEDULED";
+
+      const excerpt = generateExcerpt(data.content ?? "");
+
+      const payload = {
+        title: data.title?.trim() ?? "",
+        excerpt,
+        content: data.content ?? "",
+        coverUrl: data.coverUrl?.trim() || undefined,
+        tags: (data.tags || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        status: safeStatus,
+      };
+
+      try {
         if (initial?.id) {
-            await updatePost(initial.id, payload)
-            alert("Updated")
-        } else {
-            const res = await createPost(payload)
-            window.location.href = `/admin/blog/${res.id}/edit`
+          await updatePost(initial.id, payload);
+          toast.success("Draft diperbarui");
+          return;
         }
-    })
 
-    return (
-        <div className="space-y-3">
-            <input value={data.title} onChange={(e) => setData({ ...data, title: e.target.value })} placeholder="Judul" className="w-full rounded-xl border border-border/30 bg-background px-3 py-2" />
-            <input value={data.subtitle} onChange={(e) => setData({ ...data, subtitle: e.target.value })} placeholder="Subjudul (opsional)" className="w-full rounded-xl border border-border/30 bg-background px-3 py-2" />
-            <input value={data.coverUrl} onChange={(e) => setData({ ...data, coverUrl: e.target.value })} placeholder="Cover URL (opsional)" className="w-full rounded-xl border border-border/30 bg-background px-3 py-2" />
-            <textarea value={data.excerpt} onChange={(e) => setData({ ...data, excerpt: e.target.value })} placeholder="Excerpt / ringkasan" className="w-full min-h-[80px] rounded-xl border border-border/30 bg-background px-3 py-2" />
-            <textarea value={data.content} onChange={(e) => setData({ ...data, content: e.target.value })} placeholder="Konten Markdown" className="w-full min-h-[280px] rounded-xl border border-border/30 bg-background px-3 py-2 font-mono text-sm" />
+        const res = await createPost(payload);
+        toast.success("Draft dibuat");
+        window.location.href = `/admin/blog/${res.id}/edit`;
+      } catch (err) {
+        toast.error("Gagal menyimpan");
+        console.error(err);
+      }
+    });
+  }
 
-            <input value={data.tags} onChange={(e) => setData({ ...data, tags: e.target.value })} placeholder="Tags dipisah koma, contoh: nextjs,react" className="w-full rounded-xl border border-border/30 bg-background px-3 py-2" />
+  function handlePublish() {
+    startTransition(async () => {
+      if (!initial?.id) return;
+      try {
+        const res = await publishPost(initial.id);
+        toast.success("Artikel dipublish");
+        if (res?.slug) {
+          window.location.href = `/blog/${res.slug}`;
+        }
+      } catch (err) {
+        toast.error("Gagal publish");
+        console.error(err);
+      }
+    });
+  }
 
-            <div className="flex items-center gap-2">
-                <select value={data.status} onChange={(e) => setData({ ...data, status: e.target.value as any })} className="rounded-xl border border-border/30 bg-background px-3 py-2">
-                    <option value="DRAFT">DRAFT</option>
-                    <option value="PUBLISHED">PUBLISHED</option>
-                    <option value="SCHEDULED">SCHEDULED</option>
-                </select>
-                <button disabled={pending} onClick={onSubmit} className="rounded-xl border border-border/30 px-4 py-2 text-sm">{initial?.id ? "Simpan" : "Buat"}</button>
-                {initial?.id && (
-                    <>
-                        <button disabled={pending} onClick={() => publishPost(initial.id!)} className="rounded-xl border border-border/30 px-4 py-2 text-sm">Publish</button>
-                        <button disabled={pending} onClick={() => { if (confirm("Hapus artikel?")) deletePost(initial.id!) }} className="rounded-xl border border-border/30 px-4 py-2 text-sm">Hapus</button>
-                    </>
-                )}
+  function handleDelete() {
+    startTransition(async () => {
+      if (!initial?.id) return;
+      const ok = window.confirm("Hapus artikel ini?");
+      if (!ok) return;
+      try {
+        await deletePost(initial.id);
+        toast.success("Artikel dihapus");
+        window.location.href = "/admin/blog";
+      } catch (err) {
+        toast.error("Gagal hapus");
+        console.error(err);
+      }
+    });
+  }
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <section className="space-y-6">
+        <Card className="rounded-2xl border border-border/30 bg-background text-foreground shadow-sm transition-colors duration-300 hover:border-border/50">
+          <CardHeader className="space-y-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="title"
+                className="text-sm font-medium text-foreground"
+              >
+                Judul
+              </Label>
+              <Input
+                id="title"
+                value={data.title}
+                onChange={(e) => setData({ ...data, title: e.target.value })}
+                placeholder="Judul artikel"
+                className="rounded-xl border-border/30 bg-background text-base font-semibold text-foreground placeholder:text-muted-foreground"
+              />
             </div>
-        </div>
-    )
+          </CardHeader>
+        </Card>
+
+        <Card className="rounded-2xl border border-border/30 bg-background text-foreground shadow-sm transition-colors duration-300 hover:border-border/50">
+          <CardHeader className="space-y-2">
+            <Label className="text-sm font-medium text-foreground">
+              Konten Artikel
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Gunakan toolbar untuk heading, bold, kode, list, kutipan.
+            </p>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            <div
+              data-color-mode="dark"
+              className={cn(
+                "[&_.w-md-editor]:rounded-xl [&_.w-md-editor]:border [&_.w-md-editor]:border-border/30 [&_.w-md-editor]:bg-background",
+                "[&_.w-md-editor-toolbar]:border-border/30 [&_.w-md-editor-toolbar]:bg-muted/20",
+                "[&_.w-md-editor-content]:bg-background"
+              )}
+            >
+              <MDEditor
+                value={data.content}
+                onChange={(val) =>
+                  setData({
+                    ...data,
+                    content: typeof val === "string" ? val : data.content,
+                  })
+                }
+                height={400}
+                preview="edit"
+                visibleDragbar={false}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      <aside className="space-y-6">
+        <Card className="rounded-2xl border border-border/30 bg-background text-foreground shadow-sm transition-colors duration-300 hover:border-border/50">
+          <CardHeader className="space-y-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="cover"
+                className="text-sm font-medium text-foreground"
+              >
+                Cover URL
+              </Label>
+
+              <Input
+                id="cover"
+                value={data.coverUrl}
+                onChange={(e) => setData({ ...data, coverUrl: e.target.value })}
+                placeholder="https://..."
+                className="rounded-xl border-border/30 bg-background text-foreground placeholder:text-muted-foreground"
+              />
+
+              <div className="overflow-hidden rounded-xl border border-border/30 bg-muted/10">
+                <AspectRatio ratio={16 / 9} className="relative">
+                  {data.coverUrl ? (
+                    <img
+                      src={data.coverUrl}
+                      alt="Preview cover"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex h-full w-full items-center justify-center text-[11px] text-muted-foreground">
+                      Preview cover
+                    </div>
+                  )}
+                </AspectRatio>
+              </div>
+
+              <p className="text-[11px] text-muted-foreground">
+                Gambar utama kartu blog dan header artikel.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="tags"
+                className="text-sm font-medium text-foreground"
+              >
+                Tags
+              </Label>
+              <Input
+                id="tags"
+                value={data.tags}
+                onChange={(e) => setData({ ...data, tags: e.target.value })}
+                placeholder="nextjs,react,typescript"
+                className="rounded-xl border-border/30 bg-background text-foreground placeholder:text-muted-foreground"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Pisahkan dengan koma.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-foreground">
+                Status
+              </Label>
+              <Select
+                value={data.status}
+                onValueChange={(v) =>
+                  setData({
+                    ...data,
+                    status: v.toUpperCase() as any,
+                  })
+                }
+              >
+                <SelectTrigger className="rounded-xl border-border/30 bg-background text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DRAFT">DRAFT</SelectItem>
+                  <SelectItem value="PUBLISHED">PUBLISHED</SelectItem>
+                  <SelectItem value="SCHEDULED">SCHEDULED</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Separator className="bg-border/30" />
+
+            <div className="flex flex-col gap-2">
+              <Button
+                disabled={pending}
+                onClick={handleSave}
+                className="w-full rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
+              >
+                {initial?.id ? "Simpan Perubahan" : "Buat Draft"}
+              </Button>
+
+              {initial?.id ? (
+                <>
+                  <Button
+                    disabled={pending}
+                    onClick={handlePublish}
+                    variant="outline"
+                    className="w-full rounded-xl border-border/30 text-xs font-medium hover:border-border/50 sm:text-sm"
+                  >
+                    Publish
+                  </Button>
+
+                  <Button
+                    disabled={pending}
+                    onClick={handleDelete}
+                    variant="outline"
+                    className="w-full rounded-xl border-border/30 text-xs font-medium text-red-500 hover:border-border/50 hover:text-red-600 sm:text-sm"
+                  >
+                    Hapus
+                  </Button>
+                </>
+              ) : null}
+            </div>
+          </CardHeader>
+        </Card>
+      </aside>
+    </div>
+  );
 }

@@ -9,20 +9,28 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { signIn } from "next-auth/react"
+import { usePathname } from "next/navigation"
 import { useI18n } from "@/lib/i18n"
 import { SiGithub, SiGoogle } from "react-icons/si"
 
 interface LoginDialogProps {
   isOpen: boolean
   onClose: () => void
+  callbackUrlOverride?: string
 }
 
-export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
+export function LoginDialog({
+  isOpen,
+  onClose,
+  callbackUrlOverride,
+}: LoginDialogProps) {
   const { messages } = useI18n()
+  const pathname = usePathname()
+  const callbackUrl = callbackUrlOverride || pathname || "/"
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md rounded-xl border border-border/30 bg-background/80 text-foreground backdrop-blur-sm">
+      <DialogContent className="rounded-xl border border-border/30 bg-background/80 text-foreground backdrop-blur-sm sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-foreground">
             {messages.auth.login.title}
@@ -37,7 +45,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             type="button"
             variant="outline"
             onClick={() =>
-              signIn("google", { callbackUrl: "/guestbook" })
+              signIn("google", { callbackUrl })
             }
             className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
             aria-label={messages.auth.login.google}
@@ -53,7 +61,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             type="button"
             variant="outline"
             onClick={() =>
-              signIn("github", { callbackUrl: "/guestbook" })
+              signIn("github", { callbackUrl })
             }
             className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
             aria-label={messages.auth.login.github}
