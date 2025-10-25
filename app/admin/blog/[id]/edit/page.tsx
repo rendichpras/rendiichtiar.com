@@ -1,18 +1,18 @@
-import { prisma } from "@/lib/prisma";
-import { PageTransition } from "@/components/animations/page-transition";
-import { PostForm } from "@/components/pages/blog/PostForm";
+import { prisma } from "@/lib/prisma"
+import { PageTransition } from "@/components/animations/page-transition"
+import { PostForm } from "@/components/pages/blog/PostForm"
 
 export default async function EditPostPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>
 }) {
-  const { id } = params;
+  const { id } = await params
 
   const p = await prisma.post.findUnique({
     where: { id },
     include: { tags: { include: { tag: true } } },
-  });
+  })
 
   if (!p) {
     return (
@@ -27,13 +27,13 @@ export default async function EditPostPage({
           </section>
         </main>
       </PageTransition>
-    );
+    )
   }
 
   const normalizedStatus = (p.status || "DRAFT").toUpperCase() as
     | "DRAFT"
     | "PUBLISHED"
-    | "SCHEDULED";
+    | "SCHEDULED"
 
   return (
     <PageTransition>
@@ -67,5 +67,5 @@ export default async function EditPostPage({
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }
