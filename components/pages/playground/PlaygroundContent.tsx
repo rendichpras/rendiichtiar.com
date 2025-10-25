@@ -13,6 +13,7 @@ import { PageTransition } from "@/components/animations/page-transition";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { OnMount } from "@monaco-editor/react";
+import type * as Monaco from "monaco-editor";
 import { useI18n } from "@/lib/i18n";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -85,6 +86,7 @@ export function PlaygroundContent() {
   const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
     try {
       setEditorReady(true);
+
       editor.updateOptions({
         tabSize: 2,
         insertSpaces: true,
@@ -101,15 +103,22 @@ export function PlaygroundContent() {
       });
 
       monaco.languages.registerCompletionItemProvider("javascript", {
-        provideCompletionItems: (model, position) => {
+        provideCompletionItems(
+          model: Monaco.editor.ITextModel,
+          position: Monaco.Position
+        ): Monaco.languages.ProviderResult<
+          Monaco.languages.CompletionList
+        > {
           try {
             const word = model.getWordUntilPosition(position);
-            const range = {
+
+            const range: Monaco.IRange = {
               startLineNumber: position.lineNumber,
               endLineNumber: position.lineNumber,
               startColumn: word.startColumn,
               endColumn: word.endColumn,
             };
+
             return {
               suggestions: [
                 {
@@ -253,7 +262,7 @@ export function PlaygroundContent() {
               className={cn(
                 "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card/50 p-4 text-foreground backdrop-blur-sm transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
                 isFullscreen &&
-                "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
+                  "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
               )}
             >
               <CardContent className="space-y-2 p-0">
@@ -359,6 +368,7 @@ export function PlaygroundContent() {
                   </Suspense>
                 </div>
               </CardContent>
+
               <CardContent className="space-y-2 p-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -394,10 +404,13 @@ export function PlaygroundContent() {
                 </div>
 
                 <div
-                  className="min-h-[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
+                  className="min-h[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
                   role="region"
                   aria-live="polite"
-                  aria-label={messages.pages.playground.console.output_label}
+                  aria-label={
+                    messages.pages.playground.console.output_label ??
+                    "Console output"
+                  }
                 >
                   {output}
                 </div>

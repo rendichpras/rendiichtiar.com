@@ -119,7 +119,7 @@ export async function createPost(input: {
     select: { id: true, slug: true },
   });
 
-  revalidateTag("posts");
+  revalidateTag("blog-posts", "max")
   revalidatePath("/blog");
   return post;
 }
@@ -182,7 +182,7 @@ export async function updatePost(
     });
   });
 
-  revalidateTag("posts");
+  revalidateTag("blog-posts", "max")
   revalidatePath("/blog");
   revalidatePath(`/blog/${updated.slug}`);
   return updated;
@@ -191,7 +191,7 @@ export async function updatePost(
 export async function deletePost(id: string) {
   await requireAdmin();
   const p = await prisma.post.delete({ where: { id } });
-  revalidateTag("posts");
+  revalidateTag("blog-posts", "max")
   revalidatePath("/blog");
   return p;
 }
@@ -203,7 +203,7 @@ export async function publishPost(id: string) {
     data: { status: "PUBLISHED", publishedAt: new Date() },
     select: { slug: true },
   });
-  revalidateTag("posts");
+  revalidateTag("blog-posts", "max")
   revalidatePath("/blog");
   revalidatePath(`/blog/${p.slug}`);
   return p;

@@ -140,7 +140,7 @@ export async function POST(req: Request) {
         {
           success: false,
           message: messages.api.contact.error.validation,
-          errors: error.errors,
+          errors: error.issues,
         },
         { status: 400 }
       );

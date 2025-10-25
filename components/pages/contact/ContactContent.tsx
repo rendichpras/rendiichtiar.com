@@ -98,13 +98,15 @@ export function ContactContent() {
     } catch (err) {
       if (err instanceof z.ZodError) {
         const fieldErrors: FormErrors = {};
-        for (const issue of err.errors) {
+
+        for (const issue of err.issues) {
           const field = issue.path[0] as keyof ContactFormData;
           if (!fieldErrors[field]) {
             fieldErrors[field] = issue.message;
           }
           toast.error(issue.message);
         }
+
         setErrors(fieldErrors);
       } else {
         toast.error(messages.pages.contact.form.error.general);
