@@ -1,4 +1,3 @@
-// simple SSE hub
 import { EventEmitter } from "node:events"
 
 type GBEvent =

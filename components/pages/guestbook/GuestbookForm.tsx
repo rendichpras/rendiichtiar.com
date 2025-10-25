@@ -3,56 +3,54 @@
 import { useMemo, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+
+import { toast } from "sonner"
+import { Loader2, TriangleAlert } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
-import { toast } from "sonner"
+import { Label } from "@/components/ui/label"
+
 import { addGuestbookEntry } from "@/app/guestbook/guestbook"
-import { containsForbiddenWords, getForbiddenWords } from "@/lib/constants/forbidden-words"
+import {
+  containsForbiddenWords,
+  getForbiddenWords,
+} from "@/lib/constants/forbidden-words"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 const MAX_LEN = 280
 
-function Spinner() {
-  return (
-    <svg
-      className="absolute left-3 h-4 w-4 animate-spin"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      aria-hidden
-    >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
-  )
-}
-
 export function GuestbookForm() {
   const { data: session } = useSession()
+  const router = useRouter()
+  const { messages } = useI18n()
+
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forbiddenWords, setForbiddenWords] = useState<string[]>([])
-  const router = useRouter()
-  const { messages } = useI18n()
-  const remainingChars = useMemo(() => Math.max(0, MAX_LEN - message.length), [message])
 
-  if (!session) return null
+  const remainingChars = useMemo(
+    () => Math.max(0, MAX_LEN - message.length),
+    [message]
+  )
+
+  if (!session) {
+    return null
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const v = e.target.value
     setMessage(v)
-    setForbiddenWords(containsForbiddenWords(v) ? getForbiddenWords(v) : [])
+    setForbiddenWords(
+      containsForbiddenWords(v) ? getForbiddenWords(v) : []
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     if (!message.trim()) {
       toast.error(messages.guestbook.form.empty_error)
       return
@@ -61,7 +59,9 @@ export function GuestbookForm() {
       toast.error(messages.guestbook.form.session_error)
       return
     }
+
     setIsSubmitting(true)
+
     try {
       await addGuestbookEntry(message, session.user.email)
       setMessage("")
@@ -78,24 +78,39 @@ export function GuestbookForm() {
   const isBlocked = forbiddenWords.length > 0
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="relative">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-3"
+      noValidate
+      aria-busy={isSubmitting}
+    >
+      <div className="relative space-y-1">
+        <Label htmlFor="guestbook-message" className="sr-only">
+          {messages.guestbook.form.placeholder}
+        </Label>
+
         <Textarea
+          id="guestbook-message"
           value={message}
           onChange={handleChange}
           placeholder={messages.guestbook.form.placeholder}
-          className={cn(
-            "min-h-[35px] resize-none border-border/30 pr-12 transition-all duration-300 hover:border-border/50 focus-visible:ring-primary",
-            isBlocked && "border-destructive focus-visible:ring-destructive"
-          )}
           maxLength={MAX_LEN}
+          disabled={isSubmitting}
+          className={cn(
+            "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary",
+            isBlocked &&
+              "border-destructive focus-visible:ring-destructive"
+          )}
           aria-invalid={isBlocked || undefined}
           aria-describedby={isBlocked ? "forbidden-hint" : undefined}
         />
+
         <span
           className={cn(
-            "absolute bottom-2 right-2 text-xs",
-            remainingChars <= 20 ? "text-destructive" : "text-muted-foreground"
+            "absolute bottom-2 right-3 text-xs tabular-nums",
+            remainingChars <= 20
+              ? "text-destructive"
+              : "text-muted-foreground"
           )}
           aria-live="polite"
         >
@@ -104,21 +119,38 @@ export function GuestbookForm() {
       </div>
 
       {isBlocked && (
-        <Alert id="forbidden-hint" variant="destructive" className="border-destructive/30 bg-destructive/5 py-2">
-          <div className="flex items-center gap-2 text-sm">
-            <ExclamationTriangleIcon className="h-4 w-4 shrink-0" />
-            <AlertDescription>{messages.guestbook.form.forbidden_words}</AlertDescription>
-          </div>
+        <Alert
+          id="forbidden-hint"
+          variant="destructive"
+          className="rounded-xl border-destructive/30 bg-destructive/5 p-3 text-destructive"
+        >
+          <TriangleAlert
+            className="h-4 w-4"
+            aria-hidden="true"
+          />
+          <AlertDescription className="text-sm leading-relaxed text-destructive">
+            {messages.guestbook.form.forbidden_words}
+          </AlertDescription>
         </Alert>
       )}
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting || isBlocked} className="relative bg-primary/10 text-primary hover:bg-primary/20">
+        <Button
+          type="submit"
+          disabled={isSubmitting || isBlocked}
+          className={cn(
+            "relative rounded-xl bg-primary/10 text-primary hover:bg-primary/20",
+            isSubmitting && "cursor-wait opacity-80"
+          )}
+        >
           {isSubmitting ? (
-            <>
-              <Spinner />
-              <span className="pl-6">{messages.guestbook.form.sending}</span>
-            </>
+            <span className="flex items-center gap-2 text-primary">
+              <Loader2
+                className="h-4 w-4 animate-spin"
+                aria-hidden="true"
+              />
+              <span>{messages.guestbook.form.sending}</span>
+            </span>
           ) : (
             messages.guestbook.form.send
           )}

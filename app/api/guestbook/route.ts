@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth/next"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
-import messages from "@/messages/id" // Gunakan ID sebagai default
+import messages from "@/messages/id"
 
 export async function POST(req: Request) {
   const session = await getServerSession()

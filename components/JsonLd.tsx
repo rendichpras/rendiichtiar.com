@@ -8,7 +8,6 @@ export default function JsonLd() {
     sameAs: [
       'https://github.com/rendichpras',
       'https://linkedin.com/in/rendiichtiar',
-      // Tambahkan social media lainnya
     ],
     knowsAbout: [
       'Web Development',

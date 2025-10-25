@@ -2,16 +2,20 @@
 
 import { useState } from "react"
 import { useSession } from "next-auth/react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { formatDistanceToNow } from "date-fns"
 import { id as localeID } from "date-fns/locale"
 import { toast } from "sonner"
+import { CornerUpRight, Loader2, Heart } from "lucide-react"
+
 import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
-import { LoginDialog } from "@/components/auth/LoginDialog"
 import { cn } from "@/lib/utils"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { LoginDialog } from "@/components/auth/LoginDialog"
 
 interface ReplyProps {
   parentId: string
@@ -20,7 +24,12 @@ interface ReplyProps {
   isReplying: boolean
 }
 
-export function GuestbookReply({ parentId, onReplyComplete, parentAuthor, isReplying }: ReplyProps) {
+export function GuestbookReply({
+  parentId,
+  onReplyComplete,
+  parentAuthor,
+  isReplying,
+}: ReplyProps) {
   const { data: session } = useSession()
   const [replyMessage, setReplyMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -30,13 +39,27 @@ export function GuestbookReply({ parentId, onReplyComplete, parentAuthor, isRepl
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!replyMessage.trim()) return toast.error(messages.guestbook.form.empty_error)
-    if (!session.user?.email) return toast.error(messages.guestbook.form.session_error)
+
+    if (!replyMessage.trim()) {
+      toast.error(messages.guestbook.form.empty_error)
+      return
+    }
+    if (!session.user?.email) {
+      toast.error(messages.guestbook.form.session_error)
+      return
+    }
 
     setIsSubmitting(true)
+
     try {
       const messageWithMention = `@${parentAuthor} ${replyMessage}`
-      await addGuestbookEntry(messageWithMention, session.user.email, parentId, parentAuthor)
+      await addGuestbookEntry(
+        messageWithMention,
+        session.user.email,
+        parentId,
+        parentAuthor
+      )
+
       setReplyMessage("")
       onReplyComplete()
       toast.success(messages.guestbook.list.reply.success)
@@ -49,27 +72,78 @@ export function GuestbookReply({ parentId, onReplyComplete, parentAuthor, isRepl
 
   return (
     <div className="mt-4 pl-4 sm:pl-8">
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-3"
+        noValidate
+        aria-busy={isSubmitting}
+      >
         <div className="flex items-start gap-2 sm:gap-3">
           <Avatar className="mt-1 h-5 w-5 border border-border/30 sm:h-6 sm:w-6">
-            <AvatarImage src={session.user?.image || ""} alt={session.user?.name || "Me"} />
-            <AvatarFallback aria-hidden>{session.user?.name?.charAt(0) || "?"}</AvatarFallback>
+            <AvatarImage
+              src={session.user?.image || ""}
+              alt={session.user?.name || "Me"}
+            />
+            <AvatarFallback
+              className="text-[10px] font-medium text-foreground/90"
+              aria-hidden="true"
+            >
+              {session.user?.name?.charAt(0) || "?"}
+            </AvatarFallback>
           </Avatar>
 
           <div className="min-w-0 flex-1">
-            <Textarea
-              value={replyMessage}
-              onChange={(e) => setReplyMessage(e.target.value)}
-              placeholder={messages.guestbook.list.reply.placeholder.replace("{name}", parentAuthor)}
-              className="min-h-[35px] resize-none border-border/30 transition-all duration-300 hover:border-border/50 focus-visible:ring-primary text-xs sm:text-sm"
-              maxLength={280}
-            />
+            <div className="space-y-2">
+              <Label htmlFor={`reply-${parentId}`} className="sr-only">
+                {messages.guestbook?.list?.reply?.placeholder ??
+                  messages.guestbook.list.reply.placeholder}
+              </Label>
+
+              <Textarea
+                id={`reply-${parentId}`}
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+                placeholder={messages.guestbook.list.reply.placeholder.replace(
+                  "{name}",
+                  parentAuthor
+                )}
+                className={cn(
+                  "min-h-[44px] resize-none rounded-xl border-border/30 bg-card/50 text-xs backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary sm:text-sm"
+                )}
+                maxLength={280}
+                disabled={isSubmitting}
+              />
+            </div>
+
             <div className="mt-2 flex justify-end gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={onReplyComplete} className="h-7 text-[10px] hover:bg-background/80 sm:h-8 sm:text-xs">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onReplyComplete}
+                disabled={isSubmitting}
+                className="h-7 rounded-xl px-2 text-[10px] text-muted-foreground hover:bg-background/80 hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
+              >
                 {messages.guestbook.list.reply.cancel}
               </Button>
-              <Button type="submit" size="sm" disabled={isSubmitting} className="h-7 bg-primary/10 text-[10px] text-primary hover:bg-primary/20 sm:h-8 sm:text-xs">
-                {isSubmitting ? messages.guestbook.list.reply.sending : messages.guestbook.list.reply.send}
+
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSubmitting}
+                className="h-7 rounded-xl bg-primary/10 px-2 text-[10px] text-primary hover:bg-primary/20 sm:h-8 sm:px-3 sm:text-xs"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-1.5">
+                    <Loader2
+                      className="h-3 w-3 animate-spin sm:h-4 sm:w-4"
+                      aria-hidden="true"
+                    />
+                    <span>{messages.guestbook.list.reply.sending}</span>
+                  </span>
+                ) : (
+                  messages.guestbook.list.reply.send
+                )}
               </Button>
             </div>
           </div>
@@ -81,32 +155,56 @@ export function GuestbookReply({ parentId, onReplyComplete, parentAuthor, isRepl
 
 interface LikeButtonProps {
   guestbookId: string
-  likes: { id: string; user: { name: string | null; email: string | null } }[]
+  likes: {
+    id: string
+    user: { name: string | null; email: string | null }
+  }[]
   userEmail?: string | null
 }
 
-export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
+export function LikeButton({
+  guestbookId,
+  likes,
+  userEmail,
+}: LikeButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [localLikes, setLocalLikes] = useState(likes)
-  const [liked, setLiked] = useState(() => localLikes.some((l) => l.user.email === userEmail))
+  const [liked, setLiked] = useState(() =>
+    localLikes.some((l) => l.user.email === userEmail)
+  )
   const [isAnimating, setIsAnimating] = useState(false)
   const [showLoginDialog, setShowLoginDialog] = useState(false)
   const { messages } = useI18n()
 
   const handleLike = async () => {
-    if (!userEmail) return setShowLoginDialog(true)
+    if (!userEmail) {
+      setShowLoginDialog(true)
+      return
+    }
     if (isLoading) return
+
     setIsLoading(true)
     setIsAnimating(true)
+
     const prev = { liked, localLikes }
+
     try {
       if (liked) {
         setLiked(false)
-        setLocalLikes((ls) => ls.filter((l) => l.user.email !== userEmail))
+        setLocalLikes((ls) =>
+          ls.filter((l) => l.user.email !== userEmail)
+        )
       } else {
         setLiked(true)
-        setLocalLikes((ls) => [...ls, { id: crypto.randomUUID(), user: { name: null, email: userEmail } }])
+        setLocalLikes((ls) => [
+          ...ls,
+          {
+            id: crypto.randomUUID(),
+            user: { name: null, email: userEmail },
+          },
+        ])
       }
+
       await toggleLike(guestbookId, userEmail)
     } catch {
       setLiked(prev.liked)
@@ -120,19 +218,39 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
 
   return (
     <>
-      <button
+      <Button
         onClick={handleLike}
         disabled={isLoading}
         aria-pressed={liked}
-        className={cn("flex items-center gap-1 text-[10px] text-muted-foreground transition-colors hover:text-primary sm:text-xs", liked && "text-primary")}
+        variant="ghost"
+        size="sm"
+        className={cn(
+          "flex items-center gap-1 p-0 text-[10px] text-muted-foreground hover:text-primary sm:text-xs",
+          liked && "text-primary"
+        )}
       >
-        <svg className={cn("h-3 w-3 transition-transform duration-200 sm:h-4 sm:w-4", isAnimating && "scale-125")} fill={liked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-        <span className={cn("transition-transform duration-200", isAnimating && "scale-110")}>{localLikes.length || ""}</span>
-      </button>
+        <Heart
+          className={cn(
+            "h-3 w-3 transition-transform duration-200 sm:h-4 sm:w-4",
+            isAnimating && "scale-125"
+          )}
+          fill={liked ? "currentColor" : "none"}
+          aria-hidden="true"
+        />
+        <span
+          className={cn(
+            "transition-transform duration-200",
+            isAnimating && "scale-110"
+          )}
+        >
+          {localLikes.length || ""}
+        </span>
+      </Button>
 
-      <LoginDialog isOpen={showLoginDialog} onClose={() => setShowLoginDialog(false)} />
+      <LoginDialog
+        isOpen={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+      />
     </>
   )
 }
@@ -144,11 +262,18 @@ interface ReplyListProps {
     createdAt: Date
     user: { name: string | null; image: string | null }
     mentionedUser?: { name: string | null } | null
-    likes: { id: string; user: { name: string | null; email: string | null } }[]
+    likes: {
+      id: string
+      user: { name: string | null; email: string | null }
+    }[]
     parentId?: string | null
     rootId?: string | null
   }[]
-  onReplyClick: (targetId: string, authorName: string, rootId: string) => void
+  onReplyClick: (
+    targetId: string,
+    authorName: string,
+    rootId: string
+  ) => void
   rootId: string
   rootAuthor: string
   activeReplyId: string | null
@@ -167,59 +292,103 @@ export function GuestbookReplyList({
 }: ReplyListProps) {
   const { data: session } = useSession()
   const { messages } = useI18n()
+
   if (replies.length === 0) return null
 
   return (
     <div className="mt-4 space-y-4 pl-4 sm:pl-8">
       {replies.map((reply) => {
-        const isReplyToReply = !!reply.parentId && reply.parentId !== rootId
+        const isReplyToReply =
+          !!reply.parentId && reply.parentId !== rootId
         const isActive = activeReplyId === reply.id
 
         return (
-          <div key={reply.id} className={cn("space-y-1", isReplyToReply && "pl-6 sm:pl-10 border-l border-border/30")}>
+          <div
+            key={reply.id}
+            className={cn(
+              "space-y-1",
+              isReplyToReply &&
+                "border-l border-border/30 pl-6 sm:pl-10"
+            )}
+          >
             <div className="flex items-start gap-2 sm:gap-3">
               <Avatar className="mt-1 h-5 w-5 border border-border/30 sm:h-6 sm:w-6">
-                <AvatarImage src={reply.user.image || ""} alt={reply.user.name || "Avatar"} />
-                <AvatarFallback aria-hidden>{reply.user.name?.charAt(0) || "?"}</AvatarFallback>
+                <AvatarImage
+                  src={reply.user.image || ""}
+                  alt={reply.user.name || "Avatar"}
+                />
+                <AvatarFallback
+                  className="text-[10px] font-medium text-foreground/90"
+                  aria-hidden="true"
+                >
+                  {reply.user.name?.charAt(0) || "?"}
+                </AvatarFallback>
               </Avatar>
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-medium text-foreground/90 sm:text-sm">{reply.user.name}</span>
+                  <span className="text-xs font-medium text-foreground/90 sm:text-sm">
+                    {reply.user.name}
+                  </span>
+
                   <span className="text-[10px] text-muted-foreground sm:text-xs">
-                    {formatDistanceToNow(reply.createdAt, { addSuffix: true, locale: localeID })}
+                    {formatDistanceToNow(reply.createdAt, {
+                      addSuffix: true,
+                      locale: localeID,
+                    })}
                   </span>
                 </div>
 
                 <p className="mt-1 break-words text-xs text-muted-foreground sm:text-sm">
                   {reply.mentionedUser ? (
                     <>
-                      <span className="text-primary">@{reply.mentionedUser.name}</span>{" "}
-                      {reply.message.split(`@${reply.mentionedUser.name} `)[1]}
+                      <span className="text-primary">
+                        @{reply.mentionedUser.name}
+                      </span>{" "}
+                      {reply.message.split(
+                        `@${reply.mentionedUser.name} `
+                      )[1]}
                     </>
                   ) : (
                     reply.message
                   )}
                 </p>
 
-                <div className="mt-2 flex items-center gap-4">
-                  <button
-                    onClick={() => onReplyClick(reply.id, reply.user.name || "", rootId)}
-                    className="flex items-center gap-1 text-[10px] text-muted-foreground transition-colors hover:text-primary sm:text-xs"
+                <div className="mt-2 flex flex-wrap items-center gap-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      onReplyClick(
+                        reply.id,
+                        reply.user.name || "",
+                        rootId
+                      )
+                    }
+                    className="flex items-center gap-1 p-0 text-[10px] text-muted-foreground hover:text-primary sm:text-xs"
                   >
-                    <svg className="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                    </svg>
+                    <CornerUpRight
+                      className="h-3 w-3 sm:h-4 sm:w-4"
+                      aria-hidden="true"
+                    />
                     {messages.guestbook.list.reply.button}
-                  </button>
+                  </Button>
 
-                  <LikeButton guestbookId={reply.id} likes={reply.likes} userEmail={session?.user?.email} />
+                  <LikeButton
+                    guestbookId={reply.id}
+                    likes={reply.likes}
+                    userEmail={session?.user?.email}
+                  />
                 </div>
 
                 {isActive && (
                   <GuestbookReply
                     parentId={reply.id}
-                    parentAuthor={activeReplyAuthor || reply.user.name || ""}
+                    parentAuthor={
+                      activeReplyAuthor ||
+                      reply.user.name ||
+                      rootAuthor
+                    }
                     onReplyComplete={onReplyComplete}
                     isReplying
                   />

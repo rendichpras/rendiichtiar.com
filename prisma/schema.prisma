@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,12 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
 }
 
 model Account {
@@ -49,13 +49,14 @@ model User {
   accounts      Account[]
   sessions      Session[]
   guestbook     Guestbook[]
-  
-  // Field untuk mention
+
   mentionedIn   Guestbook[] @relation("MentionedIn")
   mentionedBy   Guestbook[] @relation("Mentions")
-
-  // Field untuk like
   likes         Like[]
+
+  posts                 Post[]
+  postComments          PostComment[]
+  postCommentsMentioned PostComment[] @relation("PostCommentMentioned")
 }
 
 model Guestbook {
@@ -64,23 +65,19 @@ model Guestbook {
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Fields untuk reply
-  parentId  String?    // ID dari pesan yang di-reply (induk langsung)
-  parent    Guestbook? @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies   Guestbook[] @relation("Replies")
 
-  // Root thread id untuk menjaga struktur saat refresh
+  parentId  String?
+  parent    Guestbook?   @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Guestbook[]  @relation("Replies")
+
   rootId    String?
-  root      Guestbook?  @relation("RootThread", fields: [rootId], references: [id], onDelete: Cascade)
-  thread    Guestbook[] @relation("RootThread")
-  
-  // Field untuk mention
-  mentionedUserId String?
-  mentionedUser   User?   @relation("MentionedIn", fields: [mentionedUserId], references: [id])
-  mentions        User[]  @relation("Mentions")
+  root      Guestbook?   @relation("RootThread", fields: [rootId], references: [id], onDelete: Cascade)
+  thread    Guestbook[]  @relation("RootThread")
 
-  // Field untuk like
+  mentionedUserId String?
+  mentionedUser   User?      @relation("MentionedIn", fields: [mentionedUserId], references: [id])
+  mentions        User[]     @relation("Mentions")
+
   likes     Like[]
 
   @@index([parentId])
@@ -104,5 +101,69 @@ model Contact {
   email     String
   message   String   @db.Text
   createdAt DateTime @default(now())
-  status    String   @default("UNREAD") // UNREAD, READ, REPLIED
+  status    String   @default("UNREAD")
+}
+
+model Post {
+  id           String      @id @default(cuid())
+  slug         String      @unique
+  title        String
+  subtitle     String?
+  excerpt      String      @db.Text
+  content      String      @db.Text
+  coverUrl     String?
+  status       PostStatus  @default(DRAFT)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  publishedAt  DateTime?
+  readingTime  Int         @default(0)
+  views        Int         @default(0)
+
+  authorId     String
+  author       User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  tags         PostTag[]
+  comments     PostComment[]
+
+  @@index([status, publishedAt])
+}
+
+model Tag {
+  id    String   @id @default(cuid())
+  name  String   @unique
+  slug  String   @unique
+  posts PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model PostComment {
+  id              String   @id @default(cuid())
+  postId          String
+  userId          String
+  message         String   @db.Text
+  createdAt       DateTime @default(now())
+
+  parentId        String?
+  rootId          String?
+
+  mentionedUserId String?
+  mentionedUser   User?    @relation("PostCommentMentioned", fields: [mentionedUserId], references: [id])
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  parent  PostComment?  @relation("PostCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies PostComment[] @relation("PostCommentReplies")
+
+  @@index([postId])
+  @@index([rootId])
+  @@index([parentId])
 }

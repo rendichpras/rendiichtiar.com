@@ -4,6 +4,7 @@
     "about": "About",
     "guestbook": "Guestbook",
     "contact": "Contact",
+    "blog": "Blog",
     "playground": "JS Playground",
     "apps": "Apps",
     "socials": "Social Media",
@@ -36,6 +37,7 @@
       "education": "Education"
     },
     "intro": {
+      "headline": "Get to know me better!",
       "greeting": "Hello! Thanks for checking out my personal website.",
       "bio1": "I'm a Software Engineer who mainly works on the Frontend side of web development, and I've been doing this for more than two years. I specialize in modern JavaScript tools like React, Next.js, and TypeScript to build websites that are fast, responsive, and work well on all devices. I care a lot about how people experience a website, and I make sure the apps I build are not only useful but also easy and fun to use.",
       "bio2": "My interest in web development started from a love for technology and design. I believe technology should help make life better, not harder. I follow this idea in every project I work on. I like learning new things and keeping up with the latest trends in web development.",
@@ -45,9 +47,11 @@
       "closing": "Best regards,"
     },
     "career": {
-      "empty": "No career displayed yet"
+      "empty": "No career displayed yet",
+      "headline" : "Here's a summary of my professional experience so far."
     },
     "education": {
+      "headline": "Here's a summary of my educational background.",
       "upb": {
         "name": "Pelita Bangsa University",
         "major": "Informatics Engineering",
@@ -311,7 +315,16 @@
     "playground": {
       "title": "JavaScript Playground | Rendi Ichtiar Prasetyo",
       "description": "Test and run your JavaScript code directly in the browser with instant feedback."
-    }
+    },
+    "blog": {
+    "title": "Blog",
+    "subtitle": "Latest posts and notes",
+    "empty": "No articles yet.",
+    "prev": "Previous",
+    "next": "Next",
+    "read_time": "min read",
+    "views": "views"
+  }
   },
   "footer": {
     "copyright": "© {year} Rendi Ichtiar Prasetyo",
@@ -325,7 +338,9 @@
     "toggle": "Toggle theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "current_dark": "Dark",
+    "current_light": "Light"
   },
   "auth": {
     "login": {

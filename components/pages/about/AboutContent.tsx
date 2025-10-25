@@ -1,12 +1,25 @@
 "use client"
 
-import { memo, useMemo, useState, type ComponentType, type ReactNode } from "react"
+import {
+  memo,
+  useMemo,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Separator } from "@/components/ui/separator"
 import { PageTransition } from "@/components/animations/page-transition"
 import { BookOpen, GraduationCap, User2 } from "lucide-react"
-import { Card } from "@/components/ui/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useI18n, type Messages } from "@/lib/i18n"
 
@@ -33,25 +46,35 @@ const SectionNavCard = memo(function SectionNavCard({
   delay?: number
 }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}>
-      <Card
-        role="button"
-        tabIndex={0}
-        aria-label={label}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+    >
+      <Button
+        type="button"
         onClick={onClick}
-        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
+        variant="ghost"
         className={cn(
-          "group relative flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-300 outline-none",
-          "border-border/30 hover:border-border/50 focus:ring-2 focus:ring-primary/40",
-          active && "bg-primary/10 text-primary border-primary/50 hover:border-primary/50"
+          "group w-full justify-start rounded-xl border text-left transition-colors duration-300",
+          "border-border/30 bg-card/30 hover:border-border/50 hover:bg-card/50",
+          "focus-visible:ring-2 focus-visible:ring-primary/40",
+          active &&
+            "border-primary/50 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/10"
         )}
-        aria-pressed={active}
       >
         <div className="flex items-center gap-3 text-sm font-medium">
-          <Icon className="size-5 transition-transform group-hover:scale-110" aria-hidden />
-          <span>{label}</span>
+          <Icon
+            className={cn(
+              "size-5 text-foreground/80 transition-transform",
+              active && "text-primary",
+              "group-hover:scale-110"
+            )}
+            aria-hidden="true"
+          />
+          <span className="truncate">{label}</span>
         </div>
-      </Card>
+      </Button>
     </motion.div>
   )
 })
@@ -72,23 +95,36 @@ function EducationItem({
   sizes?: string
 }) {
   return (
-    <Card className="p-4 border-border/30 bg-card/30 backdrop-blur-sm transition-all duration-300 hover:border-border/50 hover:bg-card/50">
-      <div className="flex items-start sm:items-center gap-4">
-        <div className="size-12 sm:size-14 rounded-lg flex items-center justify-center shrink-0 bg-background/50 p-2 border border-border/30 relative">
-          <Image src={src} alt={name} fill sizes={sizes} className="object-contain" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="text-base sm:text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            {name}
-          </h3>
-          <p className="text-xs sm:text-sm text-foreground/80">{major}</p>
-          <div className="text-xs text-muted-foreground mt-1.5 flex flex-wrap items-center gap-1.5">
-            <span>{period}</span>
-            <span aria-hidden>•</span>
-            <span>{location}</span>
+    <Card className="rounded-xl border-border/30 bg-card/30 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50 hover:bg-card/50">
+      <CardContent>
+        <div className="flex items-start gap-4 sm:items-center">
+          <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-border/30 bg-background/50 p-2 sm:size-14">
+            <Image
+              src={src}
+              alt={name}
+              fill
+              sizes={sizes}
+              className="object-contain"
+            />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h3 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-base font-semibold leading-tight text-transparent sm:text-lg">
+              {name}
+            </h3>
+
+            <p className="text-xs text-foreground/80 sm:text-sm">
+              {major}
+            </p>
+
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+              <span>{period}</span>
+              <span aria-hidden="true">•</span>
+              <span>{location}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   )
 }
@@ -99,8 +135,17 @@ const sections: readonly SectionContent[] = [
     icon: User2,
     titleKey: "intro",
     content: ({ messages }) => (
-      <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
-        <div className="space-y-4">
+      <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
+            {messages.about.sections.intro}
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground sm:text-base">
+            {messages.about.intro.headline}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4 text-sm leading-relaxed text-foreground/90 sm:text-base">
           {[
             messages.about.intro.greeting,
             messages.about.intro.bio1,
@@ -109,12 +154,13 @@ const sections: readonly SectionContent[] = [
             messages.about.intro.bio4,
             messages.about.intro.bio5,
           ].map((t, i) => (
-            <p key={i} className="text-sm sm:text-base leading-relaxed text-foreground/90">
-              {t}
-            </p>
+            <p key={i}>{t}</p>
           ))}
-          <p className="text-sm text-muted-foreground">{messages.about.intro.closing}</p>
-        </div>
+
+          <p className="text-sm text-muted-foreground">
+            {messages.about.intro.closing}
+          </p>
+        </CardContent>
       </Card>
     ),
   },
@@ -123,8 +169,19 @@ const sections: readonly SectionContent[] = [
     icon: BookOpen,
     titleKey: "career",
     content: ({ messages }) => (
-      <Card className="p-6 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
-        <p className="text-sm sm:text-base text-muted-foreground text-center">{messages.about.career.empty}</p>
+      <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
+            {messages.about.sections.career}
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground sm:text-base">
+            {messages.about.career.headline}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-6 pt-0 text-center text-sm text-muted-foreground sm:text-base">
+          {messages.about.career.empty}
+        </CardContent>
       </Card>
     ),
   },
@@ -133,21 +190,33 @@ const sections: readonly SectionContent[] = [
     icon: GraduationCap,
     titleKey: "education",
     content: ({ messages }) => (
-      <Card className="p-6 space-y-4 border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
-        <EducationItem
-          src="/upb.png"
-          name={messages.about.education.upb.name}
-          major={messages.about.education.upb.major}
-          period={messages.about.education.upb.period}
-          location={messages.about.education.upb.location}
-        />
-        <EducationItem
-          src="/smkhsagung.png"
-          name={messages.about.education.smk.name}
-          major={messages.about.education.smk.major}
-          period={messages.about.education.smk.period}
-          location={messages.about.education.smk.location}
-        />
+      <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
+            {messages.about.sections.education}
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground sm:text-base">
+            {messages.about.education.headline}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <EducationItem
+            src="/upb.png"
+            name={messages.about.education.upb.name}
+            major={messages.about.education.upb.major}
+            period={messages.about.education.upb.period}
+            location={messages.about.education.upb.location}
+          />
+
+          <EducationItem
+            src="/smkhsagung.png"
+            name={messages.about.education.smk.name}
+            major={messages.about.education.smk.major}
+            period={messages.about.education.smk.period}
+            location={messages.about.education.smk.location}
+          />
+        </CardContent>
       </Card>
     ),
   },
@@ -165,24 +234,30 @@ export function AboutContent() {
   }))
 
   const contentById = useMemo(
-    () => Object.fromEntries(sections.map((s) => [s.id, s.content])) as Record<SectionId, SectionContent["content"]>,
+    () =>
+      Object.fromEntries(
+        sections.map((s) => [s.id, s.content])
+      ) as Record<SectionId, SectionContent["content"]>,
     []
   )
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background lg:pl-64 pt-16 lg:pt-0">
-        <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
-          <div className="max-w-2xl space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pt-0 lg:pl-64">
+        <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
+          <header className="max-w-2xl space-y-2">
+            <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
               {messages.about.title}
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">{messages.about.subtitle}</p>
-          </div>
+
+            <p className="text-sm text-muted-foreground sm:text-base">
+              {messages.about.subtitle}
+            </p>
+          </header>
 
           <Separator className="my-6 bg-border/40" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {nav.map(({ id, label, icon, delay }) => (
               <SectionNavCard
                 key={id}

@@ -11,13 +11,14 @@ export function SignOutButton() {
       onClick={() => signOut()}
       variant="outline"
       size="sm"
-      className="group relative bg-background/50 border-primary/20 backdrop-blur-sm hover:border-primary/30"
+      className="group flex items-center gap-2 rounded-xl border-border/30 text-xs font-medium text-muted-foreground hover:border-border/50 hover:text-primary sm:text-sm"
       aria-label="Keluar"
     >
-      <span className="flex items-center gap-2">
-        <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-primary">Keluar</span>
-        <ExitIcon className="h-4 w-4 text-muted-foreground transition-colors group-hover:translate-x-0.5 group-hover:text-primary duration-300" />
-      </span>
+      <span>Keluar</span>
+      <ExitIcon
+        className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary"
+        aria-hidden="true"
+      />
     </Button>
   )
 }

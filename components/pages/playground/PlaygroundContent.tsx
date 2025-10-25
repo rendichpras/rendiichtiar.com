@@ -6,7 +6,10 @@ import { motion } from "framer-motion"
 import { Trash2, Play, Expand } from "lucide-react"
 import { SiJavascript } from "react-icons/si"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PageTransition } from "@/components/animations/page-transition"
@@ -15,7 +18,9 @@ import { toast } from "sonner"
 import type { OnMount } from "@monaco-editor/react"
 import { useI18n } from "@/lib/i18n"
 
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+})
 
 const DEFAULT_CODE = `console.log("Hello");`
 
@@ -46,29 +51,35 @@ function escapeRegex(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
-const EditorLoading = () => (
-  <div className="flex h-full min-h-[500px] w-full animate-pulse items-center justify-center rounded-md bg-secondary/20">
-    <Skeleton className="h-full w-full" />
-  </div>
-)
+function EditorLoading() {
+  return (
+    <div className="flex h-full min-h-[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm">
+      <Skeleton className="h-full w-full rounded-xl" />
+    </div>
+  )
+}
 
 function JavaScriptIcon() {
   return (
     <div className="flex size-8 items-center justify-center">
-      <SiJavascript className="size-8 text-[#F7DF1E]" aria-hidden />
+      <SiJavascript className="size-8 text-[#F7DF1E]" aria-hidden="true" />
     </div>
   )
 }
 
 export function PlaygroundContent() {
   const { messages } = useI18n()
+
   const [code, setCode] = useState<string>(DEFAULT_CODE)
   const [output, setOutput] = useState<string>("")
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
   const [editorReady, setEditorReady] = useState<boolean>(false)
 
   const blockedPattern = useMemo(
-    () => new RegExp(String.raw`\b(?:${BLOCKED_KEYWORDS.map((k) => escapeRegex(k)).join("|")})\b`),
+    () =>
+      new RegExp(
+        String.raw`\b(?:${BLOCKED_KEYWORDS.map((k) => escapeRegex(k)).join("|")})\b`
+      ),
     []
   )
 
@@ -89,6 +100,7 @@ export function PlaygroundContent() {
         autoIndent: "full",
         autoSurround: "languageDefined",
       })
+
       monaco.languages.registerCompletionItemProvider("javascript", {
         provideCompletionItems: (model, position) => {
           try {
@@ -105,7 +117,8 @@ export function PlaygroundContent() {
                   label: "cl",
                   kind: monaco.languages.CompletionItemKind.Snippet,
                   insertText: "console.log($1)",
-                  insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  insertTextRules:
+                    monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                   detail: "Console log",
                   range,
                 },
@@ -116,7 +129,9 @@ export function PlaygroundContent() {
           }
         },
       })
-    } catch {}
+    } catch {
+      // silent
+    }
   }, [])
 
   const validateCode = useCallback(
@@ -136,7 +151,12 @@ export function PlaygroundContent() {
         return false
       }
     },
-    [blockedPattern, messages.playground.errors.blocked_keyword, messages.playground.errors.code_too_long, messages.playground.errors.validation_error]
+    [
+      blockedPattern,
+      messages.playground.errors.blocked_keyword,
+      messages.playground.errors.code_too_long,
+      messages.playground.errors.validation_error,
+    ]
   )
 
   const runCode = useCallback(() => {
@@ -144,9 +164,12 @@ export function PlaygroundContent() {
       toast.error(messages.playground.errors.editor_not_ready)
       return
     }
+
     try {
       if (!validateCode(code)) return
+
       const logs: string[] = []
+
       const sandbox = {
         console: {
           log: (...args: any[]) => {
@@ -154,7 +177,8 @@ export function PlaygroundContent() {
               const line = args
                 .map((arg) => {
                   if (arg instanceof Error) return arg.message
-                  if (typeof arg === "object") return JSON.stringify(arg, null, 2)
+                  if (typeof arg === "object")
+                    return JSON.stringify(arg, null, 2)
                   return String(arg)
                 })
                 .join(" ")
@@ -165,6 +189,7 @@ export function PlaygroundContent() {
           },
         },
       }
+
       const fn = new Function(
         "console",
         `
@@ -176,6 +201,7 @@ export function PlaygroundContent() {
         }
       `
       ) as (c: Console) => void
+
       fn(sandbox.console as unknown as Console)
       setOutput(logs.filter(Boolean).join("\n"))
     } catch (error) {
@@ -187,39 +213,60 @@ export function PlaygroundContent() {
         toast.error(messages.playground.errors.runtime_error)
       }
     }
-  }, [code, editorReady, messages.playground.errors.editor_not_ready, messages.playground.errors.runtime_error, validateCode])
+  }, [
+    code,
+    editorReady,
+    messages.playground.errors.editor_not_ready,
+    messages.playground.errors.runtime_error,
+    validateCode,
+  ])
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 lg:pl-64 lg:pt-0">
+      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
         <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl space-y-2">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl space-y-2"
+          >
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 {messages.playground.title}
               </h1>
             </div>
-            <p className="text-sm text-muted-foreground sm:text-base">{messages.playground.subtitle}</p>
+
+            <p className="text-sm text-muted-foreground sm:text-base">
+              {messages.playground.subtitle}
+            </p>
           </motion.div>
 
           <Separator className="my-6 bg-border/40" />
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          {/* Playground container */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <Card
               className={cn(
-                "grid grid-cols-1 gap-4 p-4 transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
-                "border-border/30",
-                isFullscreen && "fixed inset-4 z-50 overflow-auto"
+                "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card/50 p-4 text-foreground backdrop-blur-sm transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
+                isFullscreen &&
+                  "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
               )}
             >
-              <div className="space-y-2">
+              {/* Editor side */}
+              <CardContent className="space-y-2 p-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-primary/10 px-2 py-1 text-sm text-primary">
+                    <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
                       {messages.playground.editor.language}
                     </span>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
@@ -228,25 +275,30 @@ export function PlaygroundContent() {
                         setCode("")
                         setOutput("")
                       }}
-                      className="size-8 hover:bg-background/80"
+                      className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
                     >
-                      <Trash2 className="size-4" aria-hidden />
-                      <span className="sr-only">{messages.playground.editor.actions.clear}</span>
+                      <Trash2 className="size-4" aria-hidden="true" />
+                      <span className="sr-only">
+                        {messages.playground.editor.actions.clear}
+                      </span>
                     </Button>
+
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsFullscreen((s) => !s)}
-                      className="size-8 hover:bg-background/80"
                       aria-pressed={isFullscreen}
+                      className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
                     >
-                      <Expand className="size-4" aria-hidden />
-                      <span className="sr-only">{messages.playground.editor.actions.fullscreen}</span>
+                      <Expand className="size-4" aria-hidden="true" />
+                      <span className="sr-only">
+                        {messages.playground.editor.actions.fullscreen}
+                      </span>
                     </Button>
                   </div>
                 </div>
 
-                <div className="relative min-h-[500px] overflow-hidden rounded-md border border-border/30 transition-all duration-300 hover:border-border/50">
+                <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-border/30 bg-background/40 transition-all duration-300 hover:border-border/50">
                   <Suspense fallback={<EditorLoading />}>
                     <MonacoEditor
                       height="500px"
@@ -255,12 +307,14 @@ export function PlaygroundContent() {
                       value={code}
                       onChange={(value) => {
                         if (!editorReady) return
-                        const v = value ?? ""
-                        if (v.length > MAX_LEN) {
-                          toast.error(messages.playground.errors.code_too_long)
+                        const next = value ?? ""
+                        if (next.length > MAX_LEN) {
+                          toast.error(
+                            messages.playground.errors.code_too_long
+                          )
                           return
                         }
-                        setCode(v)
+                        setCode(next)
                       }}
                       onMount={handleEditorDidMount}
                       options={{
@@ -279,7 +333,10 @@ export function PlaygroundContent() {
                         detectIndentation: true,
                         folding: true,
                         glyphMargin: false,
-                        guides: { bracketPairs: true, indentation: true },
+                        guides: {
+                          bracketPairs: true,
+                          indentation: true,
+                        },
                         mouseWheelZoom: true,
                         dragAndDrop: true,
                         copyWithSyntaxHighlighting: true,
@@ -288,7 +345,11 @@ export function PlaygroundContent() {
                         autoClosingQuotes: "always",
                         autoIndent: "full",
                         autoSurround: "languageDefined",
-                        quickSuggestions: { other: true, comments: true, strings: true },
+                        quickSuggestions: {
+                          other: true,
+                          comments: true,
+                          strings: true,
+                        },
                         snippetSuggestions: "inline",
                         cursorBlinking: "smooth",
                         cursorSmoothCaretAnimation: "on",
@@ -300,40 +361,52 @@ export function PlaygroundContent() {
                     />
                   </Suspense>
                 </div>
-              </div>
+              </CardContent>
 
-              <div className="space-y-2">
+              {/* Console side */}
+              <CardContent className="space-y-2 p-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-primary/10 px-2 py-1 text-sm text-primary">
+                    <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
                       {messages.playground.console.title}
                     </span>
                   </div>
+
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => setOutput("")} className="size-8 hover:bg-background/80">
-                      <Trash2 className="size-4" aria-hidden />
-                      <span className="sr-only">{messages.playground.console.clear}</span>
-                    </Button>
                     <Button
-                      variant="default"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setOutput("")}
+                      className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                    >
+                      <Trash2 className="size-4" aria-hidden="true" />
+                      <span className="sr-only">
+                        {messages.playground.console.clear}
+                      </span>
+                    </Button>
+
+                    <Button
                       size="icon"
                       onClick={runCode}
-                      className="size-8 bg-primary/10 text-primary hover:bg-primary/20"
+                      className="size-8 rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                     >
-                      <Play className="size-4" aria-hidden />
-                      <span className="sr-only">{messages.playground.editor.actions.run}</span>
+                      <Play className="size-4" aria-hidden="true" />
+                      <span className="sr-only">
+                        {messages.playground.editor.actions.run}
+                      </span>
                     </Button>
                   </div>
                 </div>
+
                 <div
-                  className="min-h-[500px] whitespace-pre-wrap overflow-auto rounded-md border border-border/30 p-4 font-mono text-sm transition-all duration-300 hover:border-border/50"
+                  className="min-h-[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
                   role="region"
                   aria-live="polite"
                   aria-label="Console output"
                 >
                   {output}
                 </div>
-              </div>
+              </CardContent>
             </Card>
           </motion.div>
         </section>

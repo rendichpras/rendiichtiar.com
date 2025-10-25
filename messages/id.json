@@ -4,6 +4,7 @@
     "about": "Tentang",
     "guestbook": "Buku Tamu",
     "contact": "Kontak",
+    "blog": "Blog",
     "playground": "JS Playground",
     "apps": "Aplikasi",
     "socials": "Media Sosial",
@@ -36,6 +37,7 @@
       "education": "Pendidikan"
     },
     "intro": {
+      "headline": "Kenali saya lebih dekat!",
       "greeting": "Halo! Terima kasih telah mengunjungi website personal saya.",
       "bio1": "Saya seorang Software Engineer yang berfokus pada pengembangan Frontend dengan pengalaman lebih dari 2 tahun. Saya memiliki keahlian dalam ekosistem JavaScript modern seperti React, Next.js, dan TypeScript untuk membangun aplikasi web yang responsif dan profesional. Saya tidak hanya memahami jumlah pengguna, tetapi juga berkomitmen untuk menghadirkan solusi digital yang tidak hanya fungsional, tetapi juga intuitif dan menyenangkan untuk digunakan.",
       "bio2": "Perjalanan saya di dunia pengembangan web dimulai dari ketertarikan saya pada teknologi dan desain. Saya selalu percaya bahwa teknologi harus membuat hidup lebih mudah, bukan sebaliknya. Prinsip ini yang selalu saya terapkan dalam setiap proyek yang saya kerjakan. Saya senang mengeksplorasi teknologi-teknologi baru dan selalu berusaha untuk tetap up-to-date dengan perkembangan terbaru di dunia web development.",
@@ -45,9 +47,11 @@
       "closing": "Salam hangat,"
     },
     "career": {
-      "empty": "Belum ada karir yang ditampilkan"
+      "empty": "Belum ada karir yang ditampilkan",
+      "headline" : "Berikut adalah ringkasan pengalaman profesional saya sejauh ini."
     },
     "education": {
+      "headline": "Berikut adalah ringkasan latar belakang pendidikan saya.",
       "upb": {
         "name": "Universitas Pelita Bangsa",
         "major": "Teknik Informatika",
@@ -311,13 +315,24 @@
     "playground": {
       "title": "JavaScript Playground | Rendi Ichtiar Prasetyo",
       "description": "Uji dan jalankan kode JavaScript Anda secara langsung di browser dengan umpan balik instan."
-    }
+    },
+    "blog": {
+    "title": "Blog",
+    "subtitle": "Tulisan terbaru dan catatan teknis",
+    "empty": "Belum ada artikel.",
+    "prev": "Sebelumnya",
+    "next": "Berikutnya",
+    "read_time": "menit baca",
+    "views": "kali dibaca"
+  }
   },
   "theme": {
     "toggle": "Ubah tema",
     "light": "Terang",
     "dark": "Gelap",
-    "system": "Sistem"
+    "system": "Sistem",
+    "current_dark": "Gelap",
+    "current_light": "Terang"
   },
   "footer": {
     "copyright": "© {year} Rendi Ichtiar Prasetyo",
