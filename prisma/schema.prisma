@@ -66,17 +66,25 @@ model Guestbook {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   // Fields untuk reply
-  parentId  String?  // ID dari pesan yang di-reply
-  parent    Guestbook?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId  String?    // ID dari pesan yang di-reply (induk langsung)
+  parent    Guestbook? @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
   replies   Guestbook[] @relation("Replies")
+
+  // Root thread id untuk menjaga struktur saat refresh
+  rootId    String?
+  root      Guestbook?  @relation("RootThread", fields: [rootId], references: [id], onDelete: Cascade)
+  thread    Guestbook[] @relation("RootThread")
   
   // Field untuk mention
-  mentionedUserId String? // ID user yang di-mention
+  mentionedUserId String?
   mentionedUser   User?   @relation("MentionedIn", fields: [mentionedUserId], references: [id])
   mentions        User[]  @relation("Mentions")
 
   // Field untuk like
   likes     Like[]
+
+  @@index([parentId])
+  @@index([rootId])
 }
 
 model Like {
