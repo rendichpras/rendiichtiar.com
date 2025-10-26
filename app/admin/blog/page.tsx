@@ -5,6 +5,9 @@ import { db } from "@/db";
 import { posts, postTags, tags } from "@/db/schema/schema";
 import { desc, inArray, eq } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminBlogListPage() {
   const rawPosts = await db
     .select({
