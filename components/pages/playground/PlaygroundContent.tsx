@@ -51,7 +51,7 @@ function escapeRegex(s: string) {
 
 function EditorLoading() {
   return (
-    <div className="flex h-full min-h-[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm">
+    <div className="flex h-full min-h[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm">
       <Skeleton className="h-full w-full rounded-xl" />
     </div>
   )
@@ -228,8 +228,8 @@ export function PlaygroundContent() {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
-        <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -413,8 +413,8 @@ export function PlaygroundContent() {
               </CardContent>
             </Card>
           </motion.div>
-        </section>
-      </main>
+        </div>
+      </section>
     </PageTransition>
   )
 }

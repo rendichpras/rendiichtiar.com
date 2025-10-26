@@ -241,8 +241,8 @@ export function AboutContent() {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
-        <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <header className="max-w-2xl space-y-2">
             <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
               {messages.pages.about.title}
@@ -277,8 +277,8 @@ export function AboutContent() {
           >
             {contentById[activeSection]({ messages })}
           </motion.div>
-        </section>
-      </main>
+        </div>
+      </section>
     </PageTransition>
   )
 }

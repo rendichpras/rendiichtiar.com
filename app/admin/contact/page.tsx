@@ -81,8 +81,11 @@ export default function AdminContactPage() {
     try {
       const res = await fetch("/api/contact")
       const data = await res.json()
-      if (data?.success) setContacts(data.contacts as Contact[])
-      else toast.error(messages.admin.contact.notifications.load_error)
+      if (data?.success) {
+        setContacts(data.contacts as Contact[])
+      } else {
+        toast.error(messages.admin.contact.notifications.load_error)
+      }
     } catch {
       toast.error(messages.admin.contact.notifications.load_error)
     } finally {
@@ -253,11 +256,11 @@ export default function AdminContactPage() {
   if (pageLoading) {
     return (
       <PageTransition>
-        <main className="relative min-h-screen bg-background lg:pl-64 pt-16 lg:pt-0">
-          <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
+        <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
             <ContactSkeleton />
-          </section>
-        </main>
+          </div>
+        </section>
       </PageTransition>
     )
   }
@@ -266,20 +269,20 @@ export default function AdminContactPage() {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background lg:pl-64 pt-16 lg:pt-0">
-        <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="max-w-3xl space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {messages.admin.contact.title}
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
+            <p className="text-sm text-muted-foreground sm:text-base">
               {messages.admin.contact.subtitle}
             </p>
           </div>
 
           <Separator className="my-6 bg-border/60" />
 
-          <Card className="border-none">
+          <Card className="border-none bg-transparent shadow-none">
             <div className="p-4">
               <div className="flex flex-col items-center gap-4 py-4 sm:flex-row">
                 <Input
@@ -469,8 +472,8 @@ export default function AdminContactPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </section>
-      </main>
+        </div>
+      </section>
     </PageTransition>
   )
 }

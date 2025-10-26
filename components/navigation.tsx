@@ -19,7 +19,9 @@ import {
   Code,
   ArrowUpRight,
   BadgeCheck,
-  MessageSquareText,
+  NotebookPen,
+  PanelRightOpen,
+  PanelLeftOpen,
 } from "lucide-react"
 
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -32,7 +34,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 type IconComp = React.ComponentType<{ className?: string }>
@@ -44,7 +45,7 @@ const MAIN_NAV: readonly NavItem[] = [
   {
     path: "/guestbook",
     nameKey: "common.navigation.guestbook",
-    icon: MessageSquareText,
+    icon: NotebookPen,
   },
   { path: "/contact", nameKey: "common.navigation.contact", icon: Mail },
   { path: "/blog", nameKey: "common.navigation.blog", icon: BookOpen },
@@ -292,7 +293,7 @@ export function MobileNav() {
       <Button
         variant="ghost"
         size="icon"
-        className="rounded-full sm:hidden"
+        className="rounded-full"
         onClick={() => setOpen((v) => !v)}
         aria-label={
           open
@@ -417,7 +418,13 @@ export function MobileNav() {
   )
 }
 
-export function Navbar() {
+export function Navigation({
+  collapsed,
+  onToggle,
+}: {
+  collapsed: boolean
+  onToggle: () => void
+}) {
   const pathname = usePathname()
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
@@ -429,7 +436,6 @@ export function Navbar() {
 
   return (
     <>
-      {/* header mobile */}
       <header
         className="fixed left-0 right-0 top-0 z-50 lg:hidden"
         role="banner"
@@ -460,10 +466,11 @@ export function Navbar() {
           </nav>
         </div>
       </header>
-
-      {/* sidebar desktop */}
       <motion.aside
-        className="fixed left-0 top-0 bottom-0 z-50 hidden w-64 flex-col border-r border-border/30 lg:flex"
+        className={cn(
+          "fixed left-0 top-0 bottom-0 z-50 hidden border-r border-border/30 lg:flex lg:flex-col transition-all duration-300",
+          collapsed ? "w-16" : "w-64"
+        )}
         role="complementary"
         aria-label={messages.common.navigation.nav_menu}
       >
@@ -476,17 +483,42 @@ export function Navbar() {
             boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
           }}
         />
-        <div className="relative flex flex-1 flex-col p-6">
-          <Logo
-            className="text-xl"
-            homeLabel={messages.pages.home.to_home}
-            verifiedLabel={messages.pages.home.verified}
-          />
 
-          <Separator className="my-6 bg-border/30" />
+        <div className="relative flex h-full flex-col">
+          <div className="flex h-16 items-center justify-between border-b px-4">
+            <div
+              className={cn(
+                "text-xl font-semibold leading-none",
+                collapsed && "sr-only"
+              )}
+            >
+              <Logo
+                className="text-xl"
+                homeLabel={messages.pages.home.to_home}
+                verifiedLabel={messages.pages.home.verified}
+              />
+            </div>
 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              onClick={onToggle}
+              aria-label={
+                collapsed
+                  ? messages.common.navigation.open_menu
+                  : messages.common.navigation.close_menu
+              }
+            >
+              {collapsed ? (
+                <PanelLeftOpen className="size-4" aria-hidden="true" />
+              ) : (
+                <PanelRightOpen className="size-4" aria-hidden="true" />
+              )}
+            </Button>
+          </div>
           <nav
-            className="flex-1 space-y-4"
+            className="flex-1 space-y-4 overflow-y-auto p-4"
             role="navigation"
             aria-label={messages.common.navigation.main_menu}
           >
@@ -504,21 +536,26 @@ export function Navbar() {
                     <Link
                       href={it.path}
                       className={cn(
-                        "group relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5 text-sm font-medium",
+                        "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors",
+                        collapsed ? "justify-center px-2" : "gap-3 px-3",
                         active
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
                       )}
                       aria-current={active ? "page" : undefined}
                     >
-                      <Icon className="size-4" aria-hidden="true" />
-                      <span>{t(messages, it.nameKey)}</span>
+                      <Icon
+                        className="size-4 flex-shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span className={cn(collapsed && "hidden")}>
+                        {t(messages, it.nameKey)}
+                      </span>
                     </Link>
                   </motion.div>
                 )
               })}
             </div>
-
             <div className="space-y-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -526,7 +563,7 @@ export function Navbar() {
                 transition={{
                   delay: MAIN_NAV.length * BASE_DELAY,
                 }}
-                className="px-3 py-2"
+                className={cn("px-3 py-2", collapsed && "sr-only")}
               >
                 <p className="text-xs font-medium text-muted-foreground">
                   {messages.common.navigation.apps}
@@ -548,69 +585,82 @@ export function Navbar() {
                     <Link
                       href={it.path}
                       className={cn(
-                        "group relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5 text-sm font-medium",
+                        "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors",
+                        collapsed ? "justify-center px-2" : "gap-3 px-3",
                         active
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
                       )}
                       aria-current={active ? "page" : undefined}
                     >
-                      <Icon className="size-4" aria-hidden="true" />
-                      <span>{t(messages, it.nameKey)}</span>
+                      <Icon
+                        className="size-4 flex-shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span className={cn(collapsed && "hidden")}>
+                        {t(messages, it.nameKey)}
+                      </span>
                     </Link>
                   </motion.div>
                 )
               })}
             </div>
-
-            <div className="space-y-1">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: (MAIN_NAV.length + APP_NAV.length) * BASE_DELAY,
-                }}
-                className="px-3 py-2"
-              >
-                <p className="text-xs font-medium text-muted-foreground">
-                  {messages.common.navigation.socials}
-                </p>
-              </motion.div>
-
-              {SOCIAL_NAV.map((s, i) => (
+            {!collapsed && (
+              <div className="space-y-1">
                 <motion.div
-                  key={s.name}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
-                    delay: (MAIN_NAV.length + APP_NAV.length + i) * BASE_DELAY,
+                    delay: (MAIN_NAV.length + APP_NAV.length) * BASE_DELAY,
                   }}
+                  className="px-3 py-2"
                 >
-                  <a
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary"
-                  >
-                    <span>{s.name}</span>
-                    <ArrowUpRight
-                      className="ml-auto size-4"
-                      aria-hidden="true"
-                    />
-                  </a>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {messages.common.navigation.socials}
+                  </p>
                 </motion.div>
-              ))}
-            </div>
-          </nav>
 
-          <div className="mt-auto flex items-center justify-between px-3 pt-6">
+                {SOCIAL_NAV.map((s, i) => (
+                  <motion.div
+                    key={s.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay:
+                        (MAIN_NAV.length + APP_NAV.length + i) * BASE_DELAY,
+                    }}
+                  >
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors",
+                        "gap-3 px-3"
+                      )}
+                    >
+                      <span>{s.name}</span>
+                      <ArrowUpRight
+                        className="ml-auto size-4"
+                        aria-hidden="true"
+                      />
+                    </a>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </nav>
+          <div
+            className={cn(
+              "mt-auto flex items-center border-t px-4 py-4",
+              collapsed ? "justify-center" : "justify-between"
+            )}
+          >
             <ThemeToggle className="hover:scale-100" />
-            <LanguageSwitcher variant="compact" />
+            {!collapsed && <LanguageSwitcher variant="compact" />}
           </div>
         </div>
       </motion.aside>
-
-      <div className="hidden w-64 lg:block" />
     </>
   )
 }

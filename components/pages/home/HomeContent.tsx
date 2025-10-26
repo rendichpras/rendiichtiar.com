@@ -175,123 +175,121 @@ export default function HomeContent() {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pt-0 lg:pl-64">
-        <section className="relative py-8 sm:py-12 md:py-16">
-          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-            <div className="space-y-6 sm:space-y-8">
-              {/* Hero */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-                <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
-                  <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/30">
-                    <Image
-                      src="/avatar.jpg"
-                      alt="Rendi Ichtiar Prasetyo"
-                      priority
-                      fill
-                      sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 128px"
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex-1 space-y-4">
-                  <div className="space-y-2">
-                    <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
-                      {messages.pages.home.greeting}
-                    </h1>
-
-                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground sm:gap-4 sm:text-base">
-                      <div className="flex items-center gap-2">
-                        <MapPin
-                          className="h-4 w-4 text-primary/70"
-                          aria-hidden="true"
-                        />
-                        <span>{messages.pages.home.location}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <MonitorUp
-                          className="h-4 w-4 text-primary/70"
-                          aria-hidden="true"
-                        />
-                        <span>{messages.pages.home.remote_worker}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {messages.pages.home.bio}
-                  </p>
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
+          <div className="space-y-6 sm:space-y-8">
+            {/* Hero */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+              <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
+                <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/30">
+                  <Image
+                    src="/avatar.jpg"
+                    alt="Rendi Ichtiar Prasetyo"
+                    priority
+                    fill
+                    sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 128px"
+                    className="object-cover"
+                  />
                 </div>
               </div>
 
-              <Separator className="bg-border/40" />
-
-              {/* Tech stack */}
-              <div className="space-y-6 sm:space-y-8">
+              <div className="flex-1 space-y-4">
                 <div className="space-y-2">
-                  <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                    {messages.pages.home.tech_stack}
-                  </h2>
-                  <p className="text-sm text-muted-foreground sm:text-base">
-                    {messages.pages.home.tech_stack_desc}
-                  </p>
-                </div>
+                  <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
+                    {messages.pages.home.greeting}
+                  </h1>
 
-                <div className="space-y-2">
-                  <MarqueeRow durationSeconds={40} reverse />
-                  <MarqueeRow durationSeconds={35} />
-                  <MarqueeRow durationSeconds={30} reverse />
-                </div>
-              </div>
-
-              <Separator className="bg-border/40" />
-
-              {/* CTA section */}
-              <div className="space-y-8 sm:space-y-12">
-                <div className="space-y-4 sm:space-y-6">
-                  <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                    {messages.pages.home.work_title}
-                  </h2>
-
-                  <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-                    {messages.pages.home.work_desc}
-                  </p>
-                </div>
-
-                <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
-                  <CardHeader className="space-y-2 pb-3">
+                  <div className="flex flex-wrap gap-3 text-sm text-muted-foreground sm:gap-4 sm:text-base">
                     <div className="flex items-center gap-2">
-                      <MessageCircle
-                        className="h-5 w-5 text-primary/70"
+                      <MapPin
+                        className="h-4 w-4 text-primary/70"
                         aria-hidden="true"
                       />
-                      <CardTitle className="text-lg font-semibold text-foreground sm:text-xl">
-                        {messages.pages.home.lets_work}
-                      </CardTitle>
+                      <span>{messages.pages.home.location}</span>
                     </div>
 
-                    <CardDescription className="text-sm text-muted-foreground sm:text-base">
-                      {messages.pages.home.work_cta}
-                    </CardDescription>
-                  </CardHeader>
+                    <div className="flex items-center gap-2">
+                      <MonitorUp
+                        className="h-4 w-4 text-primary/70"
+                        aria-hidden="true"
+                      />
+                      <span>{messages.pages.home.remote_worker}</span>
+                    </div>
+                  </div>
+                </div>
 
-                  <CardFooter>
-                    <Button
-                      asChild
-                      className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
-                    >
-                      <a href="mailto:rendichpras@gmail.com">
-                        {messages.pages.home.contact_me}
-                      </a>
-                    </Button>
-                  </CardFooter>
-                </Card>
+                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  {messages.pages.home.bio}
+                </p>
               </div>
             </div>
+
+            <Separator className="bg-border/40" />
+
+            {/* Tech stack */}
+            <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-2">
+                <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+                  {messages.pages.home.tech_stack}
+                </h2>
+                <p className="text-sm text-muted-foreground sm:text-base">
+                  {messages.pages.home.tech_stack_desc}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <MarqueeRow durationSeconds={40} reverse />
+                <MarqueeRow durationSeconds={35} />
+                <MarqueeRow durationSeconds={30} reverse />
+              </div>
+            </div>
+
+            <Separator className="bg-border/40" />
+
+            {/* CTA section */}
+            <div className="space-y-8 sm:space-y-12">
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+                  {messages.pages.home.work_title}
+                </h2>
+
+                <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
+                  {messages.pages.home.work_desc}
+                </p>
+              </div>
+
+              <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+                <CardHeader className="space-y-2 pb-3">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle
+                      className="h-5 w-5 text-primary/70"
+                      aria-hidden="true"
+                    />
+                    <CardTitle className="text-lg font-semibold text-foreground sm:text-xl">
+                      {messages.pages.home.lets_work}
+                    </CardTitle>
+                  </div>
+
+                  <CardDescription className="text-sm text-muted-foreground sm:text-base">
+                    {messages.pages.home.work_cta}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardFooter>
+                  <Button
+                    asChild
+                    className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
+                  >
+                    <a href="mailto:rendichpras@gmail.com">
+                      {messages.pages.home.contact_me}
+                    </a>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
     </PageTransition>
   )
 }

@@ -118,9 +118,9 @@ export function ContactContent() {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
-        <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
-          {/* Page heading */}
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 py-0 sm:px-6 md:px-8 lg:px-12 xl:px-24">
+          {/* heading */}
           <header className="max-w-3xl space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {messages.pages.contact.title}
@@ -132,7 +132,7 @@ export function ContactContent() {
 
           <Separator className="my-6 bg-border/40" />
 
-          {/* Call / meeting card */}
+          {/* kartu jadwal call */}
           <Card className="border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -174,7 +174,7 @@ export function ContactContent() {
             </CardHeader>
           </Card>
 
-          {/* Message form card */}
+          {/* kartu form kirim pesan */}
           <Card className="mt-8 border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-foreground">
@@ -309,8 +309,8 @@ export function ContactContent() {
               </form>
             </CardContent>
           </Card>
-        </section>
-      </main>
+        </div>
+      </section>
     </PageTransition>
   )
 }

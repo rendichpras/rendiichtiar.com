@@ -29,13 +29,11 @@ export default async function AdminBlogListPage() {
   if (rawPosts.length === 0) {
     return (
       <PageTransition>
-        <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
-          <section className="py-8 sm:py-12 md:py-16">
-            <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-              <BlogList posts={[]} />
-            </div>
-          </section>
-        </main>
+        <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
+            <BlogList posts={[]} />
+          </div>
+        </section>
       </PageTransition>
     )
   }
@@ -79,13 +77,11 @@ export default async function AdminBlogListPage() {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
-        <section className="py-8 sm:py-12 md:py-16">
-          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-            <BlogList posts={postsWithTags} />
-          </div>
-        </section>
-      </main>
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
+          <BlogList posts={postsWithTags} />
+        </div>
+      </section>
     </PageTransition>
   )
 }

@@ -87,8 +87,8 @@ export function GuestbookContent({ session }: Props) {
 
   return (
     <PageTransition>
-      <main className="relative min-h-screen bg-background pt-16 text-foreground lg:pl-64 lg:pt-0">
-        <section className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 xl:px-24">
+      <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="max-w-2xl space-y-2">
             <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
               {messages.pages.guestbook.title}
@@ -126,6 +126,7 @@ export function GuestbookContent({ session }: Props) {
               )}
             </div>
 
+            {/* kanan: list message */}
             <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
@@ -143,8 +144,8 @@ export function GuestbookContent({ session }: Props) {
               </CardContent>
             </Card>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
     </PageTransition>
   )
 }
