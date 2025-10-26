@@ -8,11 +8,10 @@ import { eq } from "drizzle-orm"
 export default async function EditPostPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const { id } = params
+  const { id } = await params
 
-  // ambil data post utama
   const postRows = await db
     .select({
       id: posts.id,
@@ -43,7 +42,6 @@ export default async function EditPostPage({
     )
   }
 
-  // ambil semua tag terkait post.id
   const tagRows = await db
     .select({
       tagName: tags.name,

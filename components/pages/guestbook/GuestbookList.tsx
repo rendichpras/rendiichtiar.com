@@ -1,4 +1,3 @@
-// components/pages/guestbook/GuestbookList.tsx
 "use client";
 
 import { useCallback, useEffect, useState } from "react";

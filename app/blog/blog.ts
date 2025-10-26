@@ -36,6 +36,7 @@ function makeExcerpt(markdown: string, maxLen = 200) {
   return plain.slice(0, maxLen - 1).trimEnd() + "…";
 }
 
+// selalu resolve user dari DB by email
 async function requireSession(): Promise<{
   userId: string;
   isAdmin: boolean;
@@ -43,22 +44,19 @@ async function requireSession(): Promise<{
   const session = (await auth()) as Session | null;
   if (!session?.user?.email) throw new Error("unauthorized");
 
-  let userId = (session.user as any).id as string | undefined;
-  if (!userId) {
-    const rows = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, session.user.email))
-      .limit(1);
+  const rows = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, session.user.email))
+    .limit(1);
 
-    const u = rows[0];
-    if (!u) throw new Error("unauthorized");
-    userId = u.id;
-  }
+  const u = rows[0];
+  if (!u) throw new Error("unauthorized");
 
-  const isAdmin = session.user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const isAdmin =
+    session.user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-  return { userId, isAdmin };
+  return { userId: u.id, isAdmin };
 }
 
 async function requireAdmin(): Promise<{ userId: string }> {
@@ -377,7 +375,7 @@ export async function getPosts(input?: {
   >();
 
   for (const t of tagRows) {
-    // t.tagId, t.tagSlug, t.tagName bisa null karena leftJoin
+    // skip row tanpa tag valid (leftJoin)
     if (!t.tagId || !t.tagSlug || !t.tagName) continue;
 
     const arr = tagMap.get(t.postId) ?? [];

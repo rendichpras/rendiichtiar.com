@@ -8,14 +8,14 @@
       "blog": "Blog",
       "playground": "JS Playground",
       "apps": "Apps",
-      "socials": "Social Media",
-      "close_menu": "Close Menu",
-      "open_menu": "Open Menu",
-      "nav_menu": "Navigation Menu",
-      "main_menu": "Main Menu"
+      "socials": "Social media",
+      "close_menu": "Close menu",
+      "open_menu": "Open menu",
+      "nav_menu": "Navigation menu",
+      "main_menu": "Main menu"
     },
     "theme": {
-      "toggle": "Toggle theme",
+      "toggle": "Switch theme",
       "light": "Light",
       "dark": "Dark",
       "system": "System",
@@ -24,16 +24,16 @@
     },
     "footer": {
       "copyright": "© {year} Rendi Ichtiar Prasetyo",
-      "aria_label": "Social media",
+      "aria_label": "Social links",
       "social": {
-        "github": "Visit Rendi Ichtiar's GitHub profile",
-        "linkedin": "Visit Rendi Ichtiar's LinkedIn profile",
-        "instagram": "Visit Rendi Ichtiar's Instagram profile"
+        "github": "Rendi Ichtiar on GitHub",
+        "linkedin": "Rendi Ichtiar on LinkedIn",
+        "instagram": "Rendi Ichtiar on Instagram"
       }
     },
     "language_switcher": {
       "aria_to_en": "Switch to English",
-      "aria_to_id": "Ganti ke Bahasa Indonesia",
+      "aria_to_id": "Switch to Bahasa Indonesia",
       "tooltip_id": "Bahasa Indonesia",
       "tooltip_en": "English",
       "flag_id_alt": "Bahasa Indonesia",
@@ -46,74 +46,72 @@
     "error": {
       "forbidden": {
         "title": "403 Forbidden",
-        "heading": "Access Denied",
-        "message": "Sorry, you don't have permission to access this page.",
-        "back_home": "Back to Home"
+        "heading": "Access denied",
+        "message": "You don't have access to this page.",
+        "back_home": "Back to home"
       },
       "not_found": {
         "title": "404 Not Found",
-        "heading": "Page Not Found",
-        "message": "Sorry, the page you are looking for cannot be found or has been moved.",
-        "back_home": "Back to Home"
+        "heading": "Page not found",
+        "message": "The page you're looking for doesn't exist or has moved.",
+        "back_home": "Back to home"
       }
     },
     "validation": {
       "forbidden_words": {
-        "error": "Message contains forbidden words"
+        "error": "Your message includes blocked words"
       }
     },
     "auth": {
       "login": {
-        "title": "Sign In",
-        "description": "Please sign in with your Google or GitHub account to interact with website features.",
-        "google": "Sign in with Google",
-        "github": "Sign in with GitHub",
+        "title": "Sign in",
+        "description": "Sign in with Google or GitHub to continue.",
+        "google": "Continue with Google",
+        "github": "Continue with GitHub",
         "or": "or"
       }
     }
   },
-
   "pages": {
     "home": {
       "greeting": "Hi, I'm Rendi 👋",
       "location": "Bekasi, Indonesia",
-      "remote_worker": "Remote Worker",
-      "bio": "A Software Engineer focusing on Frontend development with over 2 years of experience. I have expertise in modern JavaScript ecosystems such as React, Next.js, and TypeScript for building responsive and high-performance web applications. With attention to detail and a deep understanding of user experience, I am committed to delivering digital solutions that are not only functional but also intuitive and enjoyable to use.",
-      "tech_stack": "Technologies I Use",
-      "tech_stack_desc": "Technologies I use to build modern and scalable applications",
-      "work_title": "What I've Been Working On",
-      "work_desc": "I help brands, companies, institutions, and startups create exceptional digital experiences for their businesses through strategic development services.",
-      "lets_work": "Let's Work Together!",
-      "work_cta": "I'm open to freelance projects, please contact me via email to see how we can collaborate.",
+      "remote_worker": "Remote",
+      "bio": "Frontend-focused Software Engineer with 2+ years of experience. I build fast, accessible web apps with React, Next.js, and TypeScript. I care about performance, details, and real user experience, not just how it looks.",
+      "tech_stack": "Tools I use",
+      "tech_stack_desc": "The stack I use to build fast, scalable products",
+      "work_title": "What I'm working on",
+      "work_desc": "I help brands, startups, and teams ship clean, reliable web experiences.",
+      "lets_work": "Let's work together",
+      "work_cta": "I'm open for freelance and contract work. Reach out by email and let's talk.",
       "contact_me": "Contact me",
       "verified": "Verified",
-      "to_home": "Go to Home"
+      "to_home": "Go to home"
     },
-
     "about": {
       "title": "About",
-      "subtitle": "A glimpse of who I am – because every detail adds depth to the canvas of life.",
+      "subtitle": "A quick look at who I am and what I do.",
       "sections": {
-        "intro": "Intro",
+        "intro": "Overview",
         "career": "Career",
         "education": "Education"
       },
       "intro": {
-        "headline": "Get to know me better!",
-        "greeting": "Hello! Thanks for checking out my personal website.",
-        "bio1": "I'm a Software Engineer who mainly works on the Frontend side of web development, and I've been doing this for more than two years. I specialize in modern JavaScript tools like React, Next.js, and TypeScript to build websites that are fast, responsive, and work well on all devices. I care a lot about how people experience a website, and I make sure the apps I build are not only useful but also easy and fun to use.",
-        "bio2": "My interest in web development started from a love for technology and design. I believe technology should help make life better, not harder. I follow this idea in every project I work on. I like learning new things and keeping up with the latest trends in web development.",
-        "bio3": "When I work on a project, I don't just focus on the code. I also think about the business goals and the user's needs. I want to create apps that solve real problems in a smart and efficient way. Before I start building anything, I make sure I understand what the users and the business really need.",
-        "bio4": "Besides coding, I enjoy learning about UI/UX design and software architecture. I think understanding these areas is important for making apps that are not only functional but also easy to maintain and improve over time. I'm also part of the open source community and like sharing what I know with other developers.",
-        "bio5": "I'm always looking for new opportunities and happy to work with others. If you have a cool project or want to talk about technology, feel free to reach out. Let's make something great together!",
+        "headline": "Get to know me",
+        "greeting": "Thanks for checking out my personal site.",
+        "bio1": "I'm a Software Engineer focused on Frontend work, with a little over two years of hands-on experience. I build fast, responsive web apps using React, Next.js, and TypeScript. I put a lot of attention into performance, accessibility, and overall usability.",
+        "bio2": "I got into web development through a mix of design curiosity and wanting to understand how products work. I believe good software should make things easier, not more complicated. I try to stay close to modern tooling and best practices so what I ship holds up over time.",
+        "bio3": "When I work on something I don't just write code. I look at the actual problem, the business goal, and how people will use it. A good product should solve something clearly and efficiently, not just look nice.",
+        "bio4": "Outside of coding I spend time on UI/UX and software architecture. That helps me build products that are maintainable, not just \"done for now.\" I also like sharing what I learn and contributing when I can.",
+        "bio5": "I'm always open to new projects and collaboration. If you want to build something or just talk tech, feel free to reach out. Let's build something useful.",
         "closing": "Best regards,"
       },
       "career": {
-        "empty": "No career displayed yet",
-        "headline": "Here's a summary of my professional experience so far."
+        "empty": "No experience listed yet",
+        "headline": "Here's a quick summary of my work experience so far."
       },
       "education": {
-        "headline": "Here's a summary of my educational background.",
+        "headline": "My education so far.",
         "upb": {
           "name": "Pelita Bangsa University",
           "major": "Informatics Engineering",
@@ -128,7 +126,6 @@
         }
       }
     },
-
     "blog": {
       "list": {
         "title": "Blog",
@@ -138,32 +135,31 @@
         "next": "Next",
         "read_time": "min read",
         "views": "views",
-        "no_image": "No image available",
-        "load_more": "Load More Posts",
+        "no_image": "No image",
+        "load_more": "Load more posts",
         "no_more_posts": "No more posts to load"
       }
     },
-
     "guestbook": {
       "title": "Guestbook",
-      "subtitle": "Leave your message, impression, or suggestion in my guestbook.",
+      "subtitle": "Say hi or leave some feedback.",
       "form": {
-        "placeholder": "Write your message here...",
-        "empty_error": "Message cannot be empty!",
-        "session_error": "Invalid session, please sign in again",
-        "success": "Your message has been added to the guestbook!",
-        "error": "Failed to add message. Please try again.",
-        "forbidden_words": "Message contains forbidden words",
+        "placeholder": "Write your message...",
+        "empty_error": "Message can't be empty.",
+        "session_error": "Session expired. Please sign in again.",
+        "success": "Your message is live.",
+        "error": "Couldn't post your message. Try again.",
+        "forbidden_words": "Your message includes blocked words",
         "sending": "Sending...",
-        "send": "Send Message"
+        "send": "Post message"
       },
       "auth": {
-        "sign_in_message": "Sign in to send a message in the guestbook"
+        "sign_in_message": "Sign in to post in the guestbook"
       },
       "list": {
-        "title": "Latest Messages",
-        "subtitle": "See what others are saying",
-        "empty": "No messages yet. Be the first!",
+        "title": "Recent messages",
+        "subtitle": "What people are saying",
+        "empty": "No messages yet. Be the first.",
         "owner": "Owner",
         "reply": {
           "button": "Reply",
@@ -171,34 +167,33 @@
           "cancel": "Cancel",
           "sending": "Sending...",
           "send": "Send",
-          "success": "Your reply has been added!",
-          "error": "Failed to add reply. Please try again."
+          "success": "Reply posted.",
+          "error": "Couldn't post reply. Try again."
         },
         "like": {
           "error": "Failed to like"
         },
-        "show_replies": "{count} Replies",
+        "show_replies": "{count} replies",
         "hide_replies": "Hide"
       }
     },
-
     "contact": {
       "title": "Contact",
-      "subtitle": "Let's connect and discuss how we can collaborate together.",
+      "subtitle": "Let's connect and see how we can work together.",
       "social": {
-        "title": "Find me on social media",
+        "title": "Find me online",
         "email": "Email",
         "linkedin": "LinkedIn",
         "facebook": "Facebook",
         "instagram": "Instagram",
-        "github": "Github"
+        "github": "GitHub"
       },
       "call": {
-        "title": "1 on 1 Chat Session",
-        "subtitle": "Let's take time to discuss about anything",
+        "title": "1:1 chat session",
+        "subtitle": "Let's take 30 minutes and talk about anything.",
         "platform": "Google Meet",
-        "duration": "30 Minutes",
-        "button": "Schedule Now"
+        "duration": "30 minutes",
+        "button": "Schedule now"
       },
       "form": {
         "title": "Or send a message",
@@ -212,31 +207,30 @@
         },
         "message": {
           "label": "Message*",
-          "placeholder": "Write your message here..."
+          "placeholder": "Write your message..."
         },
-        "response_time": "Average response: 1-2 Hours (Working Hours, GMT+7)",
+        "response_time": "Avg response: 1–2 hours (business hours, GMT+7)",
         "sending": "Sending...",
-        "send": "Send Message",
-        "success": "Message sent successfully! Thank you for contacting me.",
+        "send": "Send message",
+        "success": "Message sent. Thanks for reaching out.",
         "validation": {
           "name": "Name must be at least 2 characters",
           "email": "Invalid email",
           "message": "Message must be at least 10 characters"
         },
         "error": {
-          "general": "An error occurred. Please try again later."
+          "general": "Something went wrong. Please try again later."
         }
       }
     },
-
     "playground": {
       "title": "JavaScript Playground",
-      "subtitle": "Test and run your JavaScript code directly in the browser with instant feedback.",
+      "subtitle": "Run JavaScript in your browser and see the result instantly.",
       "editor": {
         "language": "JavaScript",
         "actions": {
           "clear": "Clear code",
-          "fullscreen": "Toggle fullscreen",
+          "fullscreen": "Fullscreen",
           "run": "Run code"
         }
       },
@@ -246,33 +240,31 @@
         "output_label": "Console output"
       },
       "errors": {
-        "code_too_long": "Code is too long (maximum 5000 characters)",
-        "blocked_keyword": "Code contains functions that are not allowed for security",
-        "validation_error": "An error occurred while validating the code",
-        "editor_not_ready": "Editor is not ready. Please wait a moment.",
-        "runtime_error": "An error occurred while running the code"
+        "code_too_long": "Code is too long (max 5000 characters).",
+        "blocked_keyword": "Code uses a function that isn't allowed for security.",
+        "validation_error": "Something went wrong while validating the code.",
+        "editor_not_ready": "Editor isn't ready yet.",
+        "runtime_error": "Your code threw an error while running."
       }
     }
   },
-
   "components": {
     "postComments": {
       "heading": "Comments",
       "logged_in_as": "Commenting as",
       "must_login": "You must sign in to comment",
       "login_btn": "Sign in to comment",
-      "login_safe": "Secure sign in via Google or GitHub",
+      "login_safe": "Secure sign-in via Google or GitHub",
       "placeholder": "Write your comment…",
       "send": "Send",
       "logout": "Sign out"
     }
   },
-
   "admin": {
     "blogList": {
       "title": "Blog Admin",
       "subtitle": "Manage posts",
-      "new_post": "Write New",
+      "new_post": "New post",
       "empty": "No posts yet.",
       "published_at": "Published",
       "draft_updated": "Draft • updated",
@@ -282,38 +274,38 @@
     "blogEditor": {
       "form": {
         "title_label": "Title",
-        "title_placeholder": "Article title",
-        "content_label": "Article Content",
+        "title_placeholder": "Post title",
+        "content_label": "Content",
         "content_hint": "Use the toolbar for headings, bold text, code, lists, and quotes.",
         "cover_label": "Cover URL",
         "cover_placeholder": "https://...",
-        "cover_helper": "This image will be used on the blog card and at the top of the article.",
+        "cover_helper": "Shown on the blog card and at the top of the post.",
         "cover_preview_empty": "Cover preview",
         "tags_label": "Tags",
         "tags_placeholder": "nextjs,react,typescript",
         "tags_helper": "Separate with commas.",
         "status_label": "Status",
         "actions": {
-          "save_changes": "Save Changes",
-          "create_draft": "Create Draft",
+          "save_changes": "Save changes",
+          "create_draft": "Save draft",
           "publish": "Publish",
           "delete": "Delete"
         },
-        "confirm_delete": "Delete this article?",
+        "confirm_delete": "Delete this post?",
         "toast": {
-          "updated": "Draft updated",
+          "updated": "Draft saved",
           "created": "Draft created",
-          "error_save": "Failed to save",
-          "published": "Article published",
-          "error_publish": "Failed to publish",
-          "deleted": "Article deleted",
-          "error_delete": "Failed to delete"
+          "error_save": "Save failed",
+          "published": "Post published",
+          "error_publish": "Publish failed",
+          "deleted": "Post deleted",
+          "error_delete": "Delete failed"
         }
       }
     },
     "contact": {
-      "title": "Message Management",
-      "subtitle": "Manage and reply to messages from website visitors.",
+      "title": "Message Inbox",
+      "subtitle": "View and reply to messages from the site.",
       "table": {
         "columns": {
           "date": "Date",
@@ -342,22 +334,21 @@
         }
       },
       "reply_dialog": {
-        "title": "Reply Message",
+        "title": "Reply to message",
         "subtitle": "Reply to {name}'s message",
         "original_message": "Original message:",
-        "placeholder": "Write your reply here...",
+        "placeholder": "Write your reply...",
         "cancel": "Cancel",
         "sending": "Sending...",
-        "send": "Send Reply"
+        "send": "Send reply"
       },
       "notifications": {
-        "load_error": "Failed to load contact data",
-        "reply_success": "Reply sent successfully",
+        "load_error": "Failed to load messages",
+        "reply_success": "Reply sent",
         "reply_error": "Failed to send reply"
       }
     }
   },
-
   "api": {
     "contact": {
       "validation": {
@@ -367,40 +358,40 @@
         "reply": "Reply must be at least 10 characters"
       },
       "error": {
-        "fetch": "Failed to fetch contact data",
+        "fetch": "Failed to fetch messages",
         "validation": "Validation failed",
-        "general": "An error occurred, please try again later",
+        "general": "Something went wrong. Please try again later",
         "not_found": "Message not found"
       },
       "success": {
-        "sent": "Message sent successfully",
-        "replied": "Reply sent successfully"
+        "sent": "Message delivered",
+        "replied": "Reply sent"
       },
       "email": {
         "admin": {
-          "subject": "[Website] New Message from {name}",
-          "title": "New Message from Website",
+          "subject": "[Website] New message from {name}",
+          "title": "New message from website",
           "name_label": "Name:",
           "email_label": "Email:",
           "message_label": "Message:",
           "message_id": "Message ID:"
         },
         "user": {
-          "subject": "Thank You for Your Message",
-          "title": "Thank You {name}!",
-          "thank_you": "Thank you for contacting me. I will reply to your message soon.",
-          "message_copy": "Copy of Your Message:",
-          "visit_website": "Visit Website",
+          "subject": "Thanks for your message",
+          "title": "Thank you {name}!",
+          "thank_you": "Thanks for reaching out. I'll get back to you soon.",
+          "message_copy": "Your message:",
+          "visit_website": "Visit website",
           "regards": "Best regards,",
           "signature": "Rendi Ichtiar"
         },
         "reply": {
-          "subject": "Re: Reply to Your Message",
-          "title": "Reply to Your Message",
+          "subject": "Re: Your message",
+          "title": "Reply to your message",
           "greeting": "Hi {name} 👋",
           "original_message": "Your previous message:",
           "reply_message": "My reply:",
-          "visit_website": "Visit Website",
+          "visit_website": "Visit website",
           "regards": "Best regards,",
           "signature": "Rendi Ichtiar"
         }
@@ -413,11 +404,10 @@
       }
     }
   },
-
   "metadata": {
     "home": {
       "title": "Rendi Ichtiar Prasetyo | Frontend Engineer",
-      "description": "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
+      "description": "Frontend Engineer focused on building modern web apps with React, Next.js, and TypeScript.",
       "keywords": [
         "Full Stack Developer",
         "Web Developer",
@@ -431,19 +421,19 @@
     },
     "about": {
       "title": "About | Rendi Ichtiar Prasetyo",
-      "description": "Learn more about me, my experience, and my journey as a Frontend Engineer."
+      "description": "Learn more about me, my work, and my path as a Frontend Engineer."
     },
     "guestbook": {
       "title": "Guestbook | Rendi Ichtiar Prasetyo",
-      "description": "Leave your message, impression, or suggestion in my guestbook."
+      "description": "Say hi or leave feedback in my guestbook."
     },
     "contact": {
       "title": "Contact | Rendi Ichtiar Prasetyo",
-      "description": "Get in touch with me for collaboration, questions, or just to say hello."
+      "description": "Get in touch for collaboration, questions, or just to say hello."
     },
     "playground": {
       "title": "JavaScript Playground | Rendi Ichtiar Prasetyo",
-      "description": "Test and run your JavaScript code directly in the browser with instant feedback."
+      "description": "Run JavaScript in your browser and see the result instantly."
     }
   }
 }

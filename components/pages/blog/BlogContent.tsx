@@ -53,7 +53,7 @@ function BlogCard({
   return (
     <Card
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-xl",
+        "group relative flex h-full flex-col overflow-hidden rounded-xl p-0",
         "border border-border/30 bg-background text-foreground shadow-sm",
         "transition-colors duration-300 hover:border-border/50"
       )}
@@ -66,7 +66,7 @@ function BlogCard({
               src={item.coverUrl}
               alt={item.title}
               fill
-              className="h-full w-full object-cover"
+              className="object-cover"
               sizes="(max-width: 640px) 100vw, (max-width:1024px) 50vw, 33vw"
             />
           ) : (
@@ -83,8 +83,7 @@ function BlogCard({
         )}
       </div>
 
-      {/* body */}
-      <div className="flex flex-1 flex-col gap-2 px-4 pb-4 pt-3 sm:px-5 sm:pb-5 sm:pt-4">
+      <div className="flex flex-1 flex-col gap-2 px-4 pb-4 pt-0 -mt-1 sm:px-5 sm:pb-5 sm:pt-0 sm:-mt-1">
         <h2 className="line-clamp-2 text-base font-semibold leading-tight text-foreground group-hover:underline sm:text-lg">
           {safeTruncate(item.title, 120)}
         </h2>
@@ -127,7 +126,6 @@ function BlogCard({
         </div>
       </div>
 
-      {/* full-card link overlay */}
       <Link
         href={`/blog/${item.slug}`}
         className="absolute inset-0"
