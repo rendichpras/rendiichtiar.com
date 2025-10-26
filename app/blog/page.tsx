@@ -1,15 +1,15 @@
 import { getPosts } from "../blog/blog"
 import { BlogContent } from "@/components/pages/blog/BlogContent"
 
-export const revalidate = 60
-export const dynamic = "force-static"
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ tag?: string; page?: string }>
+  searchParams?: { tag?: string; page?: string }
 }) {
-  const resolved = searchParams ? await searchParams : {}
+  const resolved = searchParams ?? {}
 
   const tag = resolved.tag
   const page = Number(resolved.page ?? 1)
