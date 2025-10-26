@@ -230,7 +230,6 @@ export function PostForm({ initial }: { initial?: PostInput }) {
               <div className="overflow-hidden rounded-xl border border-border/30 bg-muted/10">
                 <AspectRatio ratio={16 / 9} className="relative">
                   {data.coverUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={data.coverUrl}
                       alt={messages.admin.blogEditor.form.cover_preview_empty}

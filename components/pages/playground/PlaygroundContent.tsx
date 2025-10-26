@@ -139,7 +139,6 @@ export function PlaygroundContent() {
         },
       });
     } catch {
-      // silent
     }
   }, []);
 

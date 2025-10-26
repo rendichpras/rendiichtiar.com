@@ -1,9 +1,13 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
+import { db } from "@/db";
+import { users, posts, tags, postTags, postComments } from "@/db/schema/schema";
 import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import type { Session } from "next-auth";
+import { eq, and, inArray, desc, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 
 const slugify = (s: string) =>
   s
@@ -41,15 +45,19 @@ async function requireSession(): Promise<{
 
   let userId = (session.user as any).id as string | undefined;
   if (!userId) {
-    const u = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: { id: true },
-    });
+    const rows = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, session.user.email))
+      .limit(1);
+
+    const u = rows[0];
     if (!u) throw new Error("unauthorized");
     userId = u.id;
   }
 
   const isAdmin = session.user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
   return { userId, isAdmin };
 }
 
@@ -65,16 +73,26 @@ async function upsertTags(names: string[]) {
   );
 
   const ids: string[] = [];
+
   for (const name of unique) {
     const slug = slugify(name);
-    const t = await prisma.tag.upsert({
-      where: { slug },
-      update: { name },
-      create: { name, slug },
-      select: { id: true },
-    });
-    ids.push(t.id);
+
+    const inserted = await db
+      .insert(tags)
+      .values({
+        id: randomUUID(),
+        name,
+        slug,
+      })
+      .onConflictDoUpdate({
+        target: tags.slug,
+        set: { name },
+      })
+      .returning({ id: tags.id });
+
+    ids.push(inserted[0]!.id);
   }
+
   return ids;
 }
 
@@ -94,34 +112,45 @@ export async function createPost(input: {
   const tagIds = input.tags?.length ? await upsertTags(input.tags) : [];
 
   const normalizedStatus = input.status ?? "DRAFT";
+  const publishTime =
+    input.publishedAt ?? (normalizedStatus === "PUBLISHED" ? new Date() : null);
 
-  const post = await prisma.post.create({
-    data: {
-      slug,
-      title: input.title,
-      excerpt,
-      content: input.content,
-      coverUrl: input.coverUrl ?? null,
-      status: normalizedStatus,
-      publishedAt:
-        input.publishedAt ??
-        (normalizedStatus === "PUBLISHED" ? new Date() : null),
-      readingTime,
-      authorId: userId,
-      tags: tagIds.length
-        ? {
-            createMany: {
-              data: tagIds.map((tagId) => ({ tagId })),
-            },
-          }
-        : undefined,
-    },
-    select: { id: true, slug: true },
+  const createdPost = await db.transaction(async (tx) => {
+    const insertedPost = await tx
+      .insert(posts)
+      .values({
+        id: randomUUID(),
+        slug,
+        title: input.title,
+        excerpt,
+        content: input.content,
+        coverUrl: input.coverUrl ?? null,
+        status: normalizedStatus,
+        publishedAt: publishTime,
+        readingTime,
+        authorId: userId,
+      })
+      .returning({
+        id: posts.id,
+        slug: posts.slug,
+      });
+
+    const p = insertedPost[0]!;
+    if (tagIds.length) {
+      await tx.insert(postTags).values(
+        tagIds.map((tagId) => ({
+          postId: p.id,
+          tagId,
+        }))
+      );
+    }
+
+    return p;
   });
 
-  revalidateTag("blog-posts", "max")
+  revalidateTag("blog-posts", "max");
   revalidatePath("/blog");
-  return post;
+  return createdPost;
 }
 
 export async function updatePost(
@@ -137,52 +166,65 @@ export async function updatePost(
 ) {
   await requireAdmin();
 
-  const data: any = {};
+  const updateData: Record<string, any> = {};
 
   if (typeof input.title === "string" && input.title.trim()) {
-    data.title = input.title.trim();
-    data.slug = slugify(input.title);
+    updateData.title = input.title.trim();
+    updateData.slug = slugify(input.title);
   }
 
   if (typeof input.content === "string") {
-    data.content = input.content;
-    data.readingTime = calcReadingTime(input.content);
-    data.excerpt = makeExcerpt(input.content);
+    updateData.content = input.content;
+    updateData.readingTime = calcReadingTime(input.content);
+    updateData.excerpt = makeExcerpt(input.content);
   }
 
   if (input.coverUrl !== undefined) {
-    data.coverUrl = input.coverUrl || null;
+    updateData.coverUrl = input.coverUrl || null;
   }
 
   if (input.status) {
-    data.status = input.status;
+    updateData.status = input.status;
     if (input.status === "PUBLISHED" && !input.publishedAt) {
-      data.publishedAt = new Date();
+      updateData.publishedAt = new Date();
     }
   }
 
   if (input.publishedAt !== undefined) {
-    data.publishedAt = input.publishedAt;
+    updateData.publishedAt = input.publishedAt;
   }
 
-  const updated = await prisma.$transaction(async (tx) => {
+  updateData.updatedAt = new Date();
+
+  const updated = await db.transaction(async (tx) => {
     if (input.tags) {
       const tagIds = await upsertTags(input.tags);
-      await tx.postTag.deleteMany({ where: { postId: id } });
+
+      await tx.delete(postTags).where(eq(postTags.postId, id));
+
       if (tagIds.length) {
-        await tx.postTag.createMany({
-          data: tagIds.map((tagId) => ({ postId: id, tagId })),
-        });
+        await tx.insert(postTags).values(
+          tagIds.map((tagId) => ({
+            postId: id,
+            tagId,
+          }))
+        );
       }
     }
 
-    return tx.post.update({
-      where: { id },
-      data,
-    });
+    const updatedRows = await tx
+      .update(posts)
+      .set(updateData)
+      .where(eq(posts.id, id))
+      .returning({
+        id: posts.id,
+        slug: posts.slug,
+      });
+
+    return updatedRows[0]!;
   });
 
-  revalidateTag("blog-posts", "max")
+  revalidateTag("blog-posts", "max");
   revalidatePath("/blog");
   revalidatePath(`/blog/${updated.slug}`);
   return updated;
@@ -190,20 +232,37 @@ export async function updatePost(
 
 export async function deletePost(id: string) {
   await requireAdmin();
-  const p = await prisma.post.delete({ where: { id } });
-  revalidateTag("blog-posts", "max")
+
+  const deletedRows = await db.delete(posts).where(eq(posts.id, id)).returning({
+    id: posts.id,
+    slug: posts.slug,
+  });
+
+  const p = deletedRows[0];
+
+  revalidateTag("blog-posts", "max");
   revalidatePath("/blog");
   return p;
 }
 
 export async function publishPost(id: string) {
   await requireAdmin();
-  const p = await prisma.post.update({
-    where: { id },
-    data: { status: "PUBLISHED", publishedAt: new Date() },
-    select: { slug: true },
-  });
-  revalidateTag("blog-posts", "max")
+
+  const publishedRows = await db
+    .update(posts)
+    .set({
+      status: "PUBLISHED",
+      publishedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(posts.id, id))
+    .returning({
+      slug: posts.slug,
+    });
+
+  const p = publishedRows[0]!;
+
+  revalidateTag("blog-posts", "max");
   revalidatePath("/blog");
   revalidatePath(`/blog/${p.slug}`);
   return p;
@@ -216,25 +275,145 @@ export async function getPosts(input?: {
 }) {
   const page = Math.max(1, input?.page ?? 1);
   const pageSize = Math.min(20, Math.max(1, input?.pageSize ?? 10));
+  const offset = (page - 1) * pageSize;
 
-  const where: any = { status: "PUBLISHED" as const };
+  let totalRows;
   if (input?.tag) {
-    where.tags = { some: { tag: { slug: input.tag } } };
+    totalRows = await db
+      .select({
+        count: sql<number>`count(distinct ${posts.id})`,
+      })
+      .from(posts)
+      .leftJoin(postTags, eq(postTags.postId, posts.id))
+      .leftJoin(tags, eq(tags.id, postTags.tagId))
+      .where(and(eq(posts.status, "PUBLISHED"), eq(tags.slug, input.tag)));
+  } else {
+    totalRows = await db
+      .select({
+        count: sql<number>`count(*)`,
+      })
+      .from(posts)
+      .where(eq(posts.status, "PUBLISHED"));
   }
 
-  const [items, total] = await prisma.$transaction([
-    prisma.post.findMany({
-      where,
-      orderBy: { publishedAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      include: {
-        tags: { include: { tag: true } },
-        author: true,
+  const total = Number(totalRows[0]?.count ?? 0);
+
+  let pageIdRows;
+  if (input?.tag) {
+    pageIdRows = await db
+      .select({
+        id: posts.id,
+      })
+      .from(posts)
+      .leftJoin(postTags, eq(postTags.postId, posts.id))
+      .leftJoin(tags, eq(tags.id, postTags.tagId))
+      .where(and(eq(posts.status, "PUBLISHED"), eq(tags.slug, input.tag)))
+      .orderBy(desc(posts.publishedAt))
+      .limit(pageSize)
+      .offset(offset);
+  } else {
+    pageIdRows = await db
+      .select({
+        id: posts.id,
+      })
+      .from(posts)
+      .where(eq(posts.status, "PUBLISHED"))
+      .orderBy(desc(posts.publishedAt))
+      .limit(pageSize)
+      .offset(offset);
+  }
+
+  const postIds = pageIdRows.map((r) => r.id);
+  if (postIds.length === 0) {
+    return {
+      items: [],
+      total,
+      page,
+      pageSize,
+      hasMore: page * pageSize < total,
+    };
+  }
+
+  const detailRows = await db
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      subtitle: posts.subtitle,
+      excerpt: posts.excerpt,
+      content: posts.content,
+      coverUrl: posts.coverUrl,
+      status: posts.status,
+      createdAt: posts.createdAt,
+      updatedAt: posts.updatedAt,
+      publishedAt: posts.publishedAt,
+      readingTime: posts.readingTime,
+      views: posts.views,
+      authorId: posts.authorId,
+
+      authorName: users.name,
+      authorEmail: users.email,
+      authorImage: users.image,
+    })
+    .from(posts)
+    .leftJoin(users, eq(users.id, posts.authorId))
+    .where(inArray(posts.id, postIds))
+    .orderBy(desc(posts.publishedAt));
+
+  const tagRows = await db
+    .select({
+      postId: postTags.postId,
+      tagId: tags.id,
+      tagSlug: tags.slug,
+      tagName: tags.name,
+    })
+    .from(postTags)
+    .leftJoin(tags, eq(tags.id, postTags.tagId))
+    .where(inArray(postTags.postId, postIds));
+
+  const tagMap = new Map<
+    string,
+    { tag: { id: string; slug: string; name: string } }[]
+  >();
+
+  for (const t of tagRows) {
+    // t.tagId, t.tagSlug, t.tagName bisa null karena leftJoin
+    if (!t.tagId || !t.tagSlug || !t.tagName) continue;
+
+    const arr = tagMap.get(t.postId) ?? [];
+    arr.push({
+      tag: {
+        id: t.tagId,
+        slug: t.tagSlug,
+        name: t.tagName,
       },
-    }),
-    prisma.post.count({ where }),
-  ]);
+    });
+    tagMap.set(t.postId, arr);
+  }
+
+  const items = detailRows.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    subtitle: row.subtitle,
+    excerpt: row.excerpt,
+    content: row.content,
+    coverUrl: row.coverUrl,
+    status: row.status,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    publishedAt: row.publishedAt,
+    readingTime: row.readingTime,
+    views: row.views,
+    authorId: row.authorId,
+    author: {
+      id: row.authorId,
+      name: row.authorName,
+      email: row.authorEmail,
+      image: row.authorImage,
+    },
+    tags: tagMap.get(row.id) ?? [],
+  }));
 
   return {
     items,
@@ -246,44 +425,129 @@ export async function getPosts(input?: {
 }
 
 export async function getPostBySlug(slug: string) {
-  return prisma.post.findUnique({
-    where: { slug },
-    include: { tags: { include: { tag: true } }, author: true },
-  });
+  const postRows = await db
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      subtitle: posts.subtitle,
+      excerpt: posts.excerpt,
+      content: posts.content,
+      coverUrl: posts.coverUrl,
+      status: posts.status,
+      createdAt: posts.createdAt,
+      updatedAt: posts.updatedAt,
+      publishedAt: posts.publishedAt,
+      readingTime: posts.readingTime,
+      views: posts.views,
+      authorId: posts.authorId,
+
+      authorName: users.name,
+      authorEmail: users.email,
+      authorImage: users.image,
+    })
+    .from(posts)
+    .leftJoin(users, eq(users.id, posts.authorId))
+    .where(eq(posts.slug, slug))
+    .limit(1);
+
+  const p = postRows[0];
+  if (!p) return null;
+
+  const tagRows = await db
+    .select({
+      tagId: tags.id,
+      tagSlug: tags.slug,
+      tagName: tags.name,
+    })
+    .from(postTags)
+    .leftJoin(tags, eq(tags.id, postTags.tagId))
+    .where(eq(postTags.postId, p.id));
+
+  const filteredTagRows = tagRows.filter(
+    (t) => t.tagId && t.tagSlug && t.tagName
+  );
+
+  return {
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    subtitle: p.subtitle,
+    excerpt: p.excerpt,
+    content: p.content,
+    coverUrl: p.coverUrl,
+    status: p.status,
+    createdAt: p.createdAt,
+    updatedAt: p.updatedAt,
+    publishedAt: p.publishedAt,
+    readingTime: p.readingTime,
+    views: p.views,
+    authorId: p.authorId,
+    author: {
+      id: p.authorId,
+      name: p.authorName,
+      email: p.authorEmail,
+      image: p.authorImage,
+    },
+    tags: filteredTagRows.map((t) => ({
+      tag: {
+        id: t.tagId as string,
+        slug: t.tagSlug as string,
+        name: t.tagName as string,
+      },
+    })),
+  };
 }
 
 export async function incrementView(slug: string) {
-  await prisma.post.update({
-    where: { slug },
-    data: { views: { increment: 1 } },
-  });
+  await db
+    .update(posts)
+    .set({
+      views: sql`${posts.views} + 1`,
+    })
+    .where(eq(posts.slug, slug));
 }
 
 async function findRootId(commentId: string): Promise<string> {
-  let cur: {
+  const curRows: {
     id: string;
     parentId: string | null;
     rootId: string | null;
-  } | null = await prisma.postComment.findUnique({
-    where: { id: commentId },
-    select: { id: true, parentId: true, rootId: true },
-  });
+  }[] = await db
+    .select({
+      id: postComments.id,
+      parentId: postComments.parentId,
+      rootId: postComments.rootId,
+    })
+    .from(postComments)
+    .where(eq(postComments.id, commentId))
+    .limit(1);
 
+  const cur = curRows[0] ?? null;
   if (!cur) return commentId;
   if (!cur.parentId) return cur.id;
   if (cur.rootId) return cur.rootId;
 
   let pid: string | null = cur.parentId;
   while (pid) {
-    const parentRes: { id: string; parentId: string | null } | null =
-      await prisma.postComment.findUnique({
-        where: { id: pid },
-        select: { id: true, parentId: true },
-      });
+    const parentRows: {
+      id: string;
+      parentId: string | null;
+    }[] = await db
+      .select({
+        id: postComments.id,
+        parentId: postComments.parentId,
+      })
+      .from(postComments)
+      .where(eq(postComments.id, pid))
+      .limit(1);
+
+    const parentRes = parentRows[0] ?? null;
     if (!parentRes) break;
     if (!parentRes.parentId) return parentRes.id;
     pid = parentRes.parentId;
   }
+
   return cur.id;
 }
 
@@ -294,6 +558,7 @@ export async function addPostComment(input: {
   parentAuthor?: string | null;
 }) {
   const { userId } = await requireSession();
+
   const text = input.message.trim().slice(0, 280);
   if (!text) throw new Error("empty_message");
 
@@ -301,40 +566,95 @@ export async function addPostComment(input: {
 
   let mentionedUserId: string | null = null;
   if (input.parentAuthor) {
-    const u = await prisma.user.findFirst({
-      where: { name: input.parentAuthor },
-      select: { id: true },
-    });
-    mentionedUserId = u?.id ?? null;
+    const uRows = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.name, input.parentAuthor))
+      .limit(1);
+    mentionedUserId = uRows[0]?.id ?? null;
   }
 
-  const c = await prisma.postComment.create({
-    data: {
+  const insertedRows = await db
+    .insert(postComments)
+    .values({
+      id: randomUUID(),
       postId: input.postId,
       userId,
       message: text,
       parentId: input.parentId ?? null,
       rootId,
       mentionedUserId,
-    },
-  });
+    })
+    .returning({
+      id: postComments.id,
+      postId: postComments.postId,
+      userId: postComments.userId,
+      message: postComments.message,
+      parentId: postComments.parentId,
+      rootId: postComments.rootId,
+      mentionedUserId: postComments.mentionedUserId,
+      createdAt: postComments.createdAt,
+    });
 
-  const slugObj = await prisma.post.findUnique({
-    where: { id: input.postId },
-    select: { slug: true },
-  });
-  if (slugObj?.slug) revalidatePath(`/blog/${slugObj.slug}`);
+  const c = insertedRows[0];
+
+  const slugRows = await db
+    .select({
+      slug: posts.slug,
+    })
+    .from(posts)
+    .where(eq(posts.id, input.postId))
+    .limit(1);
+
+  const slugObj = slugRows[0];
+  if (slugObj?.slug) {
+    revalidatePath(`/blog/${slugObj.slug}`);
+  }
 
   return c;
 }
 
 export async function getPostComments(postId: string) {
-  return prisma.postComment.findMany({
-    where: { postId },
-    orderBy: { createdAt: "asc" },
-    include: {
-      user: { select: { name: true, image: true } },
-      mentionedUser: { select: { name: true } },
+  const mentionedUsers = alias(users, "mentionedUsers");
+
+  const rows = await db
+    .select({
+      id: postComments.id,
+      postId: postComments.postId,
+      userId: postComments.userId,
+      message: postComments.message,
+      createdAt: postComments.createdAt,
+      parentId: postComments.parentId,
+      rootId: postComments.rootId,
+      mentionedUserId: postComments.mentionedUserId,
+
+      userName: users.name,
+      userImage: users.image,
+
+      mentionedUserName: mentionedUsers.name,
+    })
+    .from(postComments)
+    .leftJoin(users, eq(postComments.userId, users.id))
+    .leftJoin(
+      mentionedUsers,
+      eq(postComments.mentionedUserId, mentionedUsers.id)
+    )
+    .where(eq(postComments.postId, postId))
+    .orderBy(postComments.createdAt);
+
+  return rows.map((r) => ({
+    id: r.id,
+    postId: r.postId,
+    userId: r.userId,
+    message: r.message,
+    createdAt: r.createdAt,
+    parentId: r.parentId,
+    rootId: r.rootId,
+    mentionedUserId: r.mentionedUserId,
+    user: {
+      name: r.userName,
+      image: r.userImage,
     },
-  });
+    mentionedUser: r.mentionedUserName ? { name: r.mentionedUserName } : null,
+  }));
 }

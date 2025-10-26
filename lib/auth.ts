@@ -1,11 +1,15 @@
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "@/lib/prisma"
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { db } from "@/db"
+import { users, accounts } from "@/db/schema/schema"
 import { getServerSession, type NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import GitHubProvider from "next-auth/providers/github"
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+  }),
 
   providers: [
     GoogleProvider({
@@ -18,7 +22,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  secret: process.env.NEXTAUTH_SECRET || '',
+  secret: process.env.NEXTAUTH_SECRET || "",
 
   session: { strategy: "jwt" },
 

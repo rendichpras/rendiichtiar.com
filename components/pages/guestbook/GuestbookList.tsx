@@ -331,7 +331,6 @@ export function GuestbookList({
           return prev;
         });
       } catch {
-        // ignore parse error
       }
     };
 

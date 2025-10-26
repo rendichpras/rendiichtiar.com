@@ -14,7 +14,6 @@ export async function GET(req: Request) {
         try {
           controller.enqueue(`data: ${JSON.stringify(ev)}\n\n`)
         } catch {
-          // noop
         }
       }
 
@@ -23,7 +22,6 @@ export async function GET(req: Request) {
       try {
         controller.enqueue(`:ok\n\n`)
       } catch {
-        // noop
       }
 
       ping = setInterval(() => {
@@ -31,7 +29,6 @@ export async function GET(req: Request) {
         try {
           controller.enqueue(`:ping\n\n`)
         } catch {
-          // noop
         }
       }, 15_000)
 
@@ -43,7 +40,6 @@ export async function GET(req: Request) {
         try {
           controller.close()
         } catch {
-          // noop
         }
       })
     },

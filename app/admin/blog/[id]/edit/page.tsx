@@ -1,20 +1,33 @@
-import { prisma } from "@/lib/prisma"
 import { PageTransition } from "@/components/animations/page-transition"
 import { PostForm } from "@/components/pages/blog/PostForm"
+
+import { db } from "@/db"
+import { posts, postTags, tags } from "@/db/schema/schema"
+import { eq } from "drizzle-orm"
 
 export default async function EditPostPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = await params
+  const { id } = params
 
-  const p = await prisma.post.findUnique({
-    where: { id },
-    include: { tags: { include: { tag: true } } },
-  })
+  // ambil data post utama
+  const postRows = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      content: posts.content,
+      coverUrl: posts.coverUrl,
+      status: posts.status,
+    })
+    .from(posts)
+    .where(eq(posts.id, id))
+    .limit(1)
 
-  if (!p) {
+  const post = postRows[0]
+
+  if (!post) {
     return (
       <PageTransition>
         <main className="relative min-h-screen bg-background pt-16 lg:pl-64 lg:pt-0">
@@ -30,7 +43,18 @@ export default async function EditPostPage({
     )
   }
 
-  const normalizedStatus = (p.status || "DRAFT").toUpperCase() as
+  // ambil semua tag terkait post.id
+  const tagRows = await db
+    .select({
+      tagName: tags.name,
+    })
+    .from(postTags)
+    .leftJoin(tags, eq(tags.id, postTags.tagId))
+    .where(eq(postTags.postId, post.id))
+
+  const tagString = tagRows.map((t) => t.tagName).join(", ")
+
+  const normalizedStatus = (post.status || "DRAFT").toUpperCase() as
     | "DRAFT"
     | "PUBLISHED"
     | "SCHEDULED"
@@ -53,11 +77,11 @@ export default async function EditPostPage({
               <div className="rounded-2xl border border-border/30 p-4 sm:p-6">
                 <PostForm
                   initial={{
-                    id: p.id,
-                    title: p.title,
-                    coverUrl: p.coverUrl ?? undefined,
-                    content: p.content,
-                    tags: p.tags.map((t) => t.tag.name).join(", "),
+                    id: post.id,
+                    title: post.title,
+                    coverUrl: post.coverUrl ?? undefined,
+                    content: post.content,
+                    tags: tagString,
                     status: normalizedStatus,
                   }}
                 />

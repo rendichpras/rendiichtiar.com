@@ -1,28 +1,30 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server"
+import { db } from "@/db"
+import { posts } from "@/db/schema/schema"
+import { eq, desc } from "drizzle-orm"
 
 export async function GET() {
-  const site = process.env.NEXT_PUBLIC_URL ?? '';
+  const site = process.env.NEXT_PUBLIC_URL ?? ""
 
-  const posts = await prisma.post.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { publishedAt: "desc" },
-    take: 20,
-    select: {
-      title: true,
-      slug: true,
-      content: true,
-      publishedAt: true,
-    },
-  });
+  const rows = await db
+    .select({
+      title: posts.title,
+      slug: posts.slug,
+      content: posts.content,
+      publishedAt: posts.publishedAt,
+    })
+    .from(posts)
+    .where(eq(posts.status, "PUBLISHED"))
+    .orderBy(desc(posts.publishedAt))
+    .limit(20)
 
-  const items = posts
+  const items = rows
     .map((p) => {
       const pubDate = p.publishedAt
         ? new Date(p.publishedAt).toUTCString()
-        : new Date().toUTCString();
+        : new Date().toUTCString()
 
-      const desc = getExcerptFromMarkdown(p.content, 180);
+      const descText = getExcerptFromMarkdown(p.content, 180)
 
       return `
     <item>
@@ -30,10 +32,10 @@ export async function GET() {
       <link>${site}/blog/${p.slug}</link>
       <guid>${site}/blog/${p.slug}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description>${escapeXml(desc)}</description>
-    </item>`;
+      <description>${escapeXml(descText)}</description>
+    </item>`
     })
-    .join("");
+    .join("")
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
@@ -43,13 +45,13 @@ export async function GET() {
     <description>RSS Feed</description>
     ${items}
   </channel>
-</rss>`;
+</rss>`
 
   return new NextResponse(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
     },
-  });
+  })
 }
 
 function stripMarkdown(md: string) {
@@ -60,13 +62,13 @@ function stripMarkdown(md: string) {
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/^#{1,6}\s*/gm, "")
     .replace(/^\s*[-*+]\s+/gm, "")
-    .replace(/[*_~>#]/g, "");
+    .replace(/[*_~>#]/g, "")
 }
 
 function getExcerptFromMarkdown(md: string, max = 180) {
-  const plain = stripMarkdown(md).replace(/\s+/g, " ").trim();
-  if (plain.length <= max) return plain;
-  return plain.slice(0, max - 1).trimEnd() + "…";
+  const plain = stripMarkdown(md).replace(/\s+/g, " ").trim()
+  if (plain.length <= max) return plain
+  return plain.slice(0, max - 1).trimEnd() + "…"
 }
 
 function escapeXml(s: string) {
@@ -79,6 +81,6 @@ function escapeXml(s: string) {
         "'": "&apos;",
         '"': "&quot;",
       } as Record<string, string>
-    )[c]!;
-  });
+    )[c]!
+  })
 }

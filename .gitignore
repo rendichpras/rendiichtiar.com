@@ -42,7 +42,6 @@ next-env.d.ts
 
 .vercel
 
-/lib/generated/prisma
 package-lock.json
 
-/prisma/migrations
+/drizzle

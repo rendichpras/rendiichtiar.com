@@ -123,6 +123,14 @@ export default async function PostPage({
     await addPostComment({ postId: post.id, message })
   }
 
+  // tags dari drizzle bisa null karena LEFT JOIN
+  const safeTags = post.tags
+    .filter((t) => t.tag.slug && t.tag.name)
+    .map((t) => ({
+      slug: t.tag.slug as string,
+      name: t.tag.name as string,
+    }))
+
   const postVM = {
     id: post.id,
     slug: post.slug,
@@ -132,10 +140,7 @@ export default async function PostPage({
     publishedAt: post.publishedAt,
     readingTime: post.readingTime,
     views: post.views,
-    tags: post.tags.map((t) => ({
-      slug: t.tag.slug,
-      name: t.tag.name,
-    })),
+    tags: safeTags,
   }
 
   const commentVM = commentsRaw.map((c) => ({

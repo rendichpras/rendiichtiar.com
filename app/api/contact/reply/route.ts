@@ -1,18 +1,21 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import nodemailer from "nodemailer";
-import messages from "@/messages/id";
+import { NextResponse } from "next/server"
+import { z } from "zod"
+import nodemailer from "nodemailer"
+import messages from "@/messages/id"
+
+import { db } from "@/db"
+import { contacts } from "@/db/schema/schema"
+import { eq } from "drizzle-orm"
 
 const replySchema = z.object({
   contactId: z.string(),
   replyMessage: z.string().min(10, messages.api.contact.validation.reply),
-});
+})
 
 const replyEmailTemplate = (
   userName: string,
   originalMessage: string,
-  replyMessage: string
+  replyMessage: string,
 ) => `
 <!DOCTYPE html>
 <html>
@@ -32,7 +35,7 @@ const replyEmailTemplate = (
             }</h1>
             <p style="margin: 8px 0 0 0; color: #666666; font-size: 16px;">${messages.api.contact.email.reply.greeting.replace(
               "{name}",
-              userName
+              userName,
             )}</p>
         </div>
 
@@ -77,7 +80,7 @@ const replyEmailTemplate = (
     </div>
 </body>
 </html>
-`;
+`
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -87,18 +90,26 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-});
+})
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const validatedData = replySchema.parse(body);
+    const body = await req.json()
+    const validatedData = replySchema.parse(body)
 
-    const contact = await prisma.contact.findUnique({
-      where: {
-        id: validatedData.contactId,
-      },
-    });
+    const contactRows = await db
+      .select({
+        id: contacts.id,
+        name: contacts.name,
+        email: contacts.email,
+        message: contacts.message,
+        status: contacts.status,
+      })
+      .from(contacts)
+      .where(eq(contacts.id, validatedData.contactId))
+      .limit(1)
+
+    const contact = contactRows[0]
 
     if (!contact) {
       return NextResponse.json(
@@ -106,18 +117,14 @@ export async function POST(req: Request) {
           success: false,
           message: messages.api.contact.error.not_found,
         },
-        { status: 404 }
-      );
+        { status: 404 },
+      )
     }
 
-    await prisma.contact.update({
-      where: {
-        id: validatedData.contactId,
-      },
-      data: {
-        status: "REPLIED",
-      },
-    });
+    await db
+      .update(contacts)
+      .set({ status: "REPLIED" })
+      .where(eq(contacts.id, validatedData.contactId))
 
     await transporter.sendMail({
       from: process.env.SMTP_FROM,
@@ -126,14 +133,14 @@ export async function POST(req: Request) {
       html: replyEmailTemplate(
         contact.name,
         contact.message,
-        validatedData.replyMessage
+        validatedData.replyMessage,
       ),
-    });
+    })
 
     return NextResponse.json({
       success: true,
       message: messages.api.contact.success.replied,
-    });
+    })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -142,8 +149,8 @@ export async function POST(req: Request) {
           message: messages.api.contact.error.validation,
           errors: error.issues,
         },
-        { status: 400 }
-      );
+        { status: 400 },
+      )
     }
 
     return NextResponse.json(
@@ -151,7 +158,7 @@ export async function POST(req: Request) {
         success: false,
         message: messages.api.contact.error.general,
       },
-      { status: 500 }
-    );
+      { status: 500 },
+    )
   }
 }

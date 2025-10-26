@@ -1,18 +1,24 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import nodemailer from "nodemailer";
-import messages from "@/messages/id";
+import { NextResponse } from "next/server"
+import { z } from "zod"
+import nodemailer from "nodemailer"
+import { randomUUID } from "crypto"
+import messages from "@/messages/id"
+
+import { db } from "@/db"
+import { contacts } from "@/db/schema/schema"
+import { desc } from "drizzle-orm"
 
 const contactSchema = z.object({
   name: z.string().min(2, messages.api.contact.validation.name),
   email: z.string().email(messages.api.contact.validation.email),
-  message: z.string().min(10, messages.api.contact.validation.message),
-});
+  message: z
+    .string()
+    .min(10, messages.api.contact.validation.message),
+})
 
 const adminEmailTemplate = (
   data: z.infer<typeof contactSchema>,
-  messageId: string
+  messageId: string,
 ) => `
 <!DOCTYPE html>
 <html>
@@ -47,7 +53,7 @@ const adminEmailTemplate = (
     </div>
 </body>
 </html>
-`;
+`
 
 const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
 <!DOCTYPE html>
@@ -61,7 +67,7 @@ const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
         <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #f0f0f0;">
             <h1 style="color: #333; margin: 0; font-size: 24px;">${messages.api.contact.email.user.title.replace(
               "{name}",
-              data.name
+              data.name,
             )}</h1>
         </div>
         
@@ -104,7 +110,7 @@ const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
     </div>
 </body>
 </html>
-`;
+`
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -114,68 +120,84 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-});
+})
 
 export async function GET() {
   try {
-    const contacts = await prisma.contact.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const rows = await db
+      .select({
+        id: contacts.id,
+        name: contacts.name,
+        email: contacts.email,
+        message: contacts.message,
+        createdAt: contacts.createdAt,
+        status: contacts.status,
+      })
+      .from(contacts)
+      .orderBy(desc(contacts.createdAt))
 
     return NextResponse.json({
       success: true,
-      contacts,
-    });
+      contacts: rows,
+    })
   } catch (error) {
-    console.error("Error fetching contacts:", error);
+    console.error("Error fetching contacts:", error)
     return NextResponse.json(
       {
         success: false,
         message: messages.api.contact.error.fetch,
       },
-      { status: 500 }
-    );
+      { status: 500 },
+    )
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json()
 
-    const validatedData = contactSchema.parse(body);
+    const validatedData = contactSchema.parse(body)
 
-    const contact = await prisma.contact.create({
-      data: {
+    const inserted = await db
+      .insert(contacts)
+      .values({
+        id: randomUUID(),
         name: validatedData.name,
         email: validatedData.email,
         message: validatedData.message,
         status: "UNREAD",
-      },
-    });
+      })
+      .returning({
+        id: contacts.id,
+        name: contacts.name,
+        email: contacts.email,
+        message: contacts.message,
+        status: contacts.status,
+      })
+
+    const contact = inserted[0]
 
     await transporter.sendMail({
       from: process.env.SMTP_FROM,
       to: process.env.SMTP_TO,
       subject: messages.api.contact.email.admin.subject.replace(
         "{name}",
-        validatedData.name
+        validatedData.name,
       ),
       html: adminEmailTemplate(validatedData, contact.id),
-    });
+    })
 
     await transporter.sendMail({
       from: process.env.SMTP_FROM,
       to: validatedData.email,
       subject: messages.api.contact.email.user.subject,
       html: userEmailTemplate(validatedData),
-    });
+    })
 
     return NextResponse.json({
       success: true,
       message: messages.api.contact.success.sent,
-    });
+    })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -184,17 +206,17 @@ export async function POST(req: Request) {
           message: messages.api.contact.error.validation,
           errors: error.issues,
         },
-        { status: 400 }
-      );
+        { status: 400 },
+      )
     }
 
-    console.error("Error in contact form:", error);
+    console.error("Error in contact form:", error)
     return NextResponse.json(
       {
         success: false,
         message: messages.api.contact.error.general,
       },
-      { status: 500 }
-    );
+      { status: 500 },
+    )
   }
 }
