@@ -101,6 +101,7 @@ export function GuestbookContent({ session }: Props) {
           <Separator className="my-6 bg-border/40" />
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr,400px]">
+            {/* kiri: auth + form */}
             <div className="space-y-6">
               <AuthBar
                 session={session}
@@ -125,7 +126,7 @@ export function GuestbookContent({ session }: Props) {
               )}
             </div>
 
-            <Card className="h-[calc(100vh-12rem)] overflow-hidden border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
+            <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
                   {messages.pages.guestbook.list.title}
@@ -135,8 +136,8 @@ export function GuestbookContent({ session }: Props) {
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-                <ScrollArea className="max-h-[60vh] pr-2">
+              <CardContent className="flex-1 overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0">
+                <ScrollArea className="h-full pr-2">
                   <GuestbookList />
                 </ScrollArea>
               </CardContent>
