@@ -149,7 +149,7 @@ export function GuestbookList({
   const [loading, setLoading] = useState(true);
 
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
 
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -177,7 +177,7 @@ export function GuestbookList({
   const handleReplyClick = (
     targetId: string,
     authorName: string,
-    rootId?: string
+    rootId?: string,
   ) => {
     if (!session) {
       setShowLoginDialog(true);
@@ -189,35 +189,38 @@ export function GuestbookList({
   };
 
   const fetchEntries = useCallback(async () => {
-    const data = (await getGuestbookEntries()) as RawEntry[];
+    try {
+      const data = (await getGuestbookEntries()) as RawEntry[];
 
-    const normalized: GuestbookEntry[] = data.map((e) => ({
-      ...e,
-      createdAt: new Date(e.createdAt),
-      replies: orderReplies(
-        e.replies.map((r) => ({
-          ...r,
-          createdAt: new Date(r.createdAt),
-        })),
-        e.id
-      ),
-    }));
+      const normalized: GuestbookEntry[] = data.map((e) => ({
+        ...e,
+        createdAt: new Date(e.createdAt),
+        replies: orderReplies(
+          e.replies.map((r) => ({
+            ...r,
+            createdAt: new Date(r.createdAt),
+          })),
+          e.id,
+        ),
+      }));
 
-    setEntries(normalized);
-    setLoading(false);
+      setEntries(normalized);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
     void fetchEntries();
-  }, [fetchEntries]);
 
-  useEffect(() => {
-    function handleRefresh(_evt: Event) {
+    const handler = () => {
       void fetchEntries();
-    }
-    window.addEventListener("guestbook:refresh", handleRefresh);
+    };
+
+    window.addEventListener("guestbook:refresh", handler);
+
     return () => {
-      window.removeEventListener("guestbook:refresh", handleRefresh);
+      window.removeEventListener("guestbook:refresh", handler);
     };
   }, [fetchEntries]);
 
@@ -247,7 +250,7 @@ export function GuestbookList({
                   ...r,
                   createdAt: new Date(r.createdAt),
                 })),
-                e.id
+                e.id,
               ),
             };
             if (prev.some((p) => p.id === newEntry.id)) return prev;
@@ -264,7 +267,9 @@ export function GuestbookList({
               r.rootId ||
               prev.find((en) => en.id === ev.parentId)?.id ||
               prev.find((en) =>
-                en.replies.some((x) => x.id === (r.parentId ?? ev.parentId))
+                en.replies.some(
+                  (x) => x.id === (r.parentId ?? ev.parentId),
+                ),
               )?.id;
 
             if (!targetRootId) return prev;
@@ -282,7 +287,9 @@ export function GuestbookList({
 
             return prev.map((en) => {
               if (en.id === id) {
-                const liked = en.likes.some((l) => l.user.email === userEmail);
+                const liked = en.likes.some(
+                  (l) => l.user.email === userEmail,
+                );
                 let likes = en.likes;
                 if (action === "like" && !liked) {
                   likes = [
@@ -294,14 +301,18 @@ export function GuestbookList({
                   ];
                 }
                 if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail);
+                  likes = likes.filter(
+                    (l) => l.user.email !== userEmail,
+                  );
                 }
                 return { ...en, likes };
               }
 
               const replies = en.replies.map((rr) => {
                 if (rr.id !== id) return rr;
-                const liked = rr.likes.some((l) => l.user.email === userEmail);
+                const liked = rr.likes.some(
+                  (l) => l.user.email === userEmail,
+                );
                 let likes = rr.likes;
                 if (action === "like" && !liked) {
                   likes = [
@@ -313,7 +324,9 @@ export function GuestbookList({
                   ];
                 }
                 if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail);
+                  likes = likes.filter(
+                    (l) => l.user.email !== userEmail,
+                  );
                 }
                 return { ...rr, likes };
               });
@@ -437,9 +450,9 @@ export function GuestbookList({
                       handleReplyClick(entry.id, entry.user.name || "")
                     }
                     className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${
-                      messages.pages.guestbook.list.reply.button
-                    } ${entry.user.name || ""}`}
+                    aria-label={`${messages.pages.guestbook.list.reply.button} ${
+                      entry.user.name || ""
+                    }`}
                   >
                     <ReplyIcon
                       className="h-4 w-4 sm:h-5 sm:w-5"
@@ -482,7 +495,7 @@ export function GuestbookList({
                           <span>
                             {messages.pages.guestbook.list.show_replies.replace(
                               "{count}",
-                              String(entry.replies.length)
+                              String(entry.replies.length),
                             )}
                           </span>
                         </span>

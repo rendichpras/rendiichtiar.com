@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 import { Loader2, TriangleAlert } from "lucide-react";
@@ -24,7 +23,6 @@ const MAX_LEN = 280;
 
 export function GuestbookForm() {
   const { data: session } = useSession();
-  const router = useRouter();
   const { messages } = useI18n();
 
   const [message, setMessage] = useState("");
@@ -33,7 +31,7 @@ export function GuestbookForm() {
 
   const remainingChars = useMemo(
     () => Math.max(0, MAX_LEN - message.length),
-    [message]
+    [message],
   );
 
   if (!session) {
@@ -62,10 +60,14 @@ export function GuestbookForm() {
 
     try {
       await addGuestbookEntry(message, session.user.email);
+
       setMessage("");
       setForbiddenWords([]);
       toast.success(messages.pages.guestbook.form.success);
-      router.refresh();
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("guestbook:refresh"));
+      }
     } catch {
       toast.error(messages.pages.guestbook.form.error);
     } finally {
@@ -96,7 +98,7 @@ export function GuestbookForm() {
           disabled={isSubmitting}
           className={cn(
             "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary",
-            isBlocked && "border-destructive focus-visible:ring-destructive"
+            isBlocked && "border-destructive focus-visible:ring-destructive",
           )}
           aria-invalid={isBlocked || undefined}
           aria-describedby={isBlocked ? "forbidden-hint" : undefined}
@@ -105,7 +107,9 @@ export function GuestbookForm() {
         <span
           className={cn(
             "absolute bottom-2 right-3 text-xs tabular-nums",
-            remainingChars <= 20 ? "text-destructive" : "text-muted-foreground"
+            remainingChars <= 20
+              ? "text-destructive"
+              : "text-muted-foreground",
           )}
           aria-live="polite"
         >
@@ -132,7 +136,7 @@ export function GuestbookForm() {
           disabled={isSubmitting || isBlocked}
           className={cn(
             "relative rounded-xl bg-primary/10 text-primary hover:bg-primary/20",
-            isSubmitting && "cursor-wait opacity-80"
+            isSubmitting && "cursor-wait opacity-80",
           )}
         >
           {isSubmitting ? (
