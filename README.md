@@ -9,7 +9,7 @@ This project includes:
 - An admin dashboard to manage posts and incoming contact messages.
 - Dark/light theme and bilingual UI (ID / EN).
 
-Built with Next.js, React, Tailwind CSS, Prisma, and NextAuth.
+Built with Next.js, React, Tailwind CSS, Drizzle, and NextAuth.
 
 ---
 
@@ -94,7 +94,7 @@ Admin routes are protected. Only the configured admin email can access them.
 - **React:** React 19
 - **Styling:** Tailwind CSS + custom UI components
 - **Auth:** NextAuth (Google, GitHub providers)
-- **DB / ORM:** Prisma + PostgreSQL
+- **DB / ORM:** Drizzle + PostgreSQL
 - **State / Data Fetching:** React Server Components + Server Actions + SSE
 - **Editor:** Monaco Editor (`@monaco-editor/react`)
 - **Icons:** `lucide-react`, `react-icons`
@@ -137,7 +137,6 @@ components/
   BackToTop.tsx
 
 lib/
-  prisma.ts                # Prisma Client singleton
   i18n.tsx                 # i18n provider + useI18n hook
   constants/forbidden-words.ts
   auth.ts                  # Auth helpers
@@ -145,9 +144,6 @@ lib/
 messages/
   id.json                  # Bahasa Indonesia copy
   en.json                  # English copy
-
-prisma/
-  schema.prisma            # DB schema
 
 public/
   avatar.jpg
@@ -219,19 +215,17 @@ SITE_EMAIL_TO="you@example.com"
    npm install
    ```
 
-2. Generate Prisma Client:
+2. Generate Drizzle:
 
    ```bash
-   npx prisma generate
+   npx drizzle-kit generate
    ```
 
 3. Run database migrations (or create schema locally):
 
    ```bash
-   npx prisma migrate dev
+   npx drizzle-kit migrate
    ```
-
-   This applies `schema.prisma` to your PostgreSQL database.
 
 4. Start the dev server:
 

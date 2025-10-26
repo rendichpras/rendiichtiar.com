@@ -52,7 +52,11 @@ export function GuestbookReply({
     setIsSubmitting(true);
 
     try {
-      const messageWithMention = `@${parentAuthor} ${replyMessage}`;
+      const messageWithMention = `@${parentAuthor} ${replyMessage}`.slice(
+        0,
+        280
+      );
+
       await addGuestbookEntry(
         messageWithMention,
         session.user.email,
@@ -61,7 +65,11 @@ export function GuestbookReply({
       );
 
       setReplyMessage("");
+
       onReplyComplete();
+
+      window.dispatchEvent(new CustomEvent("guestbook:refresh"));
+
       toast.success(messages.pages.guestbook.list.reply.success);
     } catch {
       toast.error(messages.pages.guestbook.list.reply.error);
@@ -138,7 +146,9 @@ export function GuestbookReply({
                       className="h-3 w-3 animate-spin sm:h-4 sm:w-4"
                       aria-hidden="true"
                     />
-                    <span>{messages.pages.guestbook.list.reply.sending}</span>
+                    <span>
+                      {messages.pages.guestbook.list.reply.sending}
+                    </span>
                   </span>
                 ) : (
                   messages.pages.guestbook.list.reply.send
@@ -332,7 +342,9 @@ export function GuestbookReplyList({
                       <span className="text-primary">
                         @{reply.mentionedUser.name}
                       </span>{" "}
-                      {reply.message.split(`@${reply.mentionedUser.name} `)[1]}
+                      {reply.message.split(
+                        `@${reply.mentionedUser.name} `
+                      )[1]}
                     </>
                   ) : (
                     reply.message
@@ -344,7 +356,11 @@ export function GuestbookReplyList({
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      onReplyClick(reply.id, reply.user.name || "", rootId)
+                      onReplyClick(
+                        reply.id,
+                        reply.user.name || "",
+                        rootId
+                      )
                     }
                     className="flex items-center gap-1 p-0 text-[10px] text-muted-foreground hover:text-primary sm:text-xs"
                   >
@@ -366,7 +382,9 @@ export function GuestbookReplyList({
                   <GuestbookReply
                     parentId={reply.id}
                     parentAuthor={
-                      activeReplyAuthor || reply.user.name || rootAuthor
+                      activeReplyAuthor ||
+                      reply.user.name ||
+                      rootAuthor
                     }
                     onReplyComplete={onReplyComplete}
                     isReplying
