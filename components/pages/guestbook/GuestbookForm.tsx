@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -28,15 +28,15 @@ export function GuestbookForm() {
   const { messages } = useI18n();
 
   const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [forbiddenWords, setForbiddenWords] = useState<string[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   const remainingChars = useMemo(
     () => Math.max(0, MAX_LEN - message.length),
     [message]
   );
 
-  if (!session) {
+  if (!session || !session.user) {
     return null;
   }
 
@@ -46,41 +46,46 @@ export function GuestbookForm() {
     setForbiddenWords(containsForbiddenWords(v) ? getForbiddenWords(v) : []);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const userEmail = session.user?.email ?? null;
 
     if (!message.trim()) {
       toast.error(messages.pages.guestbook.form.empty_error);
       return;
     }
-    if (!session.user?.email) {
+
+    if (!userEmail) {
       toast.error(messages.pages.guestbook.form.session_error);
       return;
     }
 
-    setIsSubmitting(true);
+    startTransition(async () => {
+      try {
+        await addGuestbookEntry(message, userEmail);
 
-    try {
-      await addGuestbookEntry(message, session.user.email);
-      setMessage("");
-      setForbiddenWords([]);
-      toast.success(messages.pages.guestbook.form.success);
-      router.refresh();
-    } catch {
-      toast.error(messages.pages.guestbook.form.error);
-    } finally {
-      setIsSubmitting(false);
-    }
+        setMessage("");
+        setForbiddenWords([]);
+
+        toast.success(messages.pages.guestbook.form.success);
+
+        router.refresh();
+      } catch {
+        toast.error(messages.pages.guestbook.form.error);
+      }
+    });
   };
 
   const isBlocked = forbiddenWords.length > 0;
+  const isDisabled = isPending || isBlocked;
 
   return (
     <form
       onSubmit={handleSubmit}
       className="space-y-3"
       noValidate
-      aria-busy={isSubmitting}
+      aria-busy={isPending}
     >
       <div className="relative space-y-1">
         <Label htmlFor="guestbook-message" className="sr-only">
@@ -93,7 +98,7 @@ export function GuestbookForm() {
           onChange={handleChange}
           placeholder={messages.pages.guestbook.form.placeholder}
           maxLength={MAX_LEN}
-          disabled={isSubmitting}
+          disabled={isDisabled}
           className={cn(
             "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary",
             isBlocked && "border-destructive focus-visible:ring-destructive"
@@ -129,13 +134,13 @@ export function GuestbookForm() {
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={isSubmitting || isBlocked}
+          disabled={isDisabled}
           className={cn(
             "relative rounded-xl bg-primary/10 text-primary hover:bg-primary/20",
-            isSubmitting && "cursor-wait opacity-80"
+            isPending && "cursor-wait opacity-80"
           )}
         >
-          {isSubmitting ? (
+          {isPending ? (
             <span className="flex items-center gap-2 text-primary">
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
               <span>{messages.pages.guestbook.form.sending}</span>
