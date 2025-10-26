@@ -49,9 +49,6 @@ export const metadata: Metadata = {
   }
 }
 
-export const dynamic = "force-dynamic"
-export const revalidate = 0
-
 export default async function GuestbookPage() {
   const session = await getServerSession()
   return <GuestbookContent session={session} />
