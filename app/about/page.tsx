@@ -1,15 +1,16 @@
 import type { Metadata } from "next"
 import messages from "@/messages/id"
 import { AboutContent } from "@/components/pages/about/AboutContent"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: messages.metadata.about.title,
   description: messages.metadata.about.description,
-  alternates: { canonical: "https://rendiichtiar.com/about" },
+  alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
     title: messages.metadata.about.title,
     description: messages.metadata.about.description,
-    url: "https://rendiichtiar.com/about",
+    url: `${SITE_URL}/about`,
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
     locale: "id_ID",

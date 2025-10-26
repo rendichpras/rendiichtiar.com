@@ -1,17 +1,18 @@
 import { Metadata } from "next"
 import { ContactContent } from "@/components/pages/contact/ContactContent"
 import messages from "@/messages/id"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: messages.metadata.contact.title,
   description: messages.metadata.contact.description,
   alternates: {
-    canonical: "https://rendiichtiar.com/contact"
+    canonical: `${SITE_URL}/contact`,
   },
   openGraph: {
     title: messages.metadata.contact.title,
     description: messages.metadata.contact.description,
-    url: "https://rendiichtiar.com/contact",
+    url: `${SITE_URL}/contact`,
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
     locale: "id_ID",
@@ -40,14 +41,14 @@ export const metadata: Metadata = {
       follow: true,
       "max-snippet": -1,
       "max-image-preview": "large",
-      "max-video-preview": -1
+      "max-video-preview": -1,
     },
   },
   verification: {
     google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
-  }
+  },
 }
 
 export default function ContactPage() {
   return <ContactContent />
-} 
+}

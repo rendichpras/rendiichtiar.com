@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Dialog,
@@ -6,17 +6,17 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { useI18n } from "@/lib/i18n";
-import { SiGithub, SiGoogle } from "react-icons/si";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { signIn } from "next-auth/react"
+import { usePathname } from "next/navigation"
+import { useI18n } from "@/lib/i18n"
+import { SiGithub, SiGoogle } from "react-icons/si"
 
 interface LoginDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  callbackUrlOverride?: string;
+  isOpen: boolean
+  onClose: () => void
+  callbackUrlOverride?: string
 }
 
 export function LoginDialog({
@@ -24,9 +24,9 @@ export function LoginDialog({
   onClose,
   callbackUrlOverride,
 }: LoginDialogProps) {
-  const { messages } = useI18n();
-  const pathname = usePathname();
-  const callbackUrl = callbackUrlOverride || pathname || "/";
+  const { messages } = useI18n()
+  const pathname = usePathname()
+  const callbackUrl = callbackUrlOverride || pathname || "/"
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -65,5 +65,5 @@ export function LoginDialog({
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

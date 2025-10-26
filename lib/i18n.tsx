@@ -1,6 +1,12 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, ReactNode } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react"
 import id from "@/messages/id.json"
 import en from "@/messages/en.json"
 
@@ -44,4 +50,4 @@ export function useI18n() {
     throw new Error("useI18n must be used within an I18nProvider")
   }
   return context
-} 
+}

@@ -48,17 +48,11 @@ export function BackToTop() {
               visible && "translate-y-0 opacity-100"
             )}
           >
-            <ArrowUp
-              className="h-5 w-5 text-foreground"
-              aria-hidden="true"
-            />
+            <ArrowUp className="h-5 w-5 text-foreground" aria-hidden="true" />
           </Button>
         </TooltipTrigger>
 
-        <TooltipContent
-          side="left"
-          className="text-xs font-medium"
-        >
+        <TooltipContent side="left" className="text-xs font-medium">
           {messages.common.back_to_top.tooltip}
         </TooltipContent>
       </Tooltip>

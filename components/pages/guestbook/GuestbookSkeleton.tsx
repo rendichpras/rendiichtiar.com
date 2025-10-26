@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Card,
@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+} from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
 function MessageSkeleton() {
   return (
@@ -63,7 +63,7 @@ function MessageSkeleton() {
 
       <Separator className="mt-6 bg-border/40" />
     </div>
-  );
+  )
 }
 
 export function GuestbookSkeleton() {
@@ -90,5 +90,5 @@ export function GuestbookSkeleton() {
         </CardContent>
       </ScrollArea>
     </Card>
-  );
+  )
 }

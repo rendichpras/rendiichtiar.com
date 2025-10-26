@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import { Suspense, useCallback, useMemo, useState } from "react";
-import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import { Trash2, Play, Expand } from "lucide-react";
-import { SiJavascript } from "react-icons/si";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PageTransition } from "@/components/animations/page-transition";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import type { OnMount } from "@monaco-editor/react";
-import type * as Monaco from "monaco-editor";
-import { useI18n } from "@/lib/i18n";
+import { Suspense, useCallback, useMemo, useState } from "react"
+import dynamic from "next/dynamic"
+import { motion } from "framer-motion"
+import { Trash2, Play, Expand } from "lucide-react"
+import { SiJavascript } from "react-icons/si"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
+import { PageTransition } from "@/components/animations/page-transition"
+import { cn } from "@/lib/utils"
+import { toast } from "sonner"
+import type { OnMount } from "@monaco-editor/react"
+import type * as Monaco from "monaco-editor"
+import { useI18n } from "@/lib/i18n"
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-});
+})
 
-const DEFAULT_CODE = `console.log("Hello");`;
+const DEFAULT_CODE = `console.log("Hello");`
 
 const BLOCKED_KEYWORDS = [
   "document",
@@ -41,12 +41,12 @@ const BLOCKED_KEYWORDS = [
   "alert",
   "confirm",
   "prompt",
-] as const;
+] as const
 
-const MAX_LEN = 5000;
+const MAX_LEN = 5000
 
 function escapeRegex(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
 function EditorLoading() {
@@ -54,7 +54,7 @@ function EditorLoading() {
     <div className="flex h-full min-h-[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm">
       <Skeleton className="h-full w-full rounded-xl" />
     </div>
-  );
+  )
 }
 
 function JavaScriptIcon() {
@@ -62,16 +62,16 @@ function JavaScriptIcon() {
     <div className="flex size-8 items-center justify-center">
       <SiJavascript className="size-8 text-[#F7DF1E]" aria-hidden="true" />
     </div>
-  );
+  )
 }
 
 export function PlaygroundContent() {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
-  const [code, setCode] = useState<string>(DEFAULT_CODE);
-  const [output, setOutput] = useState<string>("");
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [editorReady, setEditorReady] = useState<boolean>(false);
+  const [code, setCode] = useState<string>(DEFAULT_CODE)
+  const [output, setOutput] = useState<string>("")
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+  const [editorReady, setEditorReady] = useState<boolean>(false)
 
   const blockedPattern = useMemo(
     () =>
@@ -81,11 +81,11 @@ export function PlaygroundContent() {
         )})\b`
       ),
     []
-  );
+  )
 
   const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
     try {
-      setEditorReady(true);
+      setEditorReady(true)
 
       editor.updateOptions({
         tabSize: 2,
@@ -100,24 +100,22 @@ export function PlaygroundContent() {
         autoClosingOvertype: "always",
         autoIndent: "full",
         autoSurround: "languageDefined",
-      });
+      })
 
       monaco.languages.registerCompletionItemProvider("javascript", {
         provideCompletionItems(
           model: Monaco.editor.ITextModel,
           position: Monaco.Position
-        ): Monaco.languages.ProviderResult<
-          Monaco.languages.CompletionList
-        > {
+        ): Monaco.languages.ProviderResult<Monaco.languages.CompletionList> {
           try {
-            const word = model.getWordUntilPosition(position);
+            const word = model.getWordUntilPosition(position)
 
             const range: Monaco.IRange = {
               startLineNumber: position.lineNumber,
               endLineNumber: position.lineNumber,
               startColumn: word.startColumn,
               endColumn: word.endColumn,
-            };
+            }
 
             return {
               suggestions: [
@@ -132,31 +130,30 @@ export function PlaygroundContent() {
                   range,
                 },
               ],
-            };
+            }
           } catch {
-            return { suggestions: [] };
+            return { suggestions: [] }
           }
         },
-      });
-    } catch {
-    }
-  }, []);
+      })
+    } catch {}
+  }, [])
 
   const validateCode = useCallback(
     (c: string): boolean => {
       try {
         if (c.length > MAX_LEN) {
-          toast.error(messages.pages.playground.errors.code_too_long);
-          return false;
+          toast.error(messages.pages.playground.errors.code_too_long)
+          return false
         }
         if (blockedPattern.test(c)) {
-          toast.error(messages.pages.playground.errors.blocked_keyword);
-          return false;
+          toast.error(messages.pages.playground.errors.blocked_keyword)
+          return false
         }
-        return true;
+        return true
       } catch {
-        toast.error(messages.pages.playground.errors.validation_error);
-        return false;
+        toast.error(messages.pages.playground.errors.validation_error)
+        return false
       }
     },
     [
@@ -165,18 +162,18 @@ export function PlaygroundContent() {
       messages.pages.playground.errors.code_too_long,
       messages.pages.playground.errors.validation_error,
     ]
-  );
+  )
 
   const runCode = useCallback(() => {
     if (!editorReady) {
-      toast.error(messages.pages.playground.errors.editor_not_ready);
-      return;
+      toast.error(messages.pages.playground.errors.editor_not_ready)
+      return
     }
 
     try {
-      if (!validateCode(code)) return;
+      if (!validateCode(code)) return
 
-      const logs: string[] = [];
+      const logs: string[] = []
 
       const sandbox = {
         console: {
@@ -184,19 +181,19 @@ export function PlaygroundContent() {
             try {
               const line = args
                 .map((arg) => {
-                  if (arg instanceof Error) return arg.message;
+                  if (arg instanceof Error) return arg.message
                   if (typeof arg === "object")
-                    return JSON.stringify(arg, null, 2);
-                  return String(arg);
+                    return JSON.stringify(arg, null, 2)
+                  return String(arg)
                 })
-                .join(" ");
-              logs.push(line);
+                .join(" ")
+              logs.push(line)
             } catch {
-              logs.push("[Error logging output]");
+              logs.push("[Error logging output]")
             }
           },
         },
-      };
+      }
 
       const fn = new Function(
         "console",
@@ -208,17 +205,17 @@ export function PlaygroundContent() {
           console.log(error);
         }
       `
-      ) as (c: Console) => void;
+      ) as (c: Console) => void
 
-      fn(sandbox.console as unknown as Console);
-      setOutput(logs.filter(Boolean).join("\n"));
+      fn(sandbox.console as unknown as Console)
+      setOutput(logs.filter(Boolean).join("\n"))
     } catch (error) {
       if (error instanceof Error) {
-        setOutput(error.message);
-        toast.error(error.message);
+        setOutput(error.message)
+        toast.error(error.message)
       } else {
-        setOutput(String(error));
-        toast.error(messages.pages.playground.errors.runtime_error);
+        setOutput(String(error))
+        toast.error(messages.pages.playground.errors.runtime_error)
       }
     }
   }, [
@@ -227,7 +224,7 @@ export function PlaygroundContent() {
     messages.pages.playground.errors.editor_not_ready,
     messages.pages.playground.errors.runtime_error,
     validateCode,
-  ]);
+  ])
 
   return (
     <PageTransition>
@@ -277,8 +274,8 @@ export function PlaygroundContent() {
                       variant="ghost"
                       size="icon"
                       onClick={() => {
-                        setCode("");
-                        setOutput("");
+                        setCode("")
+                        setOutput("")
                       }}
                       className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
                     >
@@ -311,15 +308,15 @@ export function PlaygroundContent() {
                       theme="vs-dark"
                       value={code}
                       onChange={(value) => {
-                        if (!editorReady) return;
-                        const next = value ?? "";
+                        if (!editorReady) return
+                        const next = value ?? ""
                         if (next.length > MAX_LEN) {
                           toast.error(
                             messages.pages.playground.errors.code_too_long
-                          );
-                          return;
+                          )
+                          return
                         }
-                        setCode(next);
+                        setCode(next)
                       }}
                       onMount={handleEditorDidMount}
                       options={{
@@ -419,5 +416,5 @@ export function PlaygroundContent() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

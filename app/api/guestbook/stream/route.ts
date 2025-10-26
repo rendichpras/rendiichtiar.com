@@ -13,23 +13,20 @@ export async function GET(req: Request) {
         if (closed) return
         try {
           controller.enqueue(`data: ${JSON.stringify(ev)}\n\n`)
-        } catch {
-        }
+        } catch {}
       }
 
       off = onEvent(send)
 
       try {
         controller.enqueue(`:ok\n\n`)
-      } catch {
-      }
+      } catch {}
 
       ping = setInterval(() => {
         if (closed) return
         try {
           controller.enqueue(`:ping\n\n`)
-        } catch {
-        }
+        } catch {}
       }, 15_000)
 
       req.signal.addEventListener("abort", () => {
@@ -39,8 +36,7 @@ export async function GET(req: Request) {
         if (off) off()
         try {
           controller.close()
-        } catch {
-        }
+        } catch {}
       })
     },
     cancel() {

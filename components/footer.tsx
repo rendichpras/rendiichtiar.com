@@ -31,11 +31,7 @@ function SocialLink({
         aria-label={label}
         title={label}
       >
-        <Link
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Link href={href} target="_blank" rel="noopener noreferrer">
           {children}
         </Link>
       </Button>
@@ -53,10 +49,7 @@ export function Footer() {
         <div className="py-6">
           <div className="flex flex-col gap-4 text-center text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <p className="text-xs text-muted-foreground sm:text-sm">
-              {messages.common.footer.copyright.replace(
-                "{year}",
-                String(year)
-              )}
+              {messages.common.footer.copyright.replace("{year}", String(year))}
             </p>
 
             <nav aria-label={messages.common.footer.aria_label}>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 import HomeContent from "@/components/pages/home/HomeContent"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rendiichtiar.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Rendi Ichtiar Prasetyo | Frontend Engineer",
     template: "%s | Rendi Ichtiar Prasetyo",

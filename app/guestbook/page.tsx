@@ -2,17 +2,18 @@ import type { Metadata } from "next"
 import { getServerSession } from "next-auth/next"
 import messages from "@/messages/id"
 import { GuestbookContent } from "@/components/pages/guestbook/GuestbookContent"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: messages.metadata.guestbook.title,
   description: messages.metadata.guestbook.description,
   alternates: {
-    canonical: "https://rendiichtiar.com/guestbook"
+    canonical: `${SITE_URL}/guestbook`,
   },
   openGraph: {
     title: messages.metadata.guestbook.title,
     description: messages.metadata.guestbook.description,
-    url: "https://rendiichtiar.com/guestbook",
+    url: `${SITE_URL}/guestbook`,
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
     locale: "id_ID",
@@ -41,12 +42,12 @@ export const metadata: Metadata = {
       follow: true,
       "max-snippet": -1,
       "max-image-preview": "large",
-      "max-video-preview": -1
+      "max-video-preview": -1,
     },
   },
   verification: {
     google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
-  }
+  },
 }
 
 export default async function GuestbookPage() {

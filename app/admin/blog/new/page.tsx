@@ -1,5 +1,5 @@
-import { PageTransition } from "@/components/animations/page-transition";
-import { PostForm } from "@/components/pages/blog/PostForm";
+import { PageTransition } from "@/components/animations/page-transition"
+import { PostForm } from "@/components/pages/blog/PostForm"
 
 export default async function NewPostPage() {
   return (
@@ -25,5 +25,5 @@ export default async function NewPostPage() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

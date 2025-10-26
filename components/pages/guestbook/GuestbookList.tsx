@@ -1,105 +1,105 @@
-"use client";
+"use client"
 
-import { useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { formatDistanceToNow } from "date-fns";
-import { id as localeID } from "date-fns/locale";
+import { useCallback, useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
+import { formatDistanceToNow } from "date-fns"
+import { id as localeID } from "date-fns/locale"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/tooltip"
+import { Button } from "@/components/ui/button"
 
 import {
   Reply as ReplyIcon,
   ChevronDown,
   ChevronRight,
   BadgeCheck,
-} from "lucide-react";
-import { SiGoogle, SiGithub } from "react-icons/si";
+} from "lucide-react"
+import { SiGoogle, SiGithub } from "react-icons/si"
 
-import { GuestbookSkeleton } from "./GuestbookSkeleton";
+import { GuestbookSkeleton } from "./GuestbookSkeleton"
 import {
   GuestbookReply,
   GuestbookReplyList,
   LikeButton,
-} from "./GuestbookReply";
+} from "./GuestbookReply"
 
-import { getGuestbookEntries } from "@/app/guestbook/guestbook";
-import { useI18n } from "@/lib/i18n";
-import { LoginDialog } from "@/components/auth/LoginDialog";
+import { getGuestbookEntries } from "@/app/guestbook/guestbook"
+import { useI18n } from "@/lib/i18n"
+import { LoginDialog } from "@/components/auth/LoginDialog"
 
 type RawLike = {
-  id: string;
-  user: { name: string | null; email: string | null };
-};
+  id: string
+  user: { name: string | null; email: string | null }
+}
 
 type RawReply = {
-  id: string;
-  message: string;
-  createdAt: string | Date;
-  user: { name: string | null; image: string | null };
-  mentionedUser?: { name: string | null } | null;
-  likes: RawLike[];
-  parentId?: string | null;
-  rootId?: string | null;
-};
+  id: string
+  message: string
+  createdAt: string | Date
+  user: { name: string | null; image: string | null }
+  mentionedUser?: { name: string | null } | null
+  likes: RawLike[]
+  parentId?: string | null
+  rootId?: string | null
+}
 
 type RawEntry = {
-  id: string;
-  message: string;
-  createdAt: string | Date;
+  id: string
+  message: string
+  createdAt: string | Date
   user: {
-    name: string | null;
-    image: string | null;
-    email: string | null;
-  };
-  provider: string;
-  likes: RawLike[];
-  replies: RawReply[];
-};
+    name: string | null
+    image: string | null
+    email: string | null
+  }
+  provider: string
+  likes: RawLike[]
+  replies: RawReply[]
+}
 
-type Reply = Omit<RawReply, "createdAt"> & { createdAt: Date };
+type Reply = Omit<RawReply, "createdAt"> & { createdAt: Date }
 type GuestbookEntry = Omit<RawEntry, "createdAt" | "replies"> & {
-  createdAt: Date;
-  replies: Reply[];
-};
+  createdAt: Date
+  replies: Reply[]
+}
 
-const OWNER_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
+const OWNER_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ""
 
 function orderReplies(list: Reply[], rootId: string): Reply[] {
-  const byParent = new Map<string, Reply[]>();
+  const byParent = new Map<string, Reply[]>()
 
   for (const r of list) {
-    const p = r.parentId ?? rootId;
-    const arr = byParent.get(p) ?? [];
-    arr.push(r);
-    byParent.set(p, arr);
+    const p = r.parentId ?? rootId
+    const arr = byParent.get(p) ?? []
+    arr.push(r)
+    byParent.set(p, arr)
   }
 
   for (const arr of byParent.values()) {
-    arr.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    arr.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
   }
 
-  const out: Reply[] = [];
+  const out: Reply[] = []
   const visit = (pid: string) => {
-    const children = byParent.get(pid) ?? [];
+    const children = byParent.get(pid) ?? []
     for (const c of children) {
-      out.push(c);
-      visit(c.id);
+      out.push(c)
+      visit(c.id)
     }
-  };
-  visit(rootId);
-  return out;
+  }
+  visit(rootId)
+  return out
 }
 
 function ProviderIcon({ provider }: { provider: string }) {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
   if (provider === "google") {
     return (
@@ -116,7 +116,7 @@ function ProviderIcon({ provider }: { provider: string }) {
           <TooltipContent>{messages.common.auth.login.google}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    );
+    )
   }
 
   if (provider === "github") {
@@ -134,45 +134,43 @@ function ProviderIcon({ provider }: { provider: string }) {
           <TooltipContent>{messages.common.auth.login.github}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    );
+    )
   }
 
-  return null;
+  return null
 }
 
 export function GuestbookList({
   showHeader = false,
 }: {
-  showHeader?: boolean;
+  showHeader?: boolean
 }) {
-  const [entries, setEntries] = useState<GuestbookEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [entries, setEntries] = useState<GuestbookEntry[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(
-    new Set()
-  );
+  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set())
 
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyingToName, setReplyingToName] = useState<string>("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null)
+  const [replyingToName, setReplyingToName] = useState<string>("")
 
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
 
-  const { data: session } = useSession();
-  const { messages } = useI18n();
+  const { data: session } = useSession()
+  const { messages } = useI18n()
 
   const toggleReplies = (entryId: string) => {
     setExpandedEntries((prev) => {
-      const next = new Set(prev);
-      next.has(entryId) ? next.delete(entryId) : next.add(entryId);
-      return next;
-    });
-  };
+      const next = new Set(prev)
+      next.has(entryId) ? next.delete(entryId) : next.add(entryId)
+      return next
+    })
+  }
 
   const handleReplyComplete = (entryId: string) => {
-    setReplyingTo(null);
-    setReplyingToName("");
-    setExpandedEntries((prev) => new Set([...prev, entryId]));
-  };
+    setReplyingTo(null)
+    setReplyingToName("")
+    setExpandedEntries((prev) => new Set([...prev, entryId]))
+  }
 
   const handleReplyClick = (
     targetId: string,
@@ -180,17 +178,17 @@ export function GuestbookList({
     rootId?: string
   ) => {
     if (!session) {
-      setShowLoginDialog(true);
-      return;
+      setShowLoginDialog(true)
+      return
     }
-    setReplyingTo(targetId);
-    setReplyingToName(authorName);
-    setExpandedEntries((prev) => new Set([...prev, rootId ?? targetId]));
-  };
+    setReplyingTo(targetId)
+    setReplyingToName(authorName)
+    setExpandedEntries((prev) => new Set([...prev, rootId ?? targetId]))
+  }
 
   const fetchEntries = useCallback(async () => {
     try {
-      const data = (await getGuestbookEntries()) as RawEntry[];
+      const data = (await getGuestbookEntries()) as RawEntry[]
 
       const normalized: GuestbookEntry[] = data.map((e) => ({
         ...e,
@@ -202,46 +200,46 @@ export function GuestbookList({
           })),
           e.id
         ),
-      }));
+      }))
 
-      setEntries(normalized);
+      setEntries(normalized)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    void fetchEntries();
+    void fetchEntries()
 
     const handler = () => {
-      void fetchEntries();
-    };
+      void fetchEntries()
+    }
 
-    window.addEventListener("guestbook:refresh", handler);
+    window.addEventListener("guestbook:refresh", handler)
 
     return () => {
-      window.removeEventListener("guestbook:refresh", handler);
-    };
-  }, [fetchEntries]);
+      window.removeEventListener("guestbook:refresh", handler)
+    }
+  }, [fetchEntries])
 
   useEffect(() => {
-    const es = new EventSource("/api/guestbook/stream");
+    const es = new EventSource("/api/guestbook/stream")
 
     es.onmessage = (evt) => {
       try {
         const ev = JSON.parse(evt.data) as
           | { type: "guestbook:new"; entry: RawEntry }
           | {
-              type: "guestbook:like";
-              id: string;
-              userEmail: string;
-              action: "like" | "unlike";
+              type: "guestbook:like"
+              id: string
+              userEmail: string
+              action: "like" | "unlike"
             }
-          | { type: "guestbook:reply"; parentId: string; reply: RawReply };
+          | { type: "guestbook:reply"; parentId: string; reply: RawReply }
 
         setEntries((prev) => {
           if (ev.type === "guestbook:new") {
-            const e = ev.entry;
+            const e = ev.entry
             const newEntry: GuestbookEntry = {
               ...e,
               createdAt: new Date(e.createdAt),
@@ -252,41 +250,41 @@ export function GuestbookList({
                 })),
                 e.id
               ),
-            };
-            if (prev.some((p) => p.id === newEntry.id)) return prev;
-            return [newEntry, ...prev];
+            }
+            if (prev.some((p) => p.id === newEntry.id)) return prev
+            return [newEntry, ...prev]
           }
 
           if (ev.type === "guestbook:reply") {
             const r: Reply = {
               ...ev.reply,
               createdAt: new Date(ev.reply.createdAt),
-            };
+            }
 
             const targetRootId =
               r.rootId ||
               prev.find((en) => en.id === ev.parentId)?.id ||
               prev.find((en) =>
                 en.replies.some((x) => x.id === (r.parentId ?? ev.parentId))
-              )?.id;
+              )?.id
 
-            if (!targetRootId) return prev;
+            if (!targetRootId) return prev
 
             return prev.map((en) => {
-              if (en.id !== targetRootId) return en;
-              if (en.replies.some((x) => x.id === r.id)) return en;
-              const next = orderReplies([...en.replies, r], en.id);
-              return { ...en, replies: next };
-            });
+              if (en.id !== targetRootId) return en
+              if (en.replies.some((x) => x.id === r.id)) return en
+              const next = orderReplies([...en.replies, r], en.id)
+              return { ...en, replies: next }
+            })
           }
 
           if (ev.type === "guestbook:like") {
-            const { id, userEmail, action } = ev;
+            const { id, userEmail, action } = ev
 
             return prev.map((en) => {
               if (en.id === id) {
-                const liked = en.likes.some((l) => l.user.email === userEmail);
-                let likes = en.likes;
+                const liked = en.likes.some((l) => l.user.email === userEmail)
+                let likes = en.likes
                 if (action === "like" && !liked) {
                   likes = [
                     ...likes,
@@ -294,18 +292,18 @@ export function GuestbookList({
                       id: crypto.randomUUID(),
                       user: { name: null, email: userEmail },
                     },
-                  ];
+                  ]
                 }
                 if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail);
+                  likes = likes.filter((l) => l.user.email !== userEmail)
                 }
-                return { ...en, likes };
+                return { ...en, likes }
               }
 
               const replies = en.replies.map((rr) => {
-                if (rr.id !== id) return rr;
-                const liked = rr.likes.some((l) => l.user.email === userEmail);
-                let likes = rr.likes;
+                if (rr.id !== id) return rr
+                const liked = rr.likes.some((l) => l.user.email === userEmail)
+                let likes = rr.likes
                 if (action === "like" && !liked) {
                   likes = [
                     ...likes,
@@ -313,40 +311,38 @@ export function GuestbookList({
                       id: crypto.randomUUID(),
                       user: { name: null, email: userEmail },
                     },
-                  ];
+                  ]
                 }
                 if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail);
+                  likes = likes.filter((l) => l.user.email !== userEmail)
                 }
-                return { ...rr, likes };
-              });
+                return { ...rr, likes }
+              })
 
-              return { ...en, replies };
-            });
+              return { ...en, replies }
+            })
           }
 
-          return prev;
-        });
-      } catch {
-        // ignore parse error
-      }
-    };
+          return prev
+        })
+      } catch {}
+    }
 
     es.onerror = () => {
-      es.close();
-    };
+      es.close()
+    }
 
     return () => {
-      es.close();
-    };
-  }, []);
+      es.close()
+    }
+  }, [])
 
   if (loading) {
     return (
       <div className="pr-4">
         <GuestbookSkeleton />
       </div>
-    );
+    )
   }
 
   if (entries.length === 0) {
@@ -356,7 +352,7 @@ export function GuestbookList({
           {messages.pages.guestbook.list.empty}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -529,5 +525,5 @@ export function GuestbookList({
         onClose={() => setShowLoginDialog(false)}
       />
     </>
-  );
+  )
 }

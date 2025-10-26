@@ -1,17 +1,18 @@
 import { ForbiddenContent } from "@/components/pages/forbidden/ForbiddenContent"
 import { Metadata } from "next"
 import messages from "@/messages/id"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: messages.common.error.forbidden.title,
   description: messages.common.error.forbidden.message,
   alternates: {
-    canonical: "https://rendiichtiar.com/forbidden",
+    canonical: `${SITE_URL}/forbidden`,
   },
   openGraph: {
     title: messages.common.error.forbidden.title,
     description: messages.common.error.forbidden.message,
-    url: "https://rendiichtiar.com/forbidden",
+    url: `${SITE_URL}/forbidden`,
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
     locale: "id_ID",

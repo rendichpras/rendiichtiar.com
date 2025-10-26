@@ -1,17 +1,18 @@
-import { NotFoundContent } from "@/components/pages/not-found/NotFoundContent";
-import { Metadata } from "next";
-import messages from "@/messages/id";
+import { NotFoundContent } from "@/components/pages/not-found/NotFoundContent"
+import { Metadata } from "next"
+import messages from "@/messages/id"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: messages.common.error.not_found.title,
   description: messages.common.error.not_found.message,
   alternates: {
-    canonical: "https://rendiichtiar.com/404",
+    canonical: `${SITE_URL}/404`,
   },
   openGraph: {
     title: messages.common.error.not_found.title,
     description: messages.common.error.not_found.message,
-    url: "https://rendiichtiar.com/404",
+    url: `${SITE_URL}/404`,
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
     locale: "id_ID",
@@ -46,8 +47,8 @@ export const metadata: Metadata = {
   verification: {
     google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
   },
-};
+}
 
 export default function NotFoundPage() {
-  return <NotFoundContent />;
+  return <NotFoundContent />
 }

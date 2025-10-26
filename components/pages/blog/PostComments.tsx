@@ -1,57 +1,57 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState } from "react"
+import { useSession } from "next-auth/react"
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { cn } from "@/lib/utils"
 
-import { LoginDialog } from "@/components/auth/LoginDialog";
-import { SignOutButton } from "@/components/auth/SignOutButton";
-import { useI18n } from "@/lib/i18n";
+import { LoginDialog } from "@/components/auth/LoginDialog"
+import { SignOutButton } from "@/components/auth/SignOutButton"
+import { useI18n } from "@/lib/i18n"
 
 type CommentVM = {
-  id: string;
-  createdAt: string | Date;
-  message: string;
-  user: { name: string | null };
-  parentId?: string | null;
-  rootId?: string | null;
-};
+  id: string
+  createdAt: string | Date
+  message: string
+  user: { name: string | null }
+  parentId?: string | null
+  rootId?: string | null
+}
 
 function toDate(input: string | Date | null | undefined) {
-  if (!input) return null;
-  return input instanceof Date ? input : new Date(input);
+  if (!input) return null
+  return input instanceof Date ? input : new Date(input)
 }
 
 function getInitials(name: string | null | undefined) {
-  if (!name) return "?";
-  const parts = name.trim().split(" ");
+  if (!name) return "?"
+  const parts = name.trim().split(" ")
   if (parts.length === 1) {
-    return parts[0]!.slice(0, 2).toUpperCase();
+    return parts[0]!.slice(0, 2).toUpperCase()
   }
-  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase()
 }
 
 export function PostComments({
   comments,
   onSubmit,
 }: {
-  comments: CommentVM[];
-  onSubmit: (fd: FormData) => Promise<void>;
+  comments: CommentVM[]
+  onSubmit: (fd: FormData) => Promise<void>
 }) {
-  const { data: session } = useSession();
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const { messages } = useI18n();
+  const { data: session } = useSession()
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
+  const { messages } = useI18n()
 
-  const isAuthed = Boolean(session?.user);
-  const displayName = session?.user?.name ?? "Anon";
+  const isAuthed = Boolean(session?.user)
+  const displayName = session?.user?.name ?? "Anon"
 
   return (
     <section aria-labelledby="comments-heading" className="space-y-4">
@@ -143,9 +143,9 @@ export function PostComments({
           <ScrollArea className="max-h-[360px] pr-2" aria-label="comments-list">
             <ul role="list" className="space-y-4">
               {comments.map((c) => {
-                const created = toDate(c.createdAt);
-                const name = c.user?.name ?? "Anon";
-                const isChild = c.parentId && c.parentId !== c.rootId;
+                const created = toDate(c.createdAt)
+                const name = c.user?.name ?? "Anon"
+                const isChild = c.parentId && c.parentId !== c.rootId
 
                 return (
                   <li
@@ -192,7 +192,7 @@ export function PostComments({
                       </p>
                     </div>
                   </li>
-                );
+                )
               })}
             </ul>
           </ScrollArea>
@@ -204,5 +204,5 @@ export function PostComments({
         onClose={() => setShowLoginDialog(false)}
       />
     </section>
-  );
+  )
 }

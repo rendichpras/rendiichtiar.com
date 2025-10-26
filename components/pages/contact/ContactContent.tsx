@@ -1,120 +1,120 @@
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { PageTransition } from "@/components/animations/page-transition";
-import { Separator } from "@/components/ui/separator";
+import { useMemo, useState } from "react"
+import { PageTransition } from "@/components/animations/page-transition"
+import { Separator } from "@/components/ui/separator"
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Calendar, Video } from "lucide-react";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useI18n, type Messages } from "@/lib/i18n";
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Calendar, Video } from "lucide-react"
+import { toast } from "sonner"
+import { z } from "zod"
+import { useI18n, type Messages } from "@/lib/i18n"
 
 type ContactFormData = {
-  name: string;
-  email: string;
-  message: string;
-};
+  name: string
+  email: string
+  message: string
+}
 
-type FormErrors = Partial<Record<keyof ContactFormData, string>>;
+type FormErrors = Partial<Record<keyof ContactFormData, string>>
 
 function makeContactSchema(messages: Messages) {
   return z.object({
     name: z.string().min(2, messages.pages.contact.form.validation.name),
     email: z.string().email(messages.pages.contact.form.validation.email),
     message: z.string().min(10, messages.pages.contact.form.validation.message),
-  });
+  })
 }
 
 function InfoRow({
   icon: Icon,
   text,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
-  text: string;
+  icon: React.ComponentType<{ className?: string }>
+  text: string
 }) {
   return (
     <div className="flex items-center gap-2 text-sm text-muted-foreground">
       <Icon className="size-4 text-primary/70" aria-hidden="true" />
       <span>{text}</span>
     </div>
-  );
+  )
 }
 
 export function ContactContent() {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: "",
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
+  })
+  const [errors, setErrors] = useState<FormErrors>({})
 
-  const contactSchema = useMemo(() => makeContactSchema(messages), [messages]);
+  const contactSchema = useMemo(() => makeContactSchema(messages), [messages])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    setErrors((prev) => ({ ...prev, [name]: undefined }))
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
+    e.preventDefault()
+    setIsLoading(true)
+    setErrors({})
 
     try {
-      const validated = contactSchema.parse(formData);
+      const validated = contactSchema.parse(formData)
 
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(validated),
-      });
+      })
 
-      const data = await res.json().catch(() => ({}));
+      const data = await res.json().catch(() => ({}))
 
       if (!res.ok) {
         throw new Error(
           data?.message || messages.pages.contact.form.error.general
-        );
+        )
       }
 
-      setFormData({ name: "", email: "", message: "" });
-      toast.success(messages.pages.contact.form.success);
+      setFormData({ name: "", email: "", message: "" })
+      toast.success(messages.pages.contact.form.success)
     } catch (err) {
       if (err instanceof z.ZodError) {
-        const fieldErrors: FormErrors = {};
+        const fieldErrors: FormErrors = {}
 
         for (const issue of err.issues) {
-          const field = issue.path[0] as keyof ContactFormData;
+          const field = issue.path[0] as keyof ContactFormData
           if (!fieldErrors[field]) {
-            fieldErrors[field] = issue.message;
+            fieldErrors[field] = issue.message
           }
-          toast.error(issue.message);
+          toast.error(issue.message)
         }
 
-        setErrors(fieldErrors);
+        setErrors(fieldErrors)
       } else {
-        toast.error(messages.pages.contact.form.error.general);
+        toast.error(messages.pages.contact.form.error.general)
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <PageTransition>
@@ -312,5 +312,5 @@ export function ContactContent() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

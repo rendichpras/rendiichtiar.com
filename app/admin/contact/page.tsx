@@ -148,40 +148,68 @@ export default function AdminContactPage() {
     return [
       {
         accessorKey: "createdAt",
-        header: ({ column }) => headBtn(messages.admin.contact.table.columns.date, column),
+        header: ({ column }) =>
+          headBtn(messages.admin.contact.table.columns.date, column),
         cell: ({ row }) => (
           <div className="font-medium">
-            {formatDistanceToNow(new Date(row.getValue("createdAt")), { addSuffix: true, locale: localeID })}
+            {formatDistanceToNow(new Date(row.getValue("createdAt")), {
+              addSuffix: true,
+              locale: localeID,
+            })}
           </div>
         ),
       },
       {
         accessorKey: "name",
-        header: ({ column }) => headBtn(messages.admin.contact.table.columns.name, column),
-        cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
+        header: ({ column }) =>
+          headBtn(messages.admin.contact.table.columns.name, column),
+        cell: ({ row }) => (
+          <div className="font-medium">{row.getValue("name")}</div>
+        ),
       },
       {
         accessorKey: "email",
-        header: ({ column }) => headBtn(messages.admin.contact.table.columns.email, column),
-        cell: ({ row }) => <div className="text-muted-foreground">{row.getValue("email")}</div>,
+        header: ({ column }) =>
+          headBtn(messages.admin.contact.table.columns.email, column),
+        cell: ({ row }) => (
+          <div className="text-muted-foreground">{row.getValue("email")}</div>
+        ),
       },
       {
         accessorKey: "message",
-        header: ({ column }) => headBtn(messages.admin.contact.table.columns.message, column),
+        header: ({ column }) =>
+          headBtn(messages.admin.contact.table.columns.message, column),
         cell: ({ row }) => (
           <div className="max-w-[500px]">
-            <p className="line-clamp-2 text-muted-foreground">{row.getValue("message")}</p>
+            <p className="line-clamp-2 text-muted-foreground">
+              {row.getValue("message")}
+            </p>
           </div>
         ),
       },
       {
         accessorKey: "status",
-        header: ({ column }) => headBtn(messages.admin.contact.table.columns.status, column),
+        header: ({ column }) =>
+          headBtn(messages.admin.contact.table.columns.status, column),
         cell: ({ row }) => {
           const status = row.getValue("status") as Contact["status"]
-          if (status === "UNREAD") return <Badge variant="destructive" className="font-normal">{messages.admin.contact.table.status.unread}</Badge>
-          if (status === "READ") return <Badge variant="secondary" className="font-normal">{messages.admin.contact.table.status.read}</Badge>
-          return <Badge variant="default" className="font-normal">{messages.admin.contact.table.status.replied}</Badge>
+          if (status === "UNREAD")
+            return (
+              <Badge variant="destructive" className="font-normal">
+                {messages.admin.contact.table.status.unread}
+              </Badge>
+            )
+          if (status === "READ")
+            return (
+              <Badge variant="secondary" className="font-normal">
+                {messages.admin.contact.table.status.read}
+              </Badge>
+            )
+          return (
+            <Badge variant="default" className="font-normal">
+              {messages.admin.contact.table.status.replied}
+            </Badge>
+          )
         },
       },
       {
@@ -198,7 +226,9 @@ export default function AdminContactPage() {
               variant={c.status === "UNREAD" ? "default" : "secondary"}
               className="w-[100px]"
             >
-              {disabled ? messages.admin.contact.table.actions.replied : messages.admin.contact.table.actions.reply}
+              {disabled
+                ? messages.admin.contact.table.actions.replied
+                : messages.admin.contact.table.actions.reply}
             </Button>
           )
         },
@@ -239,8 +269,12 @@ export default function AdminContactPage() {
       <main className="relative min-h-screen bg-background lg:pl-64 pt-16 lg:pt-0">
         <section className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 py-8 sm:py-12 md:py-16">
           <div className="max-w-3xl space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{messages.admin.contact.title}</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">{messages.admin.contact.subtitle}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              {messages.admin.contact.title}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {messages.admin.contact.subtitle}
+            </p>
           </div>
 
           <Separator className="my-6 bg-border/60" />
@@ -250,13 +284,20 @@ export default function AdminContactPage() {
               <div className="flex flex-col items-center gap-4 py-4 sm:flex-row">
                 <Input
                   placeholder={messages.admin.contact.table.search}
-                  value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                  onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+                  value={
+                    (table.getColumn("name")?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(e) =>
+                    table.getColumn("name")?.setFilterValue(e.target.value)
+                  }
                   className="w-full sm:max-w-sm"
                 />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full sm:ml-auto sm:w-auto">
+                    <Button
+                      variant="outline"
+                      className="w-full sm:ml-auto sm:w-auto"
+                    >
                       {messages.admin.contact.table.columns_button}
                       <ChevronDown className="ml-2 h-4 w-4" />
                     </Button>
@@ -266,7 +307,8 @@ export default function AdminContactPage() {
                       .getAllColumns()
                       .filter((c) => c.getCanHide())
                       .map((c) => {
-                        const key = c.id as keyof typeof messages.admin.contact.table.columns
+                        const key =
+                          c.id as keyof typeof messages.admin.contact.table.columns
                         return (
                           <DropdownMenuCheckboxItem
                             key={c.id}
@@ -286,10 +328,18 @@ export default function AdminContactPage() {
                 <Table>
                   <TableHeader>
                     {table.getHeaderGroups().map((hg) => (
-                      <TableRow key={hg.id} className="border-b border-border/50 hover:bg-transparent">
+                      <TableRow
+                        key={hg.id}
+                        className="border-b border-border/50 hover:bg-transparent"
+                      >
                         {hg.headers.map((h) => (
                           <TableHead key={h.id} className="h-11 px-6 text-xs">
-                            {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
+                            {h.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  h.column.columnDef.header,
+                                  h.getContext()
+                                )}
                           </TableHead>
                         ))}
                       </TableRow>
@@ -299,17 +349,27 @@ export default function AdminContactPage() {
                   <TableBody>
                     {table.getRowModel().rows.length ? (
                       table.getRowModel().rows.map((r) => (
-                        <TableRow key={r.id} data-state={r.getIsSelected() && "selected"} className="border-b border-border/50 last:border-0 hover:bg-muted/50">
+                        <TableRow
+                          key={r.id}
+                          data-state={r.getIsSelected() && "selected"}
+                          className="border-b border-border/50 last:border-0 hover:bg-muted/50"
+                        >
                           {r.getVisibleCells().map((cell) => (
                             <TableCell key={cell.id} className="px-6 py-3">
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
                             </TableCell>
                           ))}
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-24 text-center"
+                        >
                           {messages.admin.contact.table.empty}
                         </TableCell>
                       </TableRow>
@@ -326,10 +386,20 @@ export default function AdminContactPage() {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
                     {messages.admin.contact.table.pagination.previous}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
                     {messages.admin.contact.table.pagination.next}
                   </Button>
                 </div>
@@ -340,9 +410,14 @@ export default function AdminContactPage() {
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle>{messages.admin.contact.reply_dialog.title}</DialogTitle>
+                <DialogTitle>
+                  {messages.admin.contact.reply_dialog.title}
+                </DialogTitle>
                 <DialogDescription>
-                  {messages.admin.contact.reply_dialog.subtitle.replace("{name}", selectedContact?.name || "")}
+                  {messages.admin.contact.reply_dialog.subtitle.replace(
+                    "{name}",
+                    selectedContact?.name || ""
+                  )}
                 </DialogDescription>
               </DialogHeader>
 
@@ -354,12 +429,16 @@ export default function AdminContactPage() {
                     </p>
                     <Badge variant="outline" className="font-normal">
                       {formatDistanceToNow(
-                        selectedContact ? new Date(selectedContact.createdAt) : new Date(),
+                        selectedContact
+                          ? new Date(selectedContact.createdAt)
+                          : new Date(),
                         { addSuffix: true, locale: localeID }
                       )}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{selectedContact?.message}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedContact?.message}
+                  </p>
                 </div>
 
                 <Textarea
@@ -371,11 +450,21 @@ export default function AdminContactPage() {
               </div>
 
               <DialogFooter className="flex-col gap-2 sm:flex-row">
-                <Button variant="outline" onClick={() => setDialogOpen(false)} className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  onClick={() => setDialogOpen(false)}
+                  className="w-full sm:w-auto"
+                >
                   {messages.admin.contact.reply_dialog.cancel}
                 </Button>
-                <Button onClick={handleReply} disabled={actionLoading || !replyMessage.trim()} className="w-full sm:w-auto">
-                  {actionLoading ? messages.admin.contact.reply_dialog.sending : messages.admin.contact.reply_dialog.send}
+                <Button
+                  onClick={handleReply}
+                  disabled={actionLoading || !replyMessage.trim()}
+                  className="w-full sm:w-auto"
+                >
+                  {actionLoading
+                    ? messages.admin.contact.reply_dialog.sending
+                    : messages.admin.contact.reply_dialog.send}
                 </Button>
               </DialogFooter>
             </DialogContent>

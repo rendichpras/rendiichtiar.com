@@ -1,37 +1,38 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useI18n } from "@/lib/i18n";
+import Link from "next/link"
+import { useI18n } from "@/lib/i18n"
 
 type Post = {
-  id: string;
-  title: string;
-  subtitle: string | null;
-  slug: string | null;
-  status: "DRAFT" | "PUBLISHED" | "SCHEDULED";
-  publishedAt: Date | string | null;
-  updatedAt: Date | string;
-  tags: { tag: { id: string; name: string } }[];
-};
+  id: string
+  title: string
+  subtitle: string | null
+  slug: string | null
+  status: "DRAFT" | "PUBLISHED" | "SCHEDULED"
+  publishedAt: Date | string | null
+  updatedAt: Date | string
+  tags: { tag: { id: string; name: string } }[]
+}
 
 function getStatusClass(status: string) {
-  if (status === "PUBLISHED") return "border border-green-500/30 text-green-400";
-  if (status === "SCHEDULED") return "border border-yellow-500/30 text-yellow-400";
-  return "border border-border/30 text-muted-foreground";
+  if (status === "PUBLISHED") return "border border-green-500/30 text-green-400"
+  if (status === "SCHEDULED")
+    return "border border-yellow-500/30 text-yellow-400"
+  return "border border-border/30 text-muted-foreground"
 }
 
 export function BlogList({ posts }: { posts: Post[] }) {
-  const { messages, language } = useI18n();
-  const locale = language === "en" ? "en-US" : "id-ID";
+  const { messages, language } = useI18n()
+  const locale = language === "en" ? "en-US" : "id-ID"
 
   const fmt = (d: Date | string | null | undefined) =>
     d
       ? new Date(d).toLocaleDateString(locale, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-      : "";
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })
+      : ""
 
   return (
     <>
@@ -80,11 +81,11 @@ export function BlogList({ posts }: { posts: Post[] }) {
                     <div className="text-xs text-muted-foreground sm:text-sm">
                       {p.publishedAt
                         ? `${messages.admin.blogList.published_at} ${fmt(
-                          p.publishedAt
-                        )}`
+                            p.publishedAt
+                          )}`
                         : `${messages.admin.blogList.draft_updated} ${fmt(
-                          p.updatedAt
-                        )}`}
+                            p.updatedAt
+                          )}`}
                     </div>
                   </div>
 
@@ -111,10 +112,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
                 ) : null}
 
                 <div className="mt-4 flex items-center gap-3 text-sm text-foreground/90">
-                  <Link
-                    href={`/admin/blog/${p.id}/edit`}
-                    className="underline"
-                  >
+                  <Link href={`/admin/blog/${p.id}/edit`} className="underline">
                     {messages.admin.blogList.edit}
                   </Link>
                   {p.slug ? (
@@ -134,5 +132,5 @@ export function BlogList({ posts }: { posts: Post[] }) {
         </ul>
       )}
     </>
-  );
+  )
 }

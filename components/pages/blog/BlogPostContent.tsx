@@ -1,40 +1,40 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Link from "next/link"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
-import { PageTransition } from "@/components/animations/page-transition";
-import { cn } from "@/lib/utils";
-import { useI18n } from "@/lib/i18n";
+import { PageTransition } from "@/components/animations/page-transition"
+import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 
-import { Badge } from "@/components/ui/badge";
-import { PostComments } from "@/components/pages/blog/PostComments";
+import { Badge } from "@/components/ui/badge"
+import { PostComments } from "@/components/pages/blog/PostComments"
 
 type PostVM = {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  coverUrl?: string | null;
-  publishedAt?: string | Date | null;
-  readingTime: number;
-  views: number;
-  tags: { slug: string; name: string }[];
-};
+  id: string
+  slug: string
+  title: string
+  content: string
+  coverUrl?: string | null
+  publishedAt?: string | Date | null
+  readingTime: number
+  views: number
+  tags: { slug: string; name: string }[]
+}
 
 type CommentVM = {
-  id: string;
-  createdAt: string | Date;
-  message: string;
-  user: { name: string | null };
-  parentId?: string | null;
-  rootId?: string | null;
-};
+  id: string
+  createdAt: string | Date
+  message: string
+  user: { name: string | null }
+  parentId?: string | null
+  rootId?: string | null
+}
 
 function toDate(input: string | Date | null | undefined) {
-  if (!input) return null;
-  return input instanceof Date ? input : new Date(input);
+  if (!input) return null
+  return input instanceof Date ? input : new Date(input)
 }
 
 export function BlogPostContent({
@@ -42,13 +42,13 @@ export function BlogPostContent({
   comments,
   onSubmit,
 }: {
-  post: PostVM;
-  comments: CommentVM[];
-  onSubmit: (fd: FormData) => Promise<void>;
+  post: PostVM
+  comments: CommentVM[]
+  onSubmit: (fd: FormData) => Promise<void>
 }) {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
-  const publishedDate = toDate(post.publishedAt);
+  const publishedDate = toDate(post.publishedAt)
 
   return (
     <PageTransition>
@@ -167,5 +167,5 @@ export function BlogPostContent({
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

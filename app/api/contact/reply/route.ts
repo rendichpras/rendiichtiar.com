@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import nodemailer from "nodemailer"
 import messages from "@/messages/id"
+import { SITE_URL } from "@/lib/site"
 
 import { db } from "@/db"
 import { contacts } from "@/db/schema/schema"
@@ -15,7 +16,7 @@ const replySchema = z.object({
 const replyEmailTemplate = (
   userName: string,
   originalMessage: string,
-  replyMessage: string,
+  replyMessage: string
 ) => `
 <!DOCTYPE html>
 <html>
@@ -35,7 +36,7 @@ const replyEmailTemplate = (
             }</h1>
             <p style="margin: 8px 0 0 0; color: #666666; font-size: 16px;">${messages.api.contact.email.reply.greeting.replace(
               "{name}",
-              userName,
+              userName
             )}</p>
         </div>
 
@@ -57,7 +58,7 @@ const replyEmailTemplate = (
 
         <!-- CTA Button -->
         <div style="text-align: center; margin-bottom: 32px;">
-            <a href="https://rendiichtiar.com" style="display: inline-block; background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 15px;">${
+            <a href="${SITE_URL}" style="display: inline-block; background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 15px;">${
               messages.api.contact.email.reply.visit_website
             }</a>
         </div>
@@ -67,8 +68,8 @@ const replyEmailTemplate = (
             <p style="margin: 0 0 16px 0; color: #666666; font-size: 14px;">${
               messages.api.contact.email.reply.regards
             }<br/><span style="color: #1a1a1a; font-weight: 600;">${
-  messages.api.contact.email.reply.signature
-}</span></p>
+              messages.api.contact.email.reply.signature
+            }</span></p>
             
             <!-- Social Links -->
             <div style="margin-top: 16px;">
@@ -117,7 +118,7 @@ export async function POST(req: Request) {
           success: false,
           message: messages.api.contact.error.not_found,
         },
-        { status: 404 },
+        { status: 404 }
       )
     }
 
@@ -133,7 +134,7 @@ export async function POST(req: Request) {
       html: replyEmailTemplate(
         contact.name,
         contact.message,
-        validatedData.replyMessage,
+        validatedData.replyMessage
       ),
     })
 
@@ -149,7 +150,7 @@ export async function POST(req: Request) {
           message: messages.api.contact.error.validation,
           errors: error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -158,7 +159,7 @@ export async function POST(req: Request) {
         success: false,
         message: messages.api.contact.error.general,
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

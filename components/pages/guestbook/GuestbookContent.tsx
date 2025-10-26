@@ -1,43 +1,43 @@
-"use client";
+"use client"
 
-import { memo } from "react";
-import type { Session } from "next-auth";
+import { memo } from "react"
+import type { Session } from "next-auth"
 
-import { PageTransition } from "@/components/animations/page-transition";
-import { useI18n } from "@/lib/i18n";
+import { PageTransition } from "@/components/animations/page-transition"
+import { useI18n } from "@/lib/i18n"
 
-import { SignInButton } from "@/components/auth/SignInButton";
-import { SignOutButton } from "@/components/auth/SignOutButton";
-import { GuestbookForm } from "@/components/pages/guestbook/GuestbookForm";
-import { GuestbookList } from "@/components/pages/guestbook/GuestbookList";
+import { SignInButton } from "@/components/auth/SignInButton"
+import { SignOutButton } from "@/components/auth/SignOutButton"
+import { GuestbookForm } from "@/components/pages/guestbook/GuestbookForm"
+import { GuestbookList } from "@/components/pages/guestbook/GuestbookList"
 
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Card,
   CardHeader,
   CardContent,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface Props {
-  session?: Session | null;
+  session?: Session | null
 }
 
 const AuthBar = memo(function AuthBar({
   session,
   signInMessage,
 }: {
-  session?: Session | null;
-  signInMessage: string;
+  session?: Session | null
+  signInMessage: string
 }) {
   if (session) {
-    const user = session.user;
-    const name = user?.name || "Guest";
-    const email = user?.email || "";
-    const initial = name.charAt(0).toUpperCase();
+    const user = session.user
+    const name = user?.name || "Guest"
+    const email = user?.email || ""
+    const initial = name.charAt(0).toUpperCase()
 
     return (
       <Card className="border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
@@ -65,7 +65,7 @@ const AuthBar = memo(function AuthBar({
           </div>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -79,11 +79,11 @@ const AuthBar = memo(function AuthBar({
         <SignInButton />
       </CardContent>
     </Card>
-  );
-});
+  )
+})
 
 export function GuestbookContent({ session }: Props) {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
   return (
     <PageTransition>
@@ -146,5 +146,5 @@ export function GuestbookContent({ session }: Props) {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

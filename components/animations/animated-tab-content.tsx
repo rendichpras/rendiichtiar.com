@@ -2,7 +2,11 @@
 
 import { motion } from "framer-motion"
 
-export const AnimatedTabContent = ({ children }: { children: React.ReactNode }) => {
+export const AnimatedTabContent = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
   return (
     <motion.div
       initial={{ y: 10, opacity: 0 }}

@@ -583,9 +583,7 @@ export function Navbar() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
-                    delay:
-                      (MAIN_NAV.length + APP_NAV.length + i) *
-                      BASE_DELAY,
+                    delay: (MAIN_NAV.length + APP_NAV.length + i) * BASE_DELAY,
                   }}
                 >
                   <a

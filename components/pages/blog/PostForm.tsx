@@ -1,61 +1,61 @@
-"use client";
+"use client"
 
-import { useState, useTransition } from "react";
-import dynamic from "next/dynamic";
-import { toast } from "sonner";
+import { useState, useTransition } from "react"
+import dynamic from "next/dynamic"
+import { toast } from "sonner"
 
 import {
   createPost,
   updatePost,
   publishPost,
   deletePost,
-} from "@/app/blog/blog";
+} from "@/app/blog/blog"
 
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardHeader, CardContent } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cn } from "@/lib/utils";
-import { useI18n } from "@/lib/i18n";
+} from "@/components/ui/select"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
-});
+})
 
 export type PostInput = {
-  id?: string;
-  title?: string;
-  coverUrl?: string;
-  content?: string;
-  tags?: string;
-  status?: "DRAFT" | "PUBLISHED" | "SCHEDULED";
-};
+  id?: string
+  title?: string
+  coverUrl?: string
+  content?: string
+  tags?: string
+  status?: "DRAFT" | "PUBLISHED" | "SCHEDULED"
+}
 
 function generateExcerpt(md: string, maxLen = 220) {
-  if (!md) return "";
+  if (!md) return ""
   const plain = md
     .replace(/```[\s\S]*?```/g, "")
     .replace(/`[^`]*`/g, "")
     .replace(/[*_>#-]+/g, " ")
     .replace(/\[(.*?)\]\((.*?)\)/g, "$1")
     .replace(/\n+/g, " ")
-    .trim();
+    .trim()
 
-  if (plain.length <= maxLen) return plain;
-  return plain.slice(0, maxLen - 1).trimEnd() + "…";
+  if (plain.length <= maxLen) return plain
+  return plain.slice(0, maxLen - 1).trimEnd() + "…"
 }
 
 export function PostForm({ initial }: { initial?: PostInput }) {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
   const [data, setData] = useState<PostInput>({
     title: initial?.title ?? "",
@@ -63,18 +63,18 @@ export function PostForm({ initial }: { initial?: PostInput }) {
     content: initial?.content ?? "",
     tags: initial?.tags ?? "",
     status: initial?.status ?? "DRAFT",
-  });
+  })
 
-  const [pending, startTransition] = useTransition();
+  const [pending, startTransition] = useTransition()
 
   function handleSave() {
     startTransition(async () => {
       const safeStatus = (data.status || "DRAFT").toUpperCase() as
         | "DRAFT"
         | "PUBLISHED"
-        | "SCHEDULED";
+        | "SCHEDULED"
 
-      const excerpt = generateExcerpt(data.content ?? "");
+      const excerpt = generateExcerpt(data.content ?? "")
 
       const payload = {
         title: data.title?.trim() ?? "",
@@ -86,55 +86,55 @@ export function PostForm({ initial }: { initial?: PostInput }) {
           .map((s) => s.trim())
           .filter(Boolean),
         status: safeStatus,
-      };
+      }
 
       try {
         if (initial?.id) {
-          await updatePost(initial.id, payload);
-          toast.success(messages.admin.blogEditor.form.toast.updated);
-          return;
+          await updatePost(initial.id, payload)
+          toast.success(messages.admin.blogEditor.form.toast.updated)
+          return
         }
 
-        const res = await createPost(payload);
-        toast.success(messages.admin.blogEditor.form.toast.created);
-        window.location.href = `/admin/blog/${res.id}/edit`;
+        const res = await createPost(payload)
+        toast.success(messages.admin.blogEditor.form.toast.created)
+        window.location.href = `/admin/blog/${res.id}/edit`
       } catch (err) {
-        toast.error(messages.admin.blogEditor.form.toast.error_save);
-        console.error(err);
+        toast.error(messages.admin.blogEditor.form.toast.error_save)
+        console.error(err)
       }
-    });
+    })
   }
 
   function handlePublish() {
     startTransition(async () => {
-      if (!initial?.id) return;
+      if (!initial?.id) return
       try {
-        const res = await publishPost(initial.id);
-        toast.success(messages.admin.blogEditor.form.toast.published);
+        const res = await publishPost(initial.id)
+        toast.success(messages.admin.blogEditor.form.toast.published)
         if (res?.slug) {
-          window.location.href = `/blog/${res.slug}`;
+          window.location.href = `/blog/${res.slug}`
         }
       } catch (err) {
-        toast.error(messages.admin.blogEditor.form.toast.error_publish);
-        console.error(err);
+        toast.error(messages.admin.blogEditor.form.toast.error_publish)
+        console.error(err)
       }
-    });
+    })
   }
 
   function handleDelete() {
     startTransition(async () => {
-      if (!initial?.id) return;
-      const ok = window.confirm(messages.admin.blogEditor.form.confirm_delete);
-      if (!ok) return;
+      if (!initial?.id) return
+      const ok = window.confirm(messages.admin.blogEditor.form.confirm_delete)
+      if (!ok) return
       try {
-        await deletePost(initial.id);
-        toast.success(messages.admin.blogEditor.form.toast.deleted);
-        window.location.href = "/admin/blog";
+        await deletePost(initial.id)
+        toast.success(messages.admin.blogEditor.form.toast.deleted)
+        window.location.href = "/admin/blog"
       } catch (err) {
-        toast.error(messages.admin.blogEditor.form.toast.error_delete);
-        console.error(err);
+        toast.error(messages.admin.blogEditor.form.toast.error_delete)
+        console.error(err)
       }
-    });
+    })
   }
 
   return (
@@ -339,5 +339,5 @@ export function PostForm({ initial }: { initial?: PostInput }) {
         </Card>
       </aside>
     </div>
-  );
+  )
 }

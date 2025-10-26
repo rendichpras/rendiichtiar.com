@@ -3,6 +3,7 @@ import { z } from "zod"
 import nodemailer from "nodemailer"
 import { randomUUID } from "crypto"
 import messages from "@/messages/id"
+import { SITE_URL } from "@/lib/site"
 
 import { db } from "@/db"
 import { contacts } from "@/db/schema/schema"
@@ -11,14 +12,12 @@ import { desc } from "drizzle-orm"
 const contactSchema = z.object({
   name: z.string().min(2, messages.api.contact.validation.name),
   email: z.string().email(messages.api.contact.validation.email),
-  message: z
-    .string()
-    .min(10, messages.api.contact.validation.message),
+  message: z.string().min(10, messages.api.contact.validation.message),
 })
 
 const adminEmailTemplate = (
   data: z.infer<typeof contactSchema>,
-  messageId: string,
+  messageId: string
 ) => `
 <!DOCTYPE html>
 <html>
@@ -67,7 +66,7 @@ const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
         <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #f0f0f0;">
             <h1 style="color: #333; margin: 0; font-size: 24px;">${messages.api.contact.email.user.title.replace(
               "{name}",
-              data.name,
+              data.name
             )}</h1>
         </div>
         
@@ -87,7 +86,7 @@ const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
             
             <div style="text-align: center; margin-top: 30px;">
                 <div style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
-                    <a href="https://rendiichtiar.com" style="color: #ffffff; text-decoration: none;">${
+                    <a href="${SITE_URL}" style="color: #ffffff; text-decoration: none;">${
                       messages.api.contact.email.user.visit_website
                     }</a>
                 </div>
@@ -147,7 +146,7 @@ export async function GET() {
         success: false,
         message: messages.api.contact.error.fetch,
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -182,7 +181,7 @@ export async function POST(req: Request) {
       to: process.env.SMTP_TO,
       subject: messages.api.contact.email.admin.subject.replace(
         "{name}",
-        validatedData.name,
+        validatedData.name
       ),
       html: adminEmailTemplate(validatedData, contact.id),
     })
@@ -206,7 +205,7 @@ export async function POST(req: Request) {
           message: messages.api.contact.error.validation,
           errors: error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -216,7 +215,7 @@ export async function POST(req: Request) {
         success: false,
         message: messages.api.contact.error.general,
       },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

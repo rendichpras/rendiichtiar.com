@@ -1,81 +1,81 @@
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useMemo, useState } from "react"
+import { useSession } from "next-auth/react"
 
-import { toast } from "sonner";
-import { Loader2, TriangleAlert } from "lucide-react";
+import { toast } from "sonner"
+import { Loader2, TriangleAlert } from "lucide-react"
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Label } from "@/components/ui/label"
 
-import { addGuestbookEntry } from "@/app/guestbook/guestbook";
+import { addGuestbookEntry } from "@/app/guestbook/guestbook"
 import {
   containsForbiddenWords,
   getForbiddenWords,
-} from "@/lib/constants/forbidden-words";
-import { useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+} from "@/lib/constants/forbidden-words"
+import { useI18n } from "@/lib/i18n"
+import { cn } from "@/lib/utils"
 
-const MAX_LEN = 280;
+const MAX_LEN = 280
 
 export function GuestbookForm() {
-  const { data: session } = useSession();
-  const { messages } = useI18n();
+  const { data: session } = useSession()
+  const { messages } = useI18n()
 
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [forbiddenWords, setForbiddenWords] = useState<string[]>([]);
+  const [message, setMessage] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [forbiddenWords, setForbiddenWords] = useState<string[]>([])
 
   const remainingChars = useMemo(
     () => Math.max(0, MAX_LEN - message.length),
-    [message],
-  );
+    [message]
+  )
 
   if (!session) {
-    return null;
+    return null
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const v = e.target.value;
-    setMessage(v);
-    setForbiddenWords(containsForbiddenWords(v) ? getForbiddenWords(v) : []);
-  };
+    const v = e.target.value
+    setMessage(v)
+    setForbiddenWords(containsForbiddenWords(v) ? getForbiddenWords(v) : [])
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!message.trim()) {
-      toast.error(messages.pages.guestbook.form.empty_error);
-      return;
+      toast.error(messages.pages.guestbook.form.empty_error)
+      return
     }
     if (!session.user?.email) {
-      toast.error(messages.pages.guestbook.form.session_error);
-      return;
+      toast.error(messages.pages.guestbook.form.session_error)
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
-      await addGuestbookEntry(message, session.user.email);
+      await addGuestbookEntry(message, session.user.email)
 
-      setMessage("");
-      setForbiddenWords([]);
-      toast.success(messages.pages.guestbook.form.success);
+      setMessage("")
+      setForbiddenWords([])
+      toast.success(messages.pages.guestbook.form.success)
 
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("guestbook:refresh"));
+        window.dispatchEvent(new CustomEvent("guestbook:refresh"))
       }
     } catch {
-      toast.error(messages.pages.guestbook.form.error);
+      toast.error(messages.pages.guestbook.form.error)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
-  const isBlocked = forbiddenWords.length > 0;
+  const isBlocked = forbiddenWords.length > 0
 
   return (
     <form
@@ -98,7 +98,7 @@ export function GuestbookForm() {
           disabled={isSubmitting}
           className={cn(
             "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary",
-            isBlocked && "border-destructive focus-visible:ring-destructive",
+            isBlocked && "border-destructive focus-visible:ring-destructive"
           )}
           aria-invalid={isBlocked || undefined}
           aria-describedby={isBlocked ? "forbidden-hint" : undefined}
@@ -107,9 +107,7 @@ export function GuestbookForm() {
         <span
           className={cn(
             "absolute bottom-2 right-3 text-xs tabular-nums",
-            remainingChars <= 20
-              ? "text-destructive"
-              : "text-muted-foreground",
+            remainingChars <= 20 ? "text-destructive" : "text-muted-foreground"
           )}
           aria-live="polite"
         >
@@ -136,7 +134,7 @@ export function GuestbookForm() {
           disabled={isSubmitting || isBlocked}
           className={cn(
             "relative rounded-xl bg-primary/10 text-primary hover:bg-primary/20",
-            isSubmitting && "cursor-wait opacity-80",
+            isSubmitting && "cursor-wait opacity-80"
           )}
         >
           {isSubmitting ? (
@@ -150,5 +148,5 @@ export function GuestbookForm() {
         </Button>
       </div>
     </form>
-  );
+  )
 }

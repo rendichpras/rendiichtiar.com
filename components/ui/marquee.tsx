@@ -55,4 +55,4 @@ export function Marquee({
       )}
     </div>
   )
-} 
+}

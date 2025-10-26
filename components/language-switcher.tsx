@@ -1,38 +1,38 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
-import { useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/tooltip"
+import { useI18n } from "@/lib/i18n"
+import { cn } from "@/lib/utils"
 
 interface LanguageSwitcherProps {
-  variant?: "default" | "compact";
-  className?: string;
+  variant?: "default" | "compact"
+  className?: string
 }
 
 export function LanguageSwitcher({
   variant = "default",
   className,
 }: LanguageSwitcherProps) {
-  const { language, setLanguage, messages } = useI18n();
-  const isCompact = variant === "compact";
-  const nextLang = language === "id" ? "en" : "id";
+  const { language, setLanguage, messages } = useI18n()
+  const isCompact = variant === "compact"
+  const nextLang = language === "id" ? "en" : "id"
 
   const ariaLabel =
     language === "id"
       ? messages.common.language_switcher.aria_to_en
-      : messages.common.language_switcher.aria_to_id;
+      : messages.common.language_switcher.aria_to_id
 
   const tooltipText =
     language === "id"
       ? messages.common.language_switcher.tooltip_id
-      : messages.common.language_switcher.tooltip_en;
+      : messages.common.language_switcher.tooltip_en
 
   return (
     <TooltipProvider>
@@ -106,5 +106,5 @@ export function LanguageSwitcher({
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

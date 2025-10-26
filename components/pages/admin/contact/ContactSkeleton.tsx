@@ -22,7 +22,10 @@ export function ContactSkeleton() {
         </div>
 
         {[...Array(5)].map((_, index) => (
-          <div key={index} className="p-4 flex items-center gap-4 border-b last:border-b-0">
+          <div
+            key={index}
+            className="p-4 flex items-center gap-4 border-b last:border-b-0"
+          >
             <Skeleton className="h-6 w-[100px]" />
             <Skeleton className="h-6 w-[150px]" />
             <Skeleton className="h-6 w-[200px]" />
@@ -41,4 +44,4 @@ export function ContactSkeleton() {
       </div>
     </div>
   )
-} 
+}

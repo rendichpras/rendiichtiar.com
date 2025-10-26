@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   memo,
@@ -6,30 +6,30 @@ import {
   useState,
   type ComponentType,
   type ReactNode,
-} from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { Separator } from "@/components/ui/separator";
-import { PageTransition } from "@/components/animations/page-transition";
-import { BookOpen, GraduationCap, User2 } from "lucide-react";
+} from "react"
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { Separator } from "@/components/ui/separator"
+import { PageTransition } from "@/components/animations/page-transition"
+import { BookOpen, GraduationCap, User2 } from "lucide-react"
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useI18n, type Messages } from "@/lib/i18n";
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { useI18n, type Messages } from "@/lib/i18n"
 
-type SectionId = "intro" | "career" | "education";
+type SectionId = "intro" | "career" | "education"
 
 interface SectionContent {
-  id: SectionId;
-  icon: ComponentType<{ className?: string }>;
-  titleKey: keyof Messages["pages"]["about"]["sections"];
-  content: (props: { messages: Messages }) => ReactNode;
+  id: SectionId
+  icon: ComponentType<{ className?: string }>
+  titleKey: keyof Messages["pages"]["about"]["sections"]
+  content: (props: { messages: Messages }) => ReactNode
 }
 
 const SectionNavCard = memo(function SectionNavCard({
@@ -39,11 +39,11 @@ const SectionNavCard = memo(function SectionNavCard({
   onClick,
   delay = 0,
 }: {
-  icon: ComponentType<{ className?: string }>;
-  label: string;
-  active: boolean;
-  onClick: () => void;
-  delay?: number;
+  icon: ComponentType<{ className?: string }>
+  label: string
+  active: boolean
+  onClick: () => void
+  delay?: number
 }) {
   return (
     <motion.div
@@ -60,7 +60,7 @@ const SectionNavCard = memo(function SectionNavCard({
           "border-border/30 bg-card/30 hover:border-border/50 hover:bg-card/50",
           "focus-visible:ring-2 focus-visible:ring-primary/40",
           active &&
-          "border-primary/50 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/10"
+            "border-primary/50 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/10"
         )}
       >
         <div className="flex items-center gap-3 text-sm font-medium">
@@ -75,8 +75,8 @@ const SectionNavCard = memo(function SectionNavCard({
         </div>
       </Button>
     </motion.div>
-  );
-});
+  )
+})
 
 function EducationItem({
   src,
@@ -86,12 +86,12 @@ function EducationItem({
   location,
   sizes = "(max-width: 640px) 48px, 56px",
 }: {
-  src: string;
-  name: string;
-  major: string;
-  period: string;
-  location: string;
-  sizes?: string;
+  src: string
+  name: string
+  major: string
+  period: string
+  location: string
+  sizes?: string
 }) {
   return (
     <Card className="rounded-xl border-border/30 bg-card/30 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50 hover:bg-card/50">
@@ -123,7 +123,7 @@ function EducationItem({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 const sections: readonly SectionContent[] = [
@@ -217,18 +217,18 @@ const sections: readonly SectionContent[] = [
       </Card>
     ),
   },
-] as const;
+] as const
 
 export function AboutContent() {
-  const { messages } = useI18n();
-  const [activeSection, setActiveSection] = useState<SectionId>("intro");
+  const { messages } = useI18n()
+  const [activeSection, setActiveSection] = useState<SectionId>("intro")
 
   const nav = sections.map((s, i) => ({
     id: s.id,
     label: messages.pages.about.sections[s.titleKey],
     icon: s.icon,
     delay: i * 0.1,
-  }));
+  }))
 
   const contentById = useMemo(
     () =>
@@ -237,7 +237,7 @@ export function AboutContent() {
         SectionContent["content"]
       >,
     []
-  );
+  )
 
   return (
     <PageTransition>
@@ -280,5 +280,5 @@ export function AboutContent() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

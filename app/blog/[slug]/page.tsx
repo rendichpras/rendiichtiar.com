@@ -5,6 +5,8 @@ import {
   addPostComment,
 } from "../blog"
 import { BlogPostContent } from "@/components/pages/blog/BlogPostContent"
+import { PostJsonLd } from "@/components/pages/blog/PostJsonLd"
+import { SITE_URL } from "@/lib/site"
 import type { Metadata } from "next"
 
 export const revalidate = 60
@@ -22,16 +24,16 @@ function stripMarkdown(md: string): string {
 
 function absoluteUrl(pathOrUrl: string | null | undefined): string | undefined {
   if (!pathOrUrl) return undefined
-  const base = process.env.NEXT_PUBLIC_URL?.replace(/\/+$/, "")
-  if (!base) return undefined
 
   if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
     return pathOrUrl
   }
+
   if (pathOrUrl.startsWith("/")) {
-    return `${base}${pathOrUrl}`
+    return `${SITE_URL}${pathOrUrl}`
   }
-  return `${base}/${pathOrUrl}`
+
+  return `${SITE_URL}/${pathOrUrl}`
 }
 
 export async function generateMetadata({
@@ -45,12 +47,10 @@ export async function generateMetadata({
     return {}
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_URL?.replace(/\/+$/, "") || ""
-  const canonical = `${siteUrl}/blog/${data.slug}`
+  const canonical = `${SITE_URL}/blog/${data.slug}`
 
   const raw = stripMarkdown(data.content ?? "")
-  const description =
-    raw.length > 160 ? raw.slice(0, 159).trimEnd() + "…" : raw
+  const description = raw.length > 160 ? raw.slice(0, 159).trimEnd() + "…" : raw
 
   const ogImage = absoluteUrl(data.coverUrl) || absoluteUrl("/og-image.png")
 
@@ -123,7 +123,6 @@ export default async function PostPage({
     await addPostComment({ postId: post.id, message })
   }
 
-  // tags dari drizzle bisa null karena LEFT JOIN
   const safeTags = post.tags
     .filter((t) => t.tag.slug && t.tag.name)
     .map((t) => ({
@@ -153,10 +152,9 @@ export default async function PostPage({
   }))
 
   return (
-    <BlogPostContent
-      post={postVM}
-      comments={commentVM}
-      onSubmit={onSubmit}
-    />
+    <>
+      <PostJsonLd post={postVM} />
+      <BlogPostContent post={postVM} comments={commentVM} onSubmit={onSubmit} />
+    </>
   )
 }

@@ -1,22 +1,22 @@
-"use client";
+"use client"
 
-import { memo, type CSSProperties } from "react";
-import Image from "next/image";
-import { PageTransition } from "@/components/animations/page-transition";
-import { useI18n } from "@/lib/i18n";
+import { memo, type CSSProperties } from "react"
+import Image from "next/image"
+import { PageTransition } from "@/components/animations/page-transition"
+import { useI18n } from "@/lib/i18n"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 
-import { MapPin, MonitorUp, MessageCircle } from "lucide-react";
+import { MapPin, MonitorUp, MessageCircle } from "lucide-react"
 import {
   SiTypescript,
   SiNodedotjs,
@@ -29,14 +29,14 @@ import {
   SiNginx,
   SiDocker,
   SiMongodb,
-} from "react-icons/si";
-import { VscCode } from "react-icons/vsc";
-import type { IconType } from "react-icons";
+} from "react-icons/si"
+import { VscCode } from "react-icons/vsc"
+import type { IconType } from "react-icons"
 
 interface TechItem {
-  name: string;
-  icon: IconType;
-  colorClass: string;
+  name: string
+  icon: IconType
+  colorClass: string
 }
 
 const TECH_STACK: readonly TechItem[] = [
@@ -52,14 +52,14 @@ const TECH_STACK: readonly TechItem[] = [
   { name: "Docker", icon: SiDocker, colorClass: "text-primary/90" },
   { name: "MongoDB", icon: SiMongodb, colorClass: "text-[#47A248]/90" },
   { name: "VS Code", icon: VscCode, colorClass: "text-primary/90" },
-] as const;
+] as const
 
 interface LocalMarqueeProps {
-  children: React.ReactNode;
-  durationSeconds?: number;
-  reverse?: boolean;
-  pauseOnHover?: boolean;
-  className?: string;
+  children: React.ReactNode
+  durationSeconds?: number
+  reverse?: boolean
+  pauseOnHover?: boolean
+  className?: string
 }
 
 function LocalMarquee({
@@ -69,8 +69,8 @@ function LocalMarquee({
   pauseOnHover,
   className = "",
 }: LocalMarqueeProps) {
-  type MarqueeStyle = CSSProperties & { ["--marquee-duration"]?: string };
-  const style: MarqueeStyle = { ["--marquee-duration"]: `${durationSeconds}s` };
+  type MarqueeStyle = CSSProperties & { ["--marquee-duration"]?: string }
+  const style: MarqueeStyle = { ["--marquee-duration"]: `${durationSeconds}s` }
 
   return (
     <div
@@ -114,7 +114,7 @@ function LocalMarquee({
         }
       `}</style>
     </div>
-  );
+  )
 }
 
 const EdgeFades = memo(function EdgeFades() {
@@ -123,8 +123,8 @@ const EdgeFades = memo(function EdgeFades() {
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent" />
     </>
-  );
-});
+  )
+})
 
 const TechPill = memo(function TechPill({
   name,
@@ -139,12 +139,12 @@ const TechPill = memo(function TechPill({
       <Icon className={`h-5 w-5 ${colorClass}`} aria-hidden="true" />
       <span className="text-base font-medium leading-none">{name}</span>
     </Badge>
-  );
-});
+  )
+})
 
 interface MarqueeRowProps {
-  reverse?: boolean;
-  durationSeconds: number;
+  reverse?: boolean
+  durationSeconds: number
 }
 
 const MarqueeRow = memo(function MarqueeRow({
@@ -153,7 +153,7 @@ const MarqueeRow = memo(function MarqueeRow({
 }: MarqueeRowProps) {
   const items = [...TECH_STACK, ...TECH_STACK].map((t, idx) => (
     <TechPill key={`${t.name}-${idx}`} {...t} />
-  ));
+  ))
 
   return (
     <div className="relative">
@@ -167,11 +167,11 @@ const MarqueeRow = memo(function MarqueeRow({
         {items}
       </LocalMarquee>
     </div>
-  );
-});
+  )
+})
 
 export default function HomeContent() {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
   return (
     <PageTransition>
@@ -293,5 +293,5 @@ export default function HomeContent() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

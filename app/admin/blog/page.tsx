@@ -1,12 +1,12 @@
-import { PageTransition } from "@/components/animations/page-transition";
-import { BlogList } from "@/components/pages/admin/blog/BlogList";
+import { PageTransition } from "@/components/animations/page-transition"
+import { BlogList } from "@/components/pages/admin/blog/BlogList"
 
-import { db } from "@/db";
-import { posts, postTags, tags } from "@/db/schema/schema";
-import { desc, inArray, eq } from "drizzle-orm";
+import { db } from "@/db"
+import { posts, postTags, tags } from "@/db/schema/schema"
+import { desc, inArray, eq } from "drizzle-orm"
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function AdminBlogListPage() {
   const rawPosts = await db
@@ -24,7 +24,7 @@ export default async function AdminBlogListPage() {
       views: posts.views,
     })
     .from(posts)
-    .orderBy(posts.status, desc(posts.updatedAt));
+    .orderBy(posts.status, desc(posts.updatedAt))
 
   if (rawPosts.length === 0) {
     return (
@@ -37,10 +37,10 @@ export default async function AdminBlogListPage() {
           </section>
         </main>
       </PageTransition>
-    );
+    )
   }
 
-  const postIds = rawPosts.map((p) => p.id);
+  const postIds = rawPosts.map((p) => p.id)
 
   const tagRows = await db
     .select({
@@ -51,31 +51,31 @@ export default async function AdminBlogListPage() {
     })
     .from(postTags)
     .leftJoin(tags, eq(tags.id, postTags.tagId))
-    .where(inArray(postTags.postId, postIds));
+    .where(inArray(postTags.postId, postIds))
 
   const tagMap = new Map<
     string,
     { tag: { id: string; slug: string; name: string } }[]
-  >();
+  >()
 
   for (const row of tagRows) {
-    if (!row.tagId || !row.tagSlug || !row.tagName) continue;
+    if (!row.tagId || !row.tagSlug || !row.tagName) continue
 
-    const arr = tagMap.get(row.postId) ?? [];
+    const arr = tagMap.get(row.postId) ?? []
     arr.push({
       tag: {
         id: row.tagId,
         slug: row.tagSlug,
         name: row.tagName,
       },
-    });
-    tagMap.set(row.postId, arr);
+    })
+    tagMap.set(row.postId, arr)
   }
 
   const postsWithTags = rawPosts.map((p) => ({
     ...p,
     tags: tagMap.get(p.id) ?? [],
-  }));
+  }))
 
   return (
     <PageTransition>
@@ -87,5 +87,5 @@ export default async function AdminBlogListPage() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

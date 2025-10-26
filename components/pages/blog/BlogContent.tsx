@@ -1,41 +1,41 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from "next/image"
+import Link from "next/link"
 
-import { PageTransition } from "@/components/animations/page-transition";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/animations/page-transition"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { useI18n } from "@/lib/i18n"
+import { cn } from "@/lib/utils"
 
 type BlogListItem = {
-  id: string;
-  slug: string;
-  title: string;
-  coverUrl?: string | null;
-  excerpt?: string | null;
-  readingTime: number;
-  publishedAt?: string | Date | null;
-  views: number;
-};
+  id: string
+  slug: string
+  title: string
+  coverUrl?: string | null
+  excerpt?: string | null
+  readingTime: number
+  publishedAt?: string | Date | null
+  views: number
+}
 
 type BlogContentProps = {
-  items: BlogListItem[];
-  page: number;
-  hasMore: boolean;
-};
+  items: BlogListItem[]
+  page: number
+  hasMore: boolean
+}
 
 function toDate(input: string | Date | null | undefined) {
-  if (!input) return null;
-  return input instanceof Date ? input : new Date(input);
+  if (!input) return null
+  return input instanceof Date ? input : new Date(input)
 }
 
 function safeTruncate(str: string | null | undefined, max: number) {
-  if (!str) return "";
-  if (str.length <= max) return str;
-  return str.slice(0, max - 1).trimEnd() + "…";
+  if (!str) return ""
+  if (str.length <= max) return str
+  return str.slice(0, max - 1).trimEnd() + "…"
 }
 
 function BlogCard({
@@ -43,12 +43,12 @@ function BlogCard({
   readLabel,
   viewsLabel,
 }: {
-  item: BlogListItem;
-  readLabel: string;
-  viewsLabel: string;
+  item: BlogListItem
+  readLabel: string
+  viewsLabel: string
 }) {
-  const publishedDate = toDate(item.publishedAt);
-  const isLocalImage = item.coverUrl?.startsWith("/");
+  const publishedDate = toDate(item.publishedAt)
+  const isLocalImage = item.coverUrl?.startsWith("/")
 
   return (
     <Card
@@ -73,6 +73,7 @@ function BlogCard({
             <img
               src={item.coverUrl}
               alt={item.title}
+              loading="lazy"
               className="h-full w-full object-cover"
             />
           )
@@ -132,11 +133,11 @@ function BlogCard({
         aria-label={item.title}
       />
     </Card>
-  );
+  )
 }
 
 export function BlogContent({ items, page, hasMore }: BlogContentProps) {
-  const { messages } = useI18n();
+  const { messages } = useI18n()
 
   return (
     <PageTransition>
@@ -187,5 +188,5 @@ export function BlogContent({ items, page, hasMore }: BlogContentProps) {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }

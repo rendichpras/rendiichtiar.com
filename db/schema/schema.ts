@@ -8,15 +8,15 @@ import {
   uniqueIndex,
   primaryKey,
   foreignKey,
-} from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+} from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
 
 // enum PostStatus
 export const postStatusEnum = pgEnum("PostStatus", [
   "DRAFT",
   "PUBLISHED",
   "SCHEDULED",
-]);
+])
 
 // User
 export const users = pgTable("User", {
@@ -31,7 +31,7 @@ export const users = pgTable("User", {
     withTimezone: false,
   }),
   image: text("image"),
-});
+})
 
 // Account
 export const accounts = pgTable(
@@ -59,10 +59,10 @@ export const accounts = pgTable(
   },
   (table) => ({
     providerProviderAccountIdUnique: uniqueIndex(
-      "Account_provider_providerAccountId_unique",
+      "Account_provider_providerAccountId_unique"
     ).on(table.provider, table.providerAccountId),
-  }),
-);
+  })
+)
 
 // Session
 export const sessions = pgTable("Session", {
@@ -75,7 +75,7 @@ export const sessions = pgTable("Session", {
     mode: "date",
     withTimezone: false,
   }).notNull(),
-});
+})
 
 // Guestbook
 export const guestbook = pgTable(
@@ -117,8 +117,8 @@ export const guestbook = pgTable(
       foreignColumns: [table.id],
       name: "Guestbook_rootId_fkey",
     }).onDelete("cascade"),
-  }),
-);
+  })
+)
 
 // Like
 export const likes = pgTable(
@@ -146,10 +146,10 @@ export const likes = pgTable(
   (table) => ({
     userGuestUnique: uniqueIndex("Like_userId_guestbookId_unique").on(
       table.userId,
-      table.guestbookId,
+      table.guestbookId
     ),
-  }),
-);
+  })
+)
 
 // Contact
 export const contacts = pgTable("Contact", {
@@ -167,14 +167,14 @@ export const contacts = pgTable("Contact", {
     .defaultNow()
     .notNull(),
   status: text("status").notNull().default("UNREAD"),
-});
+})
 
 // Tag
 export const tags = pgTable("Tag", {
   id: text("id").primaryKey(),
   name: text("name").notNull().unique(),
   slug: text("slug").notNull().unique(),
-});
+})
 
 // Post
 export const posts = pgTable(
@@ -218,10 +218,10 @@ export const posts = pgTable(
   (table) => ({
     statusPublishedIdx: index("Post_status_publishedAt_idx").on(
       table.status,
-      table.publishedAt,
+      table.publishedAt
     ),
-  }),
-);
+  })
+)
 
 // PostTag
 export const postTags = pgTable(
@@ -240,8 +240,8 @@ export const postTags = pgTable(
       name: "PostTag_pkey",
       columns: [table.postId, table.tagId],
     }),
-  }),
-);
+  })
+)
 
 // PostComment
 export const postComments = pgTable(
@@ -284,5 +284,5 @@ export const postComments = pgTable(
       foreignColumns: [table.id],
       name: "PostComment_parentId_fkey",
     }).onDelete("cascade"),
-  }),
-);
+  })
+)

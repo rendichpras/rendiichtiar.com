@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { PageTransition } from "@/components/animations/page-transition";
-import { useI18n } from "@/lib/i18n";
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
+import { PageTransition } from "@/components/animations/page-transition"
+import { useI18n } from "@/lib/i18n"
 
 export function ForbiddenContent() {
-  const router = useRouter();
-  const { messages } = useI18n();
+  const router = useRouter()
+  const { messages } = useI18n()
 
   return (
     <PageTransition>
@@ -71,5 +71,5 @@ export function ForbiddenContent() {
         </section>
       </main>
     </PageTransition>
-  );
+  )
 }
