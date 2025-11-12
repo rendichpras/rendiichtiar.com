@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { ExitIcon } from "@radix-ui/react-icons"
+import { LogOut } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
 
 export function SignOutButton() {
@@ -18,7 +18,7 @@ export function SignOutButton() {
       aria-label={messages.common.auth.logout.title}
     >
       <span>{messages.common.auth.logout.title}</span>
-      <ExitIcon
+      <LogOut
         className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary"
         aria-hidden="true"
       />
