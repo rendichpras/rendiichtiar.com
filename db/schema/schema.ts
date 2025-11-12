@@ -3,20 +3,11 @@ import {
   text,
   integer,
   timestamp,
-  pgEnum,
   index,
   uniqueIndex,
-  primaryKey,
   foreignKey,
 } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
-
-// enum PostStatus
-export const postStatusEnum = pgEnum("PostStatus", [
-  "DRAFT",
-  "PUBLISHED",
-  "SCHEDULED",
-])
 
 // User
 export const users = pgTable("User", {
@@ -168,121 +159,3 @@ export const contacts = pgTable("Contact", {
     .notNull(),
   status: text("status").notNull().default("UNREAD"),
 })
-
-// Tag
-export const tags = pgTable("Tag", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull().unique(),
-  slug: text("slug").notNull().unique(),
-})
-
-// Post
-export const posts = pgTable(
-  "Post",
-  {
-    id: text("id").primaryKey(),
-    slug: text("slug").notNull().unique(),
-    title: text("title").notNull(),
-    subtitle: text("subtitle"),
-    excerpt: text("excerpt").notNull(),
-    content: text("content").notNull(),
-    coverUrl: text("coverUrl"),
-
-    status: postStatusEnum("status").notNull().default("DRAFT"),
-
-    createdAt: timestamp("createdAt", {
-      mode: "date",
-      withTimezone: false,
-    })
-      .defaultNow()
-      .notNull(),
-
-    updatedAt: timestamp("updatedAt", {
-      mode: "date",
-      withTimezone: false,
-    })
-      .defaultNow()
-      .notNull(),
-
-    publishedAt: timestamp("publishedAt", {
-      mode: "date",
-      withTimezone: false,
-    }),
-    readingTime: integer("readingTime").notNull().default(0),
-    views: integer("views").notNull().default(0),
-
-    authorId: text("authorId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-  },
-  (table) => ({
-    statusPublishedIdx: index("Post_status_publishedAt_idx").on(
-      table.status,
-      table.publishedAt
-    ),
-  })
-)
-
-// PostTag
-export const postTags = pgTable(
-  "PostTag",
-  {
-    postId: text("postId")
-      .notNull()
-      .references(() => posts.id, { onDelete: "cascade" }),
-
-    tagId: text("tagId")
-      .notNull()
-      .references(() => tags.id, { onDelete: "cascade" }),
-  },
-  (table) => ({
-    pk: primaryKey({
-      name: "PostTag_pkey",
-      columns: [table.postId, table.tagId],
-    }),
-  })
-)
-
-// PostComment
-export const postComments = pgTable(
-  "PostComment",
-  {
-    id: text("id")
-      .primaryKey()
-      .default(sql`gen_random_uuid()`),
-
-    postId: text("postId")
-      .notNull()
-      .references(() => posts.id, { onDelete: "cascade" }),
-
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-
-    message: text("message").notNull(),
-
-    createdAt: timestamp("createdAt", {
-      mode: "date",
-      withTimezone: false,
-    })
-      .defaultNow()
-      .notNull(),
-
-    parentId: text("parentId"),
-
-    rootId: text("rootId"),
-
-    mentionedUserId: text("mentionedUserId").references(() => users.id),
-  },
-  (table) => ({
-    postIdx: index("PostComment_postId_idx").on(table.postId),
-    rootIdx: index("PostComment_rootId_idx").on(table.rootId),
-    parentIdx: index("PostComment_parentId_idx").on(table.parentId),
-
-    parentFk: foreignKey({
-      columns: [table.parentId],
-      foreignColumns: [table.id],
-      name: "PostComment_parentId_fkey",
-    }).onDelete("cascade"),
-  })
-)

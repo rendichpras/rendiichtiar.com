@@ -5,7 +5,6 @@ interface Messages {
       about: string
       guestbook: string
       contact: string
-      blog: string
       playground: string
       apps: string
       socials: string
@@ -128,21 +127,6 @@ interface Messages {
       }
     }
 
-    blog: {
-      list: {
-        title: string
-        subtitle: string
-        empty: string
-        prev: string
-        next: string
-        read_time: string
-        views: string
-        no_image: string
-        load_more: string
-        no_more_posts: string
-      }
-    }
-
     guestbook: {
       title: string
       subtitle: string
@@ -254,30 +238,7 @@ interface Messages {
     }
   }
 
-  components: {
-    postComments: {
-      heading: string
-      logged_in_as: string
-      must_login: string
-      login_btn: string
-      login_safe: string
-      placeholder: string
-      send: string
-      logout: string
-    }
-  }
-
   admin: {
-    blogList: {
-      title: string
-      subtitle: string
-      new_post: string
-      empty: string
-      published_at: string
-      draft_updated: string
-      edit: string
-      view: string
-    }
     contact: {
       title: string
       subtitle: string
@@ -321,39 +282,6 @@ interface Messages {
         load_error: string
         reply_success: string
         reply_error: string
-      }
-    }
-
-    blogEditor: {
-      form: {
-        title_label: string
-        title_placeholder: string
-        content_label: string
-        content_hint: string
-        cover_label: string
-        cover_placeholder: string
-        cover_helper: string
-        cover_preview_empty: string
-        tags_label: string
-        tags_placeholder: string
-        tags_helper: string
-        status_label: string
-        actions: {
-          save_changes: string
-          create_draft: string
-          publish: string
-          delete: string
-        }
-        confirm_delete: string
-        toast: {
-          updated: string
-          created: string
-          error_save: string
-          published: string
-          error_publish: string
-          deleted: string
-          error_delete: string
-        }
       }
     }
   }

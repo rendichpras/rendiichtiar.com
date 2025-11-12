@@ -5,7 +5,6 @@
       "about": "About",
       "guestbook": "Guestbook",
       "contact": "Contact",
-      "blog": "Blog",
       "playground": "JS Playground",
       "apps": "Apps",
       "socials": "Social media",
@@ -69,6 +68,9 @@
         "google": "Continue with Google",
         "github": "Continue with GitHub",
         "or": "or"
+      },
+      "logout": {
+        "title": "Sign out"
       }
     }
   },
@@ -124,20 +126,6 @@
           "period": "2022 - 2025",
           "location": "Bekasi, Indonesia"
         }
-      }
-    },
-    "blog": {
-      "list": {
-        "title": "Blog",
-        "subtitle": "Latest posts and notes",
-        "empty": "No articles yet.",
-        "prev": "Previous",
-        "next": "Next",
-        "read_time": "min read",
-        "views": "views",
-        "no_image": "No image",
-        "load_more": "Load more posts",
-        "no_more_posts": "No more posts to load"
       }
     },
     "guestbook": {
@@ -248,61 +236,7 @@
       }
     }
   },
-  "components": {
-    "postComments": {
-      "heading": "Comments",
-      "logged_in_as": "Commenting as",
-      "must_login": "You must sign in to comment",
-      "login_btn": "Sign in to comment",
-      "login_safe": "Secure sign-in via Google or GitHub",
-      "placeholder": "Write your comment…",
-      "send": "Send",
-      "logout": "Sign out"
-    }
-  },
   "admin": {
-    "blogList": {
-      "title": "Blog Admin",
-      "subtitle": "Manage posts",
-      "new_post": "New post",
-      "empty": "No posts yet.",
-      "published_at": "Published",
-      "draft_updated": "Draft • updated",
-      "edit": "Edit",
-      "view": "View"
-    },
-    "blogEditor": {
-      "form": {
-        "title_label": "Title",
-        "title_placeholder": "Post title",
-        "content_label": "Content",
-        "content_hint": "Use the toolbar for headings, bold text, code, lists, and quotes.",
-        "cover_label": "Cover URL",
-        "cover_placeholder": "https://...",
-        "cover_helper": "Shown on the blog card and at the top of the post.",
-        "cover_preview_empty": "Cover preview",
-        "tags_label": "Tags",
-        "tags_placeholder": "nextjs,react,typescript",
-        "tags_helper": "Separate with commas.",
-        "status_label": "Status",
-        "actions": {
-          "save_changes": "Save changes",
-          "create_draft": "Save draft",
-          "publish": "Publish",
-          "delete": "Delete"
-        },
-        "confirm_delete": "Delete this post?",
-        "toast": {
-          "updated": "Draft saved",
-          "created": "Draft created",
-          "error_save": "Save failed",
-          "published": "Post published",
-          "error_publish": "Publish failed",
-          "deleted": "Post deleted",
-          "error_delete": "Delete failed"
-        }
-      }
-    },
     "contact": {
       "title": "Message Inbox",
       "subtitle": "View and reply to messages from the site.",

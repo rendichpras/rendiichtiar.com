@@ -4,10 +4,9 @@ Personal website and platform for content, guest interaction, and admin tools.
 
 This project includes:
 
-- A public site (home, about, blog, contact, playground).
+- A public site (home, about, contact, playground).
 - A guestbook with replies and likes.
-- A full blog system with Markdown editing, tags, and scheduled publishing.
-- An admin dashboard to manage posts and incoming contact messages.
+- An admin dashboard to manage incoming contact messages.
 - Dark/light theme and bilingual UI (ID / EN).
 
 Built with Next.js, React, Tailwind CSS, Drizzle, and NextAuth.
@@ -23,13 +22,6 @@ Built with Next.js, React, Tailwind CSS, Drizzle, and NextAuth.
 
 - **About (`/about`)**  
   Career and education timeline.
-
-- **Blog (`/blog/[slug]`)**
-  - Markdown content with cover image.
-  - Read time and view counter.
-  - Open Graph metadata per post.
-  - Tag list.
-  - Comment section.
 
 - **Guestbook (`/guestbook`)**
   - Sign in with Google or GitHub.
@@ -52,25 +44,6 @@ Built with Next.js, React, Tailwind CSS, Drizzle, and NextAuth.
   - Max code length guard and runtime error handling.
 
 ### Admin pages
-
-- **Blog admin (`/admin/blog`)**
-  - List all posts.
-  - Shows status: `DRAFT`, `PUBLISHED`, `SCHEDULED`.
-  - Shows publish date or last updated.
-  - Shows tags.
-  - Edit / View buttons.
-  - "New Post" action.
-
-- **Blog editor (`/admin/blog/new`, `/admin/blog/[id]/edit`)**
-  - Title, cover URL with live preview, Markdown content.
-  - Tags (comma‑separated).
-  - Post status selector (Draft / Published / Scheduled).
-  - Auto‑generate excerpt from Markdown.
-  - Actions:
-    - Save draft / update post
-    - Publish post
-    - Delete post
-  - Toast feedback on success / error.
 
 - **Contact admin (`/admin/contact`)**
   - View messages submitted from `/contact`.
@@ -113,17 +86,10 @@ Admin routes are protected. Only the configured admin email can access them.
 app/
   page.tsx                 # Home
   about/
-  blog/
-    [slug]/page.tsx        # Public blog post
-    blog.ts                # Blog server actions (CRUD, views, comments)
   contact/
   guestbook/
   playground/
   admin/
-    blog/
-      page.tsx             # Blog admin list
-      new/page.tsx         # New post editor
-      [id]/edit/page.tsx   # Edit existing post
     contact/
       page.tsx             # Contact inbox dashboard
   api/
@@ -244,12 +210,10 @@ SITE_EMAIL_TO="you@example.com"
 You now have:
 
 - `/` public site
-- `/blog` blog list (public)
 - `/guestbook` interactive guestbook (login required to post)
 - `/contact` contact form
 - `/playground` JS playground
-- `/admin/blog` admin blog dashboard (requires login as `ADMIN_EMAIL`)
-- `/admin/contact` admin blog dashboard (requires login as `ADMIN_EMAIL`)
+- `/admin/contact` admin dashboard (requires login as `ADMIN_EMAIL`)
 
 ---
 

@@ -1,7 +1,5 @@
 import { Sora, IBM_Plex_Mono } from "next/font/google"
 import "./globals.css"
-import "@uiw/react-md-editor/markdown-editor.css"
-import "@uiw/react-markdown-preview/markdown.css"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { AuthProvider } from "@/components/providers/auth-provider"
 import JsonLd from "@/components/JsonLd"

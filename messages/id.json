@@ -5,7 +5,6 @@
       "about": "Tentang",
       "guestbook": "Buku Tamu",
       "contact": "Kontak",
-      "blog": "Blog",
       "playground": "JS Playground",
       "apps": "Aplikasi",
       "socials": "Media Sosial",
@@ -69,6 +68,9 @@
         "google": "Masuk dengan Google",
         "github": "Masuk dengan GitHub",
         "or": "atau"
+      },
+      "logout": {
+        "title": "Keluar"
       }
     }
   },
@@ -124,20 +126,6 @@
           "period": "2022 - 2025",
           "location": "Bekasi, Indonesia"
         }
-      }
-    },
-    "blog": {
-      "list": {
-        "title": "Blog",
-        "subtitle": "Tulisan terbaru dan catatan singkat",
-        "empty": "Belum ada artikel.",
-        "prev": "Sebelumnya",
-        "next": "Berikutnya",
-        "read_time": "menit baca",
-        "views": "kali dibaca",
-        "no_image": "Tidak ada gambar",
-        "load_more": "Muat artikel lain",
-        "no_more_posts": "Tidak ada artikel lain untuk dimuat"
       }
     },
     "guestbook": {
@@ -248,61 +236,7 @@
       }
     }
   },
-  "components": {
-    "postComments": {
-      "heading": "Komentar",
-      "logged_in_as": "Komentar sebagai",
-      "must_login": "Anda harus login untuk berkomentar",
-      "login_btn": "Login untuk komentar",
-      "login_safe": "Login aman via Google atau GitHub",
-      "placeholder": "Tulis komentar kamu…",
-      "send": "Kirim",
-      "logout": "Keluar"
-    }
-  },
   "admin": {
-    "blogList": {
-      "title": "Blog Admin",
-      "subtitle": "Kelola artikel",
-      "new_post": "Tulis baru",
-      "empty": "Belum ada artikel.",
-      "published_at": "Terbit",
-      "draft_updated": "Draf • diperbarui",
-      "edit": "Edit",
-      "view": "Lihat"
-    },
-    "blogEditor": {
-      "form": {
-        "title_label": "Judul",
-        "title_placeholder": "Judul artikel",
-        "content_label": "Isi Artikel",
-        "content_hint": "Gunakan toolbar untuk heading, bold, kode, daftar, dan kutipan.",
-        "cover_label": "URL Cover",
-        "cover_placeholder": "https://...",
-        "cover_helper": "Gambar ini tampil di kartu blog dan di atas artikel.",
-        "cover_preview_empty": "Pratinjau cover",
-        "tags_label": "Tag",
-        "tags_placeholder": "nextjs,react,typescript",
-        "tags_helper": "Pisahkan dengan koma.",
-        "status_label": "Status",
-        "actions": {
-          "save_changes": "Simpan perubahan",
-          "create_draft": "Simpan draft",
-          "publish": "Publish",
-          "delete": "Hapus"
-        },
-        "confirm_delete": "Hapus artikel ini?",
-        "toast": {
-          "updated": "Draft disimpan",
-          "created": "Draft dibuat",
-          "error_save": "Gagal menyimpan",
-          "published": "Artikel dipublish",
-          "error_publish": "Gagal publish",
-          "deleted": "Artikel dihapus",
-          "error_delete": "Gagal hapus"
-        }
-      }
-    },
     "contact": {
       "title": "Kotak Masuk Pesan",
       "subtitle": "Lihat dan balas pesan dari pengunjung.",

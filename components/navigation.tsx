@@ -48,7 +48,6 @@ const MAIN_NAV: readonly NavItem[] = [
     icon: NotebookPen,
   },
   { path: "/contact", nameKey: "common.navigation.contact", icon: Mail },
-  { path: "/blog", nameKey: "common.navigation.blog", icon: BookOpen },
 ] as const
 
 const APP_NAV: readonly NavItem[] = [
