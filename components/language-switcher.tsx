@@ -100,9 +100,10 @@ export function LanguageSwitcher({
             </motion.div>
           </Button>
         </TooltipTrigger>
-
         <TooltipContent side="top">
-          <p className="text-xs font-medium text-foreground">{tooltipText}</p>
+          <p className="text-xs">
+            {tooltipText}
+          </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

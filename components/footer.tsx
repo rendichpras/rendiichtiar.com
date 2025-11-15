@@ -44,7 +44,7 @@ export function Footer() {
   const { messages } = useI18n()
 
   return (
-    <footer className="border-t border-border/30 bg-background/80 backdrop-blur-sm lg:pl-64">
+    <footer className="border-t border-border/30 bg-background">
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
         <div className="py-6">
           <div className="flex flex-col gap-4 text-center text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:text-left">
