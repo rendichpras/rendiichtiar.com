@@ -31,15 +31,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token }) {
       if (session.user) {
-        ;(session.user as any).id = (token as any)?.userId
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ; (session.user as any).id = (token as any)?.userId
       }
       return session
     },
 
     async jwt({ token, user, account }) {
       if (account && user) {
-        ;(token as any).userId = (user as any).id
-        ;(token as any).accessToken = (account as any).access_token
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ; (token as any).userId = (user as any).id
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ; (token as any).accessToken = (account as any).access_token
       }
       return token
     },

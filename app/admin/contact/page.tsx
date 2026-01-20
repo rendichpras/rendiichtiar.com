@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
-import { id as localeID } from "date-fns/locale"
+import { id as localeID, enUS as localeEN } from "date-fns/locale"
 import { ChevronDown, ArrowUpDown } from "lucide-react"
 import { toast } from "sonner"
 import { PageTransition } from "@/components/animations/page-transition"
@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ContactSkeleton } from "@/components/pages/admin/contact/ContactSkeleton"
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
   SortingState,
@@ -61,8 +62,9 @@ type Contact = {
 }
 
 export default function AdminContactPage() {
-  const { messages } = useI18n()
+  const { messages, language } = useI18n()
   const { data: session, status } = useSession()
+  const dateLocale = language === "id" ? localeID : localeEN
   const router = useRouter()
 
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -136,7 +138,7 @@ export default function AdminContactPage() {
   }, [])
 
   const columns = useMemo<ColumnDef<Contact>[]>(() => {
-    const headBtn = (label: string, column: any) => (
+    const headBtn = (label: string, column: Column<Contact>) => (
       <Button
         variant="ghost"
         size="sm"
@@ -157,7 +159,7 @@ export default function AdminContactPage() {
           <div className="font-medium">
             {formatDistanceToNow(new Date(row.getValue("createdAt")), {
               addSuffix: true,
-              locale: localeID,
+              locale: dateLocale,
             })}
           </div>
         ),
@@ -237,7 +239,7 @@ export default function AdminContactPage() {
         },
       },
     ]
-  }, [messages, openReplyDialog])
+  }, [messages, openReplyDialog, dateLocale])
 
   const table = useReactTable({
     data: contacts,
@@ -340,9 +342,9 @@ export default function AdminContactPage() {
                             {h.isPlaceholder
                               ? null
                               : flexRender(
-                                  h.column.columnDef.header,
-                                  h.getContext()
-                                )}
+                                h.column.columnDef.header,
+                                h.getContext()
+                              )}
                           </TableHead>
                         ))}
                       </TableRow>
@@ -435,7 +437,7 @@ export default function AdminContactPage() {
                         selectedContact
                           ? new Date(selectedContact.createdAt)
                           : new Date(),
-                        { addSuffix: true, locale: localeID }
+                        { addSuffix: true, locale: dateLocale }
                       )}
                     </Badge>
                   </div>

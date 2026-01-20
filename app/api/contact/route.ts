@@ -4,6 +4,7 @@ import nodemailer from "nodemailer"
 import { randomUUID } from "crypto"
 import messages from "@/messages/id"
 import { SITE_URL } from "@/lib/site"
+import { auth } from "@/lib/auth"
 
 import { db } from "@/db"
 import { contacts } from "@/db/schema/schema"
@@ -65,9 +66,9 @@ const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px;">
         <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #f0f0f0;">
             <h1 style="color: #333; margin: 0; font-size: 24px;">${messages.api.contact.email.user.title.replace(
-              "{name}",
-              data.name
-            )}</h1>
+  "{name}",
+  data.name
+)}</h1>
         </div>
         
         <div style="padding: 20px 0;">
@@ -76,30 +77,25 @@ const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
             </p>
             
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <p style="margin: 0 0 10px 0; color: #333;"><strong>${
-                  messages.api.contact.email.user.message_copy
-                }</strong></p>
-                <p style="margin: 0; color: #666; line-height: 1.6; font-style: italic;">${
-                  data.message
-                }</p>
+                <p style="margin: 0 0 10px 0; color: #333;"><strong>${messages.api.contact.email.user.message_copy
+  }</strong></p>
+                <p style="margin: 0; color: #666; line-height: 1.6; font-style: italic;">${data.message
+  }</p>
             </div>
             
             <div style="text-align: center; margin-top: 30px;">
                 <div style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
-                    <a href="${SITE_URL}" style="color: #ffffff; text-decoration: none;">${
-                      messages.api.contact.email.user.visit_website
-                    }</a>
+                    <a href="${SITE_URL}" style="color: #ffffff; text-decoration: none;">${messages.api.contact.email.user.visit_website
+  }</a>
                 </div>
             </div>
         </div>
         
         <div style="text-align: center; padding-top: 20px; border-top: 2px solid #f0f0f0;">
-            <p style="color: #666; margin-bottom: 5px;">${
-              messages.api.contact.email.user.regards
-            }</p>
-            <p style="color: #333; font-weight: bold; margin: 0;">${
-              messages.api.contact.email.user.signature
-            }</p>
+            <p style="color: #666; margin-bottom: 5px;">${messages.api.contact.email.user.regards
+  }</p>
+            <p style="color: #333; font-weight: bold; margin: 0;">${messages.api.contact.email.user.signature
+  }</p>
             <div style="margin-top: 15px;">
                 <a href="https://linkedin.com/in/rendiichtiar" style="color: #007bff; text-decoration: none; margin: 0 10px;">LinkedIn</a>
                 <a href="https://github.com/rendichpras" style="color: #333; text-decoration: none; margin: 0 10px;">GitHub</a>
@@ -123,6 +119,14 @@ const transporter = nodemailer.createTransport({
 
 export async function GET() {
   try {
+    const session = await auth()
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const rows = await db
       .select({
         id: contacts.id,

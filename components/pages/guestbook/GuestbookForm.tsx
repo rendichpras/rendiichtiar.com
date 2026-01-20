@@ -4,18 +4,13 @@ import { useMemo, useState } from "react"
 import { useSession } from "next-auth/react"
 
 import { toast } from "sonner"
-import { Loader2, TriangleAlert } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
 
 import { addGuestbookEntry } from "@/app/guestbook/guestbook"
-import {
-  containsForbiddenWords,
-  getForbiddenWords,
-} from "@/lib/constants/forbidden-words"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +22,6 @@ export function GuestbookForm() {
 
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [forbiddenWords, setForbiddenWords] = useState<string[]>([])
 
   const remainingChars = useMemo(
     () => Math.max(0, MAX_LEN - message.length),
@@ -39,9 +33,7 @@ export function GuestbookForm() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const v = e.target.value
-    setMessage(v)
-    setForbiddenWords(containsForbiddenWords(v) ? getForbiddenWords(v) : [])
+    setMessage(e.target.value)
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,23 +51,26 @@ export function GuestbookForm() {
     setIsSubmitting(true)
 
     try {
-      await addGuestbookEntry(message, session.user.email)
+      await addGuestbookEntry(message)
 
       setMessage("")
-      setForbiddenWords([])
       toast.success(messages.pages.guestbook.form.success)
 
       if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("guestbook:refresh"))
       }
-    } catch {
-      toast.error(messages.pages.guestbook.form.error)
+    } catch (error) {
+      if (error instanceof Error && error.message === "forbidden_words") {
+        toast.error(messages.pages.guestbook.form.forbidden_words)
+      } else if (error instanceof Error && error.message === "message_too_long") {
+        toast.error("Message too long")
+      } else {
+        toast.error(messages.pages.guestbook.form.error)
+      }
     } finally {
       setIsSubmitting(false)
     }
   }
-
-  const isBlocked = forbiddenWords.length > 0
 
   return (
     <form
@@ -97,11 +92,8 @@ export function GuestbookForm() {
           maxLength={MAX_LEN}
           disabled={isSubmitting}
           className={cn(
-            "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary",
-            isBlocked && "border-destructive focus-visible:ring-destructive"
+            "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
           )}
-          aria-invalid={isBlocked || undefined}
-          aria-describedby={isBlocked ? "forbidden-hint" : undefined}
         />
 
         <span
@@ -115,23 +107,11 @@ export function GuestbookForm() {
         </span>
       </div>
 
-      {isBlocked && (
-        <Alert
-          id="forbidden-hint"
-          variant="destructive"
-          className="rounded-xl border-destructive/30 bg-destructive/5 p-3 text-destructive"
-        >
-          <TriangleAlert className="h-4 w-4" aria-hidden="true" />
-          <AlertDescription className="text-sm leading-relaxed text-destructive">
-            {messages.pages.guestbook.form.forbidden_words}
-          </AlertDescription>
-        </Alert>
-      )}
 
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={isSubmitting || isBlocked}
+          disabled={isSubmitting}
           className={cn(
             "relative rounded-xl bg-primary/10 text-primary hover:bg-primary/20",
             isSubmitting && "cursor-wait opacity-80"

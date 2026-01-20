@@ -29,6 +29,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const handleSetLanguage = useCallback((lang: Language) => {
     setLanguage(lang)
     localStorage.setItem("language", lang)
+    document.documentElement.lang = lang
   }, [])
 
   return (

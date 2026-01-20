@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { formatDistanceToNow } from "date-fns"
-import { id as localeID } from "date-fns/locale"
+import { id as localeID, enUS as localeEN } from "date-fns/locale"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
@@ -156,12 +156,17 @@ export function GuestbookList({
   const [showLoginDialog, setShowLoginDialog] = useState(false)
 
   const { data: session } = useSession()
-  const { messages } = useI18n()
+  const { messages, language } = useI18n()
+  const dateLocale = language === "id" ? localeID : localeEN
 
   const toggleReplies = (entryId: string) => {
     setExpandedEntries((prev) => {
       const next = new Set(prev)
-      next.has(entryId) ? next.delete(entryId) : next.add(entryId)
+      if (next.has(entryId)) {
+        next.delete(entryId)
+      } else {
+        next.add(entryId)
+      }
       return next
     })
   }
@@ -230,11 +235,11 @@ export function GuestbookList({
         const ev = JSON.parse(evt.data) as
           | { type: "guestbook:new"; entry: RawEntry }
           | {
-              type: "guestbook:like"
-              id: string
-              userEmail: string
-              action: "like" | "unlike"
-            }
+            type: "guestbook:like"
+            id: string
+            userEmail: string
+            action: "like" | "unlike"
+          }
           | { type: "guestbook:reply"; parentId: string; reply: RawReply }
 
         setEntries((prev) => {
@@ -325,7 +330,7 @@ export function GuestbookList({
 
           return prev
         })
-      } catch {}
+      } catch { }
     }
 
     es.onerror = () => {
@@ -419,12 +424,12 @@ export function GuestbookList({
                   <span className="text-xs text-muted-foreground">
                     {formatDistanceToNow(entry.createdAt, {
                       addSuffix: true,
-                      locale: localeID,
+                      locale: dateLocale,
                     })}
                   </span>
                 </div>
 
-                <p className="break-words text-sm leading-relaxed text-muted-foreground">
+                <p className="break-all text-sm leading-relaxed text-muted-foreground">
                   {entry.message}
                 </p>
 
@@ -436,9 +441,8 @@ export function GuestbookList({
                       handleReplyClick(entry.id, entry.user.name || "")
                     }
                     className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${
-                      messages.pages.guestbook.list.reply.button
-                    } ${entry.user.name || ""}`}
+                    aria-label={`${messages.pages.guestbook.list.reply.button
+                      } ${entry.user.name || ""}`}
                   >
                     <ReplyIcon
                       className="h-4 w-4 sm:h-5 sm:w-5"

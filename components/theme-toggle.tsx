@@ -48,7 +48,7 @@ export function ThemeToggle({
         )}
         aria-label={messages.common.theme.toggle}
       >
-        <Sun className="size-4 text-primary" aria-hidden="true" />
+        <span className="size-4" />
       </Button>
     )
   }

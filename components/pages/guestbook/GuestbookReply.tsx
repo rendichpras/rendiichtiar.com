@@ -59,7 +59,6 @@ export function GuestbookReply({
 
       await addGuestbookEntry(
         messageWithMention,
-        session.user.email,
         parentId,
         parentAuthor
       )
@@ -206,7 +205,7 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
         ])
       }
 
-      await toggleLike(guestbookId, userEmail)
+      await toggleLike(guestbookId)
     } catch {
       setLiked(prev.liked)
       setLocalLikes(prev.localLikes)
@@ -334,7 +333,7 @@ export function GuestbookReplyList({
                   </span>
                 </div>
 
-                <p className="mt-1 break-words text-xs text-muted-foreground sm:text-sm">
+                <p className="mt-1 break-all text-xs text-muted-foreground sm:text-sm">
                   {reply.mentionedUser ? (
                     <>
                       <span className="text-primary">

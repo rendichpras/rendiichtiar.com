@@ -11,6 +11,8 @@ import { revalidatePath } from "next/cache"
 import { emitEvent } from "@/lib/realtime"
 import { eq, and, isNull, inArray, desc, asc } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
+import { auth } from "@/lib/auth"
+import { containsForbiddenWords } from "@/lib/constants/forbidden-words"
 
 type PublicUser = {
   name: string | null
@@ -194,14 +196,14 @@ export async function getGuestbookEntries(): Promise<PublicEntry[]> {
   const replyUserRows =
     replyUserIds.length > 0
       ? await db
-          .select({
-            id: users.id,
-            name: users.name,
-            email: users.email,
-            image: users.image,
-          })
-          .from(users)
-          .where(inArray(users.id, replyUserIds))
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          image: users.image,
+        })
+        .from(users)
+        .where(inArray(users.id, replyUserIds))
       : []
 
   const replyUserMap = new Map<
@@ -219,12 +221,12 @@ export async function getGuestbookEntries(): Promise<PublicEntry[]> {
   const mentionedRows =
     replyMentionIds.length > 0
       ? await db
-          .select({
-            id: users.id,
-            name: users.name,
-          })
-          .from(users)
-          .where(inArray(users.id, replyMentionIds))
+        .select({
+          id: users.id,
+          name: users.name,
+        })
+        .from(users)
+        .where(inArray(users.id, replyMentionIds))
       : []
 
   const mentionedMap = new Map<string, string | null>()
@@ -235,16 +237,16 @@ export async function getGuestbookEntries(): Promise<PublicEntry[]> {
   const replyLikesRows =
     replyIds.length > 0
       ? await db
-          .select({
-            likeId: likesTable.id,
-            guestbookId: likesTable.guestbookId,
-            likerName: users.name,
-            likerEmail: users.email,
-            likerImage: users.image,
-          })
-          .from(likesTable)
-          .leftJoin(users, eq(users.id, likesTable.userId))
-          .where(inArray(likesTable.guestbookId, replyIds))
+        .select({
+          likeId: likesTable.id,
+          guestbookId: likesTable.guestbookId,
+          likerName: users.name,
+          likerEmail: users.email,
+          likerImage: users.image,
+        })
+        .from(likesTable)
+        .leftJoin(users, eq(users.id, likesTable.userId))
+        .where(inArray(likesTable.guestbookId, replyIds))
       : []
 
   const likesMapReplies = new Map<string, PublicLike[]>()
@@ -309,10 +311,15 @@ export async function getGuestbookEntries(): Promise<PublicEntry[]> {
 
 export async function addGuestbookEntry(
   message: string,
-  userEmail: string,
   parentId?: string | null,
   parentAuthor?: string | null
 ) {
+  const session = await auth()
+  if (!session?.user?.email) {
+    throw new Error("unauthorized")
+  }
+
+  const userEmail = session.user.email
   const uRows = await db
     .select({
       id: users.id,
@@ -325,8 +332,11 @@ export async function addGuestbookEntry(
   const userRow = uRows[0]
   if (!userRow) throw new Error("user_not_found")
 
+
   const text = sanitizeMessage(message)
   if (!text) throw new Error("empty_message")
+  if (text.length > 280) throw new Error("message_too_long")
+  if (containsForbiddenWords(text)) throw new Error("forbidden_words")
 
   let mentionedUserId: string | null = null
   if (parentAuthor) {
@@ -442,7 +452,13 @@ export async function addGuestbookEntry(
   revalidatePath("/guestbook")
 }
 
-export async function toggleLike(guestbookId: string, userEmail: string) {
+export async function toggleLike(guestbookId: string) {
+  const session = await auth()
+  if (!session?.user?.email) {
+    throw new Error("unauthorized")
+  }
+  const userEmail = session.user.email
+
   const uRows = await db
     .select({ id: users.id })
     .from(users)
