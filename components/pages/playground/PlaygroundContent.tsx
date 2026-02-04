@@ -26,7 +26,7 @@ const MAX_LEN = 5000
 
 function EditorLoading() {
   return (
-    <div className="flex h-full min-h[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm">
+    <div className="flex h-full min-h[500px] w-full items-center justify-center rounded-xl border border-border/30 bg-card">
       <Skeleton className="h-full w-full rounded-xl" />
     </div>
   )
@@ -35,7 +35,7 @@ function EditorLoading() {
 function JavaScriptIcon() {
   return (
     <div className="flex size-8 items-center justify-center">
-      <SiJavascript className="size-8 text-[#F7DF1E]" aria-hidden="true" />
+      <SiJavascript className="size-8 text-foreground" aria-hidden="true" />
     </div>
   )
 }
@@ -221,7 +221,7 @@ export function PlaygroundContent() {
           >
             <Card
               className={cn(
-                "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card/50 p-4 text-foreground backdrop-blur-sm transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
+                "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card p-4 text-foreground transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
                 isFullscreen &&
                   "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
               )}
@@ -375,7 +375,6 @@ export function PlaygroundContent() {
                 >
                   {output}
                 </div>
-                {/* Hidden Sandbox Iframe */}
                 <iframe
                   id="playground-sandbox"
                   style={{ display: "none" }}

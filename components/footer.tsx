@@ -25,7 +25,7 @@ function SocialLink({
         variant="ghost"
         size="icon"
         className={cn(
-          "h-9 w-9 rounded-xl border border-border/30 bg-card/30 text-muted-foreground hover:border-border/50 hover:bg-card/50 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40",
+          "h-9 w-9 rounded-xl border border-border/30 bg-card text-muted-foreground hover:border-border/50 hover:bg-accent hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40",
           className
         )}
         aria-label={label}
@@ -58,30 +58,21 @@ export function Footer() {
                   href="https://github.com/rendichpras"
                   label={messages.common.footer.social.github}
                 >
-                  <SiGithub
-                    className="h-4 w-4 text-foreground"
-                    aria-hidden="true"
-                  />
+                  <SiGithub className="h-4 w-4" aria-hidden="true" />
                 </SocialLink>
 
                 <SocialLink
                   href="https://linkedin.com/in/rendiichtiar"
                   label={messages.common.footer.social.linkedin}
                 >
-                  <SiLinkedin
-                    className="h-4 w-4 text-[#0A66C2]"
-                    aria-hidden="true"
-                  />
+                  <SiLinkedin className="h-4 w-4" aria-hidden="true" />
                 </SocialLink>
 
                 <SocialLink
                   href="https://instagram.com/rendiichtiar"
                   label={messages.common.footer.social.instagram}
                 >
-                  <SiInstagram
-                    className="h-4 w-4 text-[#E1306C]"
-                    aria-hidden="true"
-                  />
+                  <SiInstagram className="h-4 w-4" aria-hidden="true" />
                 </SocialLink>
               </ul>
             </nav>

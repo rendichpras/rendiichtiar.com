@@ -52,3 +52,17 @@ export function useI18n() {
   }
   return context
 }
+
+export function t(messages: Messages, key: string) {
+  const parts = key.split(".")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let cur: any = messages
+  for (const p of parts) {
+    if (cur && typeof cur === "object" && p in cur) {
+      cur = cur[p]
+    } else {
+      return key
+    }
+  }
+  return typeof cur === "string" ? cur : key
+}

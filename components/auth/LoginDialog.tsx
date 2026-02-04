@@ -42,7 +42,7 @@ export function LoginDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="rounded-xl border border-border/30 bg-background/80 text-foreground backdrop-blur-sm sm:max-w-md">
+      <DialogContent className="rounded-xl border border-border/30 bg-background text-foreground sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-foreground">
             {messages.common.auth.login.title}

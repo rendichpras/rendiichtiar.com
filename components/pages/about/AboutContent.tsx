@@ -57,7 +57,7 @@ const SectionNavCard = memo(function SectionNavCard({
         variant="ghost"
         className={cn(
           "group w-full justify-start rounded-xl border text-left transition-colors duration-300",
-          "border-border/30 bg-card/30 hover:border-border/50 hover:bg-card/50",
+          "border-border/30 bg-card hover:border-border/50 hover:bg-accent",
           "focus-visible:ring-2 focus-visible:ring-primary/40",
           active &&
             "border-primary/50 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/10"
@@ -94,7 +94,7 @@ function EducationItem({
   sizes?: string
 }) {
   return (
-    <Card className="rounded-xl border-border/30 bg-card/30 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50 hover:bg-card/50">
+    <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50 hover:bg-accent">
       <CardContent>
         <div className="flex items-start gap-4 sm:items-center">
           <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-border/30 bg-background/50 p-2 sm:size-14">
@@ -132,7 +132,7 @@ const sections: readonly SectionContent[] = [
     icon: User2,
     titleKey: "intro",
     content: ({ messages }) => (
-      <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+      <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
             {messages.pages.about.sections.intro}
@@ -166,7 +166,7 @@ const sections: readonly SectionContent[] = [
     icon: BookOpen,
     titleKey: "career",
     content: ({ messages }) => (
-      <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+      <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
             {messages.pages.about.sections.career}
@@ -187,7 +187,7 @@ const sections: readonly SectionContent[] = [
     icon: GraduationCap,
     titleKey: "education",
     content: ({ messages }) => (
-      <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+      <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
             {messages.pages.about.sections.education}
@@ -244,7 +244,7 @@ export function AboutContent() {
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <header className="max-w-2xl space-y-2">
-            <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {messages.pages.about.title}
             </h1>
 

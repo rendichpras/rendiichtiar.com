@@ -68,7 +68,7 @@ function MessageSkeleton() {
 
 export function GuestbookSkeleton() {
   return (
-    <Card className="h-full rounded-2xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+    <Card className="h-full rounded-2xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
       <CardHeader className="pb-3">
         <div className="space-y-2">
           <CardTitle className="text-lg font-semibold text-foreground">

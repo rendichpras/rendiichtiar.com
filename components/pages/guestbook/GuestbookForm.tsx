@@ -86,7 +86,7 @@ export function GuestbookForm() {
           maxLength={MAX_LEN}
           disabled={isSubmitting}
           className={cn(
-            "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+            "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
           )}
         />
 

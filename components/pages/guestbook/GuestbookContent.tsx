@@ -39,7 +39,7 @@ const AuthBar = memo(function AuthBar({
     const initial = (name || "G").charAt(0).toUpperCase()
 
     return (
-      <Card className="border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+      <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
         <CardContent className="flex items-start gap-4">
           <Avatar className="size-10 border-2 border-border/30">
             <AvatarImage src={image} alt={name} />
@@ -68,7 +68,7 @@ const AuthBar = memo(function AuthBar({
   }
 
   return (
-    <Card className="border-border/30 bg-card/30 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+    <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
       <CardHeader>
         <CardTitle className="text-sm font-medium text-foreground/90">
           {signInMessage}
@@ -97,7 +97,7 @@ export function GuestbookContent() {
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="max-w-2xl space-y-2">
-            <h1 className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {messages.pages.guestbook.title}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
@@ -118,7 +118,7 @@ export function GuestbookContent() {
               />
 
               {isSignedIn && (
-                <Card className="border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+                <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
                   <CardHeader>
                     <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
                       {messages.pages.guestbook.title}
@@ -135,7 +135,7 @@ export function GuestbookContent() {
               )}
             </div>
 
-            <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
+            <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
                   {messages.pages.guestbook.list.title}

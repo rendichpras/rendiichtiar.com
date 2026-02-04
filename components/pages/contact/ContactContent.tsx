@@ -131,7 +131,6 @@ export function ContactContent() {
     <PageTransition>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 py-0 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          {/* heading */}
           <header className="max-w-3xl space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {messages.pages.contact.title}
@@ -143,8 +142,7 @@ export function ContactContent() {
 
           <Separator className="my-6 bg-border/40" />
 
-          {/* kartu jadwal call */}
-          <Card className="border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+          <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
@@ -185,8 +183,7 @@ export function ContactContent() {
             </CardHeader>
           </Card>
 
-          {/* kartu form kirim pesan */}
-          <Card className="mt-8 border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+          <Card className="mt-8 border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-foreground">
                 {messages.pages.contact.form.title}
@@ -204,7 +201,6 @@ export function ContactContent() {
                 noValidate
               >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {/* Name */}
                   <div className="space-y-2">
                     <Label
                       htmlFor="name"
@@ -224,7 +220,7 @@ export function ContactContent() {
                       disabled={isLoading}
                       aria-invalid={!!errors.name || undefined}
                       aria-describedby={errors.name ? "name-error" : undefined}
-                      className="rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                      className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
                     />
 
                     {errors.name ? (
@@ -234,7 +230,6 @@ export function ContactContent() {
                     ) : null}
                   </div>
 
-                  {/* Email */}
                   <div className="space-y-2">
                     <Label
                       htmlFor="email"
@@ -259,7 +254,7 @@ export function ContactContent() {
                       aria-describedby={
                         errors.email ? "email-error" : undefined
                       }
-                      className="rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                      className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
                     />
 
                     {errors.email ? (
@@ -270,7 +265,6 @@ export function ContactContent() {
                   </div>
                 </div>
 
-                {/* Message */}
                 <div className="space-y-2">
                   <Label
                     htmlFor="message"
@@ -294,7 +288,7 @@ export function ContactContent() {
                     aria-describedby={
                       errors.message ? "message-error" : undefined
                     }
-                    className="rounded-xl border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                    className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
                   />
 
                   {errors.message ? (
@@ -304,7 +298,6 @@ export function ContactContent() {
                   ) : null}
                 </div>
 
-                {/* Submit */}
                 <div className="flex items-center">
                   <Button
                     type="submit"

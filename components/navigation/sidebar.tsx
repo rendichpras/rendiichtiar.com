@@ -8,7 +8,7 @@ import Link from "next/link"
 
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useI18n, type Messages } from "@/lib/i18n"
+import { useI18n, type Messages, t } from "@/lib/i18n"
 import {
   Tooltip,
   TooltipContent,
@@ -21,20 +21,6 @@ import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import { MobileNav } from "./mobile-nav"
 import { MAIN_NAV, APP_NAV, SOCIAL_NAV, BASE_DELAY } from "./nav-config"
-
-function t(messages: Messages, key: string) {
-  const parts = key.split(".")
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let cur: any = messages
-  for (const p of parts) {
-    if (cur && typeof cur === "object" && p in cur) {
-      cur = cur[p]
-    } else {
-      return key
-    }
-  }
-  return typeof cur === "string" ? cur : key
-}
 
 export function Navigation({
   collapsed,
@@ -54,15 +40,13 @@ export function Navigation({
 
   return (
     <>
-      {/* MOBILE HEADER */}
       <header
         className="fixed left-0 right-0 top-0 z-50 lg:hidden"
         role="banner"
       >
         <motion.div
           className={cn(
-            "absolute inset-0 border-b border-border/30 bg-background/80 backdrop-blur-sm transition-all duration-300",
-            scrolled ? "bg-background/90" : "bg-transparent"
+            "absolute inset-0 border-b border-border/30 bg-background transition-all duration-300"
           )}
           style={{
             boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
@@ -86,7 +70,6 @@ export function Navigation({
         </div>
       </header>
 
-      {/* DESKTOP SIDEBAR */}
       <motion.aside
         className={cn(
           "fixed left-0 top-0 bottom-0 z-50 hidden border-r border-border/30 lg:flex lg:flex-col transition-all duration-300",
@@ -97,8 +80,7 @@ export function Navigation({
       >
         <motion.div
           className={cn(
-            "absolute inset-0 bg-background/80 backdrop-blur-sm transition-all duration-300",
-            scrolled ? "bg-background/90" : "bg-transparent"
+            "absolute inset-0 bg-background transition-all duration-300"
           )}
           style={{
             boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
@@ -145,7 +127,6 @@ export function Navigation({
               role="navigation"
               aria-label={messages.common.navigation.main_menu}
             >
-              {/* MAIN NAV */}
               <div className="space-y-1">
                 {MAIN_NAV.map((it, i) => {
                   const Icon = it.icon
@@ -198,7 +179,6 @@ export function Navigation({
                 })}
               </div>
 
-              {/* APP NAV */}
               <div className="space-y-1">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -266,7 +246,6 @@ export function Navigation({
                 })}
               </div>
 
-              {/* SOCIAL NAV */}
               {!collapsed && (
                 <div className="space-y-1">
                   <motion.div

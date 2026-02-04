@@ -7,7 +7,7 @@ import { Menu, X, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useI18n, type Messages } from "@/lib/i18n"
+import { useI18n, type Messages, t } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import {
@@ -17,20 +17,6 @@ import {
   type NavItem,
   type SocialItem,
 } from "./nav-config"
-
-function t(messages: Messages, key: string) {
-  const parts = key.split(".")
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let cur: any = messages
-  for (const p of parts) {
-    if (cur && typeof cur === "object" && p in cur) {
-      cur = cur[p]
-    } else {
-      return key
-    }
-  }
-  return typeof cur === "string" ? cur : key
-}
 
 const MobileNavItem = memo(function MobileNavItem({
   item,
@@ -144,7 +130,7 @@ export function MobileNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-50 bg-black/40 lg:hidden"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />

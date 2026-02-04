@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Navigation } from "@/components/navigation"
+import { Navigation } from "@/components/navigation/sidebar"
 import { cn } from "@/lib/utils"
 import { BackToTop } from "@/components/BackToTop"
 import { Footer } from "@/components/footer"

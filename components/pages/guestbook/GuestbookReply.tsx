@@ -112,7 +112,7 @@ export function GuestbookReply({
                   parentAuthor
                 )}
                 className={cn(
-                  "min-h-[44px] resize-none rounded-xl border-border/30 bg-card/50 text-xs backdrop-blur-sm transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary sm:text-sm"
+                  "min-h-[44px] resize-none rounded-xl border-border/30 bg-card text-xs transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary sm:text-sm"
                 )}
                 maxLength={280}
                 disabled={isSubmitting}

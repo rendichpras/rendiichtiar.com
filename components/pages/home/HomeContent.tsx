@@ -3,6 +3,7 @@
 import { memo, type CSSProperties } from "react"
 import Image from "next/image"
 import { PageTransition } from "@/components/animations/page-transition"
+import { Marquee } from "@/components/ui/marquee"
 import { useI18n } from "@/lib/i18n"
 
 import { Button } from "@/components/ui/button"
@@ -36,86 +37,22 @@ import type { IconType } from "react-icons"
 interface TechItem {
   name: string
   icon: IconType
-  colorClass: string
 }
 
 const TECH_STACK: readonly TechItem[] = [
-  { name: "TypeScript", icon: SiTypescript, colorClass: "text-primary" },
-  { name: "Node.js", icon: SiNodedotjs, colorClass: "text-[#339933]/90" },
-  { name: "TailwindCSS", icon: SiTailwindcss, colorClass: "text-[#06B6D4]/90" },
-  { name: "PostgreSQL", icon: SiPostgresql, colorClass: "text-primary/90" },
-  { name: "Prisma", icon: SiPrisma, colorClass: "text-foreground/90" },
-  { name: "Next.js", icon: SiNextdotjs, colorClass: "text-foreground/90" },
-  { name: "React", icon: SiReact, colorClass: "text-[#61DAFB]/90" },
-  { name: "JavaScript", icon: SiJavascript, colorClass: "text-[#F7DF1E]/90" },
-  { name: "Nginx", icon: SiNginx, colorClass: "text-[#009639]/90" },
-  { name: "Docker", icon: SiDocker, colorClass: "text-primary/90" },
-  { name: "MongoDB", icon: SiMongodb, colorClass: "text-[#47A248]/90" },
-  { name: "VS Code", icon: VscCode, colorClass: "text-primary/90" },
+  { name: "TypeScript", icon: SiTypescript },
+  { name: "Node.js", icon: SiNodedotjs },
+  { name: "TailwindCSS", icon: SiTailwindcss },
+  { name: "PostgreSQL", icon: SiPostgresql },
+  { name: "Prisma", icon: SiPrisma },
+  { name: "Next.js", icon: SiNextdotjs },
+  { name: "React", icon: SiReact },
+  { name: "JavaScript", icon: SiJavascript },
+  { name: "Nginx", icon: SiNginx },
+  { name: "Docker", icon: SiDocker },
+  { name: "MongoDB", icon: SiMongodb },
+  { name: "VS Code", icon: VscCode },
 ] as const
-
-interface LocalMarqueeProps {
-  children: React.ReactNode
-  durationSeconds?: number
-  reverse?: boolean
-  pauseOnHover?: boolean
-  className?: string
-}
-
-function LocalMarquee({
-  children,
-  durationSeconds = 30,
-  reverse,
-  pauseOnHover,
-  className = "",
-}: LocalMarqueeProps) {
-  type MarqueeStyle = CSSProperties & { ["--marquee-duration"]?: string }
-  const style: MarqueeStyle = { ["--marquee-duration"]: `${durationSeconds}s` }
-
-  return (
-    <div
-      className={`marquee relative overflow-hidden ${className}`}
-      data-dir={reverse ? "reverse" : "normal"}
-      data-pause={pauseOnHover ? "hover" : "none"}
-      style={style}
-    >
-      <div className="marquee__track">
-        <div className="marquee__group">{children}</div>
-      </div>
-
-      <style jsx>{`
-        .marquee {
-          --marquee-duration: 30s;
-        }
-        .marquee__track {
-          display: flex;
-          width: max-content;
-          animation: marquee var(--marquee-duration) linear infinite;
-          will-change: transform;
-        }
-        .marquee[data-dir="reverse"] .marquee__track {
-          animation-direction: reverse;
-        }
-        .marquee[data-pause="hover"]:hover .marquee__track {
-          animation-play-state: paused;
-        }
-        .marquee__group {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        @keyframes marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
-    </div>
-  )
-}
 
 const EdgeFades = memo(function EdgeFades() {
   return (
@@ -126,17 +63,13 @@ const EdgeFades = memo(function EdgeFades() {
   )
 })
 
-const TechPill = memo(function TechPill({
-  name,
-  icon: Icon,
-  colorClass,
-}: TechItem) {
+const TechPill = memo(function TechPill({ name, icon: Icon }: TechItem) {
   return (
     <Badge
       variant="outline"
-      className="mx-1 flex items-center gap-2 rounded-full border-border/30 bg-background/50 px-4 py-1.5 text-foreground/90 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 hover:bg-background/80"
+      className="mx-1 flex items-center gap-2 rounded-full border-border/30 bg-background px-4 py-1.5 text-muted-foreground transition-colors duration-300 hover:border-border/50 hover:bg-accent hover:text-foreground"
     >
-      <Icon className={`h-5 w-5 ${colorClass}`} aria-hidden="true" />
+      <Icon className="h-5 w-5" aria-hidden="true" />
       <span className="text-base font-medium leading-none">{name}</span>
     </Badge>
   )
@@ -151,21 +84,21 @@ const MarqueeRow = memo(function MarqueeRow({
   reverse,
   durationSeconds,
 }: MarqueeRowProps) {
-  const items = [...TECH_STACK, ...TECH_STACK].map((t, idx) => (
+  const items = TECH_STACK.map((t, idx) => (
     <TechPill key={`${t.name}-${idx}`} {...t} />
   ))
 
   return (
     <div className="relative">
       <EdgeFades />
-      <LocalMarquee
-        durationSeconds={durationSeconds}
+      <Marquee
+        duration={durationSeconds}
         reverse={reverse}
         pauseOnHover
         className="py-1"
       >
         {items}
-      </LocalMarquee>
+      </Marquee>
     </div>
   )
 })
@@ -178,10 +111,9 @@ export default function HomeContent() {
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="space-y-6 sm:space-y-8">
-            {/* Hero */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
               <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
-                <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/30">
+                <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
                   <Image
                     src="/avatar.jpg"
                     alt="Rendi Ichtiar Prasetyo"
@@ -226,7 +158,6 @@ export default function HomeContent() {
 
             <Separator className="bg-border/40" />
 
-            {/* Tech stack */}
             <div className="space-y-6 sm:space-y-8">
               <div className="space-y-2">
                 <h2 className="text-xl font-bold text-foreground sm:text-2xl">
@@ -238,15 +169,12 @@ export default function HomeContent() {
               </div>
 
               <div className="space-y-2">
-                <MarqueeRow durationSeconds={40} reverse />
-                <MarqueeRow durationSeconds={35} />
-                <MarqueeRow durationSeconds={30} reverse />
+                <MarqueeRow durationSeconds={60} />
               </div>
             </div>
 
             <Separator className="bg-border/40" />
 
-            {/* CTA section */}
             <div className="space-y-8 sm:space-y-12">
               <div className="space-y-4 sm:space-y-6">
                 <h2 className="text-xl font-bold text-foreground sm:text-2xl">
@@ -258,7 +186,7 @@ export default function HomeContent() {
                 </p>
               </div>
 
-              <Card className="rounded-xl border-border/30 bg-card/50 text-foreground backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
+              <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
                 <CardHeader className="space-y-2 pb-3">
                   <div className="flex items-center gap-2">
                     <MessageCircle
