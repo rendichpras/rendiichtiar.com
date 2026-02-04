@@ -1,8 +1,7 @@
 "use client"
 
-import { memo, type CSSProperties } from "react"
+import { memo } from "react"
 import Image from "next/image"
-import { PageTransition } from "@/components/animations/page-transition"
 import { Marquee } from "@/components/ui/marquee"
 import { useI18n } from "@/lib/i18n"
 
@@ -107,7 +106,7 @@ export default function HomeContent() {
   const { messages } = useI18n()
 
   return (
-    <PageTransition>
+    <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="space-y-6 sm:space-y-8">
@@ -218,6 +217,6 @@ export default function HomeContent() {
           </div>
         </div>
       </section>
-    </PageTransition>
+    </>
   )
 }

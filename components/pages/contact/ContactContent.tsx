@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { PageTransition } from "@/components/animations/page-transition"
 import { Separator } from "@/components/ui/separator"
 import {
   Card,
@@ -128,7 +127,7 @@ export function ContactContent() {
   }
 
   return (
-    <PageTransition>
+    <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 py-0 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <header className="max-w-3xl space-y-2">
@@ -143,7 +142,7 @@ export function ContactContent() {
           <Separator className="my-6 bg-border/40" />
 
           <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
-            <CardHeader className="pb-4">
+            <CardHeader>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <CardTitle className="text-lg font-semibold text-foreground">
@@ -315,6 +314,6 @@ export function ContactContent() {
           </Card>
         </div>
       </section>
-    </PageTransition>
+    </>
   )
 }

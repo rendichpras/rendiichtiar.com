@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -51,20 +50,20 @@ export function LanguageSwitcher({
             aria-label={ariaLabel}
             aria-pressed={language === "en"}
           >
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
-              initial={false}
-              animate={{
-                y: language === "id" ? 0 : -30,
-                opacity: language === "id" ? 1 : 0,
-              }}
-              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
-            >
+            <div className="flex items-center justify-center">
               <div className="flex items-center gap-2">
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
                   <Image
-                    src="https://flagcdn.com/id.svg"
-                    alt={messages.common.language_switcher.flag_id_alt}
+                    src={
+                      language === "id"
+                        ? "https://flagcdn.com/id.svg"
+                        : "https://flagcdn.com/gb.svg"
+                    }
+                    alt={
+                      language === "id"
+                        ? messages.common.language_switcher.flag_id_alt
+                        : messages.common.language_switcher.flag_en_alt
+                    }
                     className="h-full w-full object-cover"
                     width={16}
                     height={16}
@@ -73,38 +72,11 @@ export function LanguageSwitcher({
                 </span>
                 {!isCompact && (
                   <span className="text-sm font-medium text-foreground/90">
-                    ID
+                    {language === "id" ? "ID" : "EN"}
                   </span>
                 )}
               </div>
-            </motion.div>
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
-              initial={false}
-              animate={{
-                y: language === "en" ? 0 : 30,
-                opacity: language === "en" ? 1 : 0,
-              }}
-              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
-            >
-              <div className="flex items-center gap-2">
-                <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
-                  <Image
-                    src="https://flagcdn.com/gb.svg"
-                    alt={messages.common.language_switcher.flag_en_alt}
-                    className="h-full w-full object-cover"
-                    width={16}
-                    height={16}
-                    unoptimized
-                  />
-                </span>
-                {!isCompact && (
-                  <span className="text-sm font-medium text-foreground/90">
-                    EN
-                  </span>
-                )}
-              </div>
-            </motion.div>
+            </div>
           </Button>
         </TooltipTrigger>
         <TooltipContent side="top">

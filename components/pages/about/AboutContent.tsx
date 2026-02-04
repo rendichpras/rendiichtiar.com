@@ -8,9 +8,7 @@ import {
   type ReactNode,
 } from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
 import { Separator } from "@/components/ui/separator"
-import { PageTransition } from "@/components/animations/page-transition"
 import { BookOpen, GraduationCap, User2 } from "lucide-react"
 import {
   Card,
@@ -37,20 +35,14 @@ const SectionNavCard = memo(function SectionNavCard({
   label,
   active,
   onClick,
-  delay = 0,
 }: {
   icon: ComponentType<{ className?: string }>
   label: string
   active: boolean
   onClick: () => void
-  delay?: number
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-    >
+    <div>
       <Button
         type="button"
         onClick={onClick}
@@ -74,7 +66,7 @@ const SectionNavCard = memo(function SectionNavCard({
           <span className="truncate">{label}</span>
         </div>
       </Button>
-    </motion.div>
+    </div>
   )
 })
 
@@ -223,11 +215,10 @@ export function AboutContent() {
   const { messages } = useI18n()
   const [activeSection, setActiveSection] = useState<SectionId>("intro")
 
-  const nav = sections.map((s, i) => ({
+  const nav = sections.map((s) => ({
     id: s.id,
     label: messages.pages.about.sections[s.titleKey],
     icon: s.icon,
-    delay: i * 0.1,
   }))
 
   const contentById = useMemo(
@@ -240,7 +231,7 @@ export function AboutContent() {
   )
 
   return (
-    <PageTransition>
+    <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <header className="max-w-2xl space-y-2">
@@ -256,29 +247,20 @@ export function AboutContent() {
           <Separator className="my-6 bg-border/40" />
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {nav.map(({ id, label, icon, delay }) => (
+            {nav.map(({ id, label, icon }) => (
               <SectionNavCard
                 key={id}
                 icon={icon}
                 label={label}
                 active={activeSection === id}
                 onClick={() => setActiveSection(id)}
-                delay={delay}
               />
             ))}
           </div>
 
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="mt-6"
-          >
-            {contentById[activeSection]({ messages })}
-          </motion.div>
+          <div className="mt-6">{contentById[activeSection]({ messages })}</div>
         </div>
       </section>
-    </PageTransition>
+    </>
   )
 }

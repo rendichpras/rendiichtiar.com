@@ -1,14 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { motion, useScroll, useMotionValueEvent } from "framer-motion"
 import { ArrowUpRight, PanelRightOpen, PanelLeftOpen } from "lucide-react"
 import Link from "next/link"
 
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useI18n, type Messages, t } from "@/lib/i18n"
+import { useI18n, t } from "@/lib/i18n"
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +19,7 @@ import { cn } from "@/lib/utils"
 
 import { Logo } from "./logo"
 import { MobileNav } from "./mobile-nav"
-import { MAIN_NAV, APP_NAV, SOCIAL_NAV, BASE_DELAY } from "./nav-config"
+import { MAIN_NAV, APP_NAV, SOCIAL_NAV } from "./nav-config"
 
 export function Navigation({
   collapsed,
@@ -30,13 +29,16 @@ export function Navigation({
   onToggle: () => void
 }) {
   const pathname = usePathname()
-  const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
   const { messages } = useI18n()
 
-  useMotionValueEvent(scrollY, "change", (y) => {
-    setScrolled(y > 50)
-  })
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   return (
     <>
@@ -44,13 +46,11 @@ export function Navigation({
         className="fixed left-0 right-0 top-0 z-50 lg:hidden"
         role="banner"
       >
-        <motion.div
+        <div
           className={cn(
-            "absolute inset-0 border-b border-border/30 bg-background transition-all duration-300"
+            "absolute inset-0 border-b border-border/30 bg-background transition-all duration-300",
+            scrolled && "shadow-md"
           )}
-          style={{
-            boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
-          }}
         />
         <div className="container relative mx-auto px-6">
           <nav
@@ -70,7 +70,7 @@ export function Navigation({
         </div>
       </header>
 
-      <motion.aside
+      <aside
         className={cn(
           "fixed left-0 top-0 bottom-0 z-50 hidden border-r border-border/30 lg:flex lg:flex-col transition-all duration-300",
           collapsed ? "w-16" : "w-64"
@@ -78,13 +78,11 @@ export function Navigation({
         role="complementary"
         aria-label={messages.common.navigation.nav_menu}
       >
-        <motion.div
+        <div
           className={cn(
-            "absolute inset-0 bg-background transition-all duration-300"
+            "absolute inset-0 bg-background transition-all duration-300",
+            scrolled && "shadow-md"
           )}
-          style={{
-            boxShadow: scrolled ? "0 0 20px rgba(0,0,0,0.1)" : "none",
-          }}
         />
 
         <div className="relative flex h-full flex-col">
@@ -128,7 +126,7 @@ export function Navigation({
               aria-label={messages.common.navigation.main_menu}
             >
               <div className="space-y-1">
-                {MAIN_NAV.map((it, i) => {
+                {MAIN_NAV.map((it) => {
                   const Icon = it.icon
                   const active = pathname === it.path
                   const label = t(messages, it.nameKey)
@@ -154,12 +152,7 @@ export function Navigation({
                   )
 
                   return (
-                    <motion.div
-                      key={it.path}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * BASE_DELAY }}
-                    >
+                    <div key={it.path}>
                       {collapsed ? (
                         <Tooltip>
                           <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
@@ -174,26 +167,19 @@ export function Navigation({
                       ) : (
                         linkNode
                       )}
-                    </motion.div>
+                    </div>
                   )
                 })}
               </div>
 
               <div className="space-y-1">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: MAIN_NAV.length * BASE_DELAY,
-                  }}
-                  className={cn("px-3 py-2", collapsed && "sr-only")}
-                >
+                <div className={cn("px-3 py-2", collapsed && "sr-only")}>
                   <p className="text-xs font-medium text-muted-foreground">
                     {messages.common.navigation.apps}
                   </p>
-                </motion.div>
+                </div>
 
-                {APP_NAV.map((it, i) => {
+                {APP_NAV.map((it) => {
                   const Icon = it.icon
                   const active = pathname === it.path
                   const label = t(messages, it.nameKey)
@@ -219,14 +205,7 @@ export function Navigation({
                   )
 
                   return (
-                    <motion.div
-                      key={it.path}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        delay: (MAIN_NAV.length + i) * BASE_DELAY,
-                      }}
-                    >
+                    <div key={it.path}>
                       {collapsed ? (
                         <Tooltip>
                           <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
@@ -241,36 +220,21 @@ export function Navigation({
                       ) : (
                         linkNode
                       )}
-                    </motion.div>
+                    </div>
                   )
                 })}
               </div>
 
               {!collapsed && (
                 <div className="space-y-1">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: (MAIN_NAV.length + APP_NAV.length) * BASE_DELAY,
-                    }}
-                    className="px-3 py-2"
-                  >
+                  <div className="px-3 py-2">
                     <p className="text-xs font-medium text-muted-foreground">
                       {messages.common.navigation.socials}
                     </p>
-                  </motion.div>
+                  </div>
 
-                  {SOCIAL_NAV.map((s, i) => (
-                    <motion.div
-                      key={s.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        delay:
-                          (MAIN_NAV.length + APP_NAV.length + i) * BASE_DELAY,
-                      }}
-                    >
+                  {SOCIAL_NAV.map((s) => (
+                    <div key={s.name}>
                       <a
                         href={s.href}
                         target="_blank"
@@ -286,7 +250,7 @@ export function Navigation({
                           aria-hidden="true"
                         />
                       </a>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -303,7 +267,7 @@ export function Navigation({
             {!collapsed && <LanguageSwitcher variant="compact" />}
           </div>
         </div>
-      </motion.aside>
+      </aside>
     </>
   )
 }

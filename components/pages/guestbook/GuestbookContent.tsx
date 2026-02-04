@@ -3,7 +3,6 @@
 import { memo } from "react"
 import { useUser } from "@clerk/nextjs"
 
-import { PageTransition } from "@/components/animations/page-transition"
 import { useI18n } from "@/lib/i18n"
 
 import { SignInButton } from "@/components/auth/SignInButton"
@@ -93,7 +92,7 @@ export function GuestbookContent() {
   const image = user?.imageUrl || ""
 
   return (
-    <PageTransition>
+    <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="max-w-2xl space-y-2">
@@ -154,6 +153,6 @@ export function GuestbookContent() {
           </div>
         </div>
       </section>
-    </PageTransition>
+    </>
   )
 }

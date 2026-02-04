@@ -2,12 +2,11 @@
 
 import { memo, useCallback, useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useI18n, type Messages, t } from "@/lib/i18n"
+import { useI18n, t } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import {
@@ -122,104 +121,90 @@ export function MobileNav() {
         )}
       </Button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 bg-black/40 lg:hidden"
-              onClick={() => setOpen(false)}
-              aria-hidden="true"
-            />
-            <motion.div
-              initial={{ x: -300 }}
-              animate={{ x: 0 }}
-              exit={{ x: -300 }}
-              transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-              }}
-              className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
-              role="dialog"
-              aria-modal="true"
-              aria-label={messages.common.navigation.nav_menu}
-              id="mobile-menu"
-            >
-              <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b p-4">
-                  <Logo
-                    homeLabel={messages.pages.home.to_home}
-                    verifiedLabel={messages.pages.home.verified}
-                  />
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 z-50 bg-black/40 lg:hidden"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label={messages.common.navigation.nav_menu}
+            id="mobile-menu"
+          >
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between border-b p-4">
+                <Logo
+                  homeLabel={messages.pages.home.to_home}
+                  verifiedLabel={messages.pages.home.verified}
+                />
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full"
-                    onClick={() => setOpen(false)}
-                    aria-label={messages.common.navigation.close_menu}
-                  >
-                    <X className="size-5" aria-hidden="true" />
-                  </Button>
-                </div>
-
-                <nav
-                  className="flex-1 space-y-4 overflow-y-auto p-4"
-                  role="menu"
-                  aria-label={messages.common.navigation.main_menu}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={() => setOpen(false)}
+                  aria-label={messages.common.navigation.close_menu}
                 >
-                  <div className="space-y-1">
-                    {MAIN_NAV.map((it) => (
-                      <MobileNavItem
-                        key={it.path}
-                        item={it}
-                        pathname={pathname}
-                        onNavigate={navigate}
-                        label={t(messages, it.nameKey)}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                      {messages.common.navigation.apps}
-                    </div>
-
-                    {APP_NAV.map((it) => (
-                      <MobileNavItem
-                        key={it.path}
-                        item={it}
-                        pathname={pathname}
-                        onNavigate={navigate}
-                        label={t(messages, it.nameKey)}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                      {messages.common.navigation.socials}
-                    </div>
-
-                    {SOCIAL_NAV.map((s) => (
-                      <MobileExternalItem key={s.name} {...s} />
-                    ))}
-                  </div>
-                </nav>
-
-                <div className="flex items-center justify-between p-4 pt-6">
-                  <ThemeToggle className="hover:scale-100" />
-                  <LanguageSwitcher variant="compact" />
-                </div>
+                  <X className="size-5" aria-hidden="true" />
+                </Button>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+
+              <nav
+                className="flex-1 space-y-4 overflow-y-auto p-4"
+                role="menu"
+                aria-label={messages.common.navigation.main_menu}
+              >
+                <div className="space-y-1">
+                  {MAIN_NAV.map((it) => (
+                    <MobileNavItem
+                      key={it.path}
+                      item={it}
+                      pathname={pathname}
+                      onNavigate={navigate}
+                      label={t(messages, it.nameKey)}
+                    />
+                  ))}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
+                    {messages.common.navigation.apps}
+                  </div>
+
+                  {APP_NAV.map((it) => (
+                    <MobileNavItem
+                      key={it.path}
+                      item={it}
+                      pathname={pathname}
+                      onNavigate={navigate}
+                      label={t(messages, it.nameKey)}
+                    />
+                  ))}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
+                    {messages.common.navigation.socials}
+                  </div>
+
+                  {SOCIAL_NAV.map((s) => (
+                    <MobileExternalItem key={s.name} {...s} />
+                  ))}
+                </div>
+              </nav>
+
+              <div className="flex items-center justify-between p-4 pt-6">
+                <ThemeToggle className="hover:scale-100" />
+                <LanguageSwitcher variant="compact" />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   )
 }

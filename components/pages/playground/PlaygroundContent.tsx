@@ -2,14 +2,12 @@
 
 import { Suspense, useCallback, useState, useEffect } from "react"
 import dynamic from "next/dynamic"
-import { motion } from "framer-motion"
 import { Trash2, Play, Expand } from "lucide-react"
 import { SiJavascript } from "react-icons/si"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-import { PageTransition } from "@/components/animations/page-transition"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import type { OnMount } from "@monaco-editor/react"
@@ -192,14 +190,10 @@ export function PlaygroundContent() {
   }, [])
 
   return (
-    <PageTransition>
+    <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl space-y-2"
-          >
+          <div className="max-w-2xl space-y-2">
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -210,15 +204,11 @@ export function PlaygroundContent() {
             <p className="text-sm text-muted-foreground sm:text-base">
               {messages.pages.playground.subtitle}
             </p>
-          </motion.div>
+          </div>
 
           <Separator className="my-6 bg-border/40" />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+          <div>
             <Card
               className={cn(
                 "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card p-4 text-foreground transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
@@ -383,9 +373,9 @@ export function PlaygroundContent() {
                 />
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </section>
-    </PageTransition>
+    </>
   )
 }
