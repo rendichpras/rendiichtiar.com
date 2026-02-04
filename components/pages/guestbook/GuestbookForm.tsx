@@ -40,22 +40,27 @@ export function GuestbookForm() {
     setIsSubmitting(true)
 
     try {
-      await addGuestbookEntry(message)
+      const result = await addGuestbookEntry(message)
+
+      if (!result.success) {
+        if (result.error === "forbidden_words") {
+          toast.error(messages.pages.guestbook.form.forbidden_words)
+        } else if (result.error === "message_too_long") {
+          toast.error("Message too long")
+        } else if (result.error === "rate_limit_exceeded") {
+          toast.error("Please wait a moment before posting again.")
+        } else {
+          toast.error(messages.pages.guestbook.form.error)
+        }
+        return
+      }
+
       setMessage("")
       toast.success(messages.pages.guestbook.form.success)
 
       window.dispatchEvent(new CustomEvent("guestbook:refresh"))
-    } catch (error) {
-      if (error instanceof Error && error.message === "forbidden_words") {
-        toast.error(messages.pages.guestbook.form.forbidden_words)
-      } else if (
-        error instanceof Error &&
-        error.message === "message_too_long"
-      ) {
-        toast.error("Message too long")
-      } else {
-        toast.error(messages.pages.guestbook.form.error)
-      }
+    } catch {
+      toast.error(messages.pages.guestbook.form.error)
     } finally {
       setIsSubmitting(false)
     }

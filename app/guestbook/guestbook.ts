@@ -4,8 +4,8 @@ import { db } from "@/db"
 import { ensureDbUser } from "@/lib/auth/ensure-db-user"
 import { emitEvent } from "@/lib/realtime"
 import { headers } from "next/headers"
+import { containsForbiddenWords } from "@/lib/constants/forbidden-words"
 
-const FORBIDDEN_WORDS = ["memek", "kontol", "anjing", "babi", "bangsat"]
 const MAX_MESSAGE_LENGTH = 280
 
 function validateMessage(message: string) {
@@ -13,8 +13,7 @@ function validateMessage(message: string) {
   if (!trimmed) throw new Error("empty")
   if (trimmed.length > MAX_MESSAGE_LENGTH) throw new Error("message_too_long")
 
-  const lower = trimmed.toLowerCase()
-  if (FORBIDDEN_WORDS.some((w) => lower.includes(w))) {
+  if (containsForbiddenWords(trimmed)) {
     throw new Error("forbidden_words")
   }
 
