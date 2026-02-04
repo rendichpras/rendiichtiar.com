@@ -35,7 +35,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ContactSkeleton } from "@/components/pages/admin/contact/ContactSkeleton"
+import { ContactTableSkeleton } from "@/components/pages/admin/contact/ContactSkeleton"
 import {
   Column,
   ColumnDef,
@@ -257,7 +257,18 @@ export default function AdminContactContent() {
       <>
         <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
           <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-            <ContactSkeleton />
+            <div className="max-w-3xl space-y-2">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                {t("title")}
+              </h1>
+              <p className="text-sm text-muted-foreground sm:text-base">
+                {t("subtitle")}
+              </p>
+            </div>
+
+            <Separator className="my-6 bg-border/60" />
+
+            <ContactTableSkeleton />
           </div>
         </section>
       </>

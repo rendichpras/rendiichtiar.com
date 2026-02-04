@@ -9,6 +9,10 @@ import { SignInButton } from "@/components/auth/SignInButton"
 import { SignOutButton } from "@/components/auth/SignOutButton"
 import { GuestbookForm } from "@/components/pages/guestbook/GuestbookForm"
 import { GuestbookList } from "@/components/pages/guestbook/GuestbookList"
+import {
+  AuthBarSkeleton,
+  FormCardSkeleton,
+} from "@/components/pages/guestbook/GuestbookSkeleton"
 
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -82,7 +86,7 @@ const AuthBar = memo(function AuthBar({
 
 export function GuestbookContent() {
   const t = useTranslations("pages.guestbook")
-  const { isSignedIn, user } = useUser()
+  const { isLoaded, isSignedIn, user } = useUser()
 
   const email =
     user?.primaryEmailAddress?.emailAddress ??
@@ -108,29 +112,37 @@ export function GuestbookContent() {
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr,400px]">
             <div className="space-y-6">
-              <AuthBar
-                isSignedIn={!!isSignedIn}
-                name={name}
-                email={email}
-                image={image}
-                signInMessage={t("auth.sign_in_message")}
-              />
+              {!isLoaded ? (
+                <AuthBarSkeleton />
+              ) : (
+                <AuthBar
+                  isSignedIn={!!isSignedIn}
+                  name={name}
+                  email={email}
+                  image={image}
+                  signInMessage={t("auth.sign_in_message")}
+                />
+              )}
 
-              {isSignedIn && (
-                <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
-                  <CardHeader>
-                    <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
-                      {t("title")}
-                    </CardTitle>
-                    <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                      {t("subtitle")}
-                    </CardDescription>
-                  </CardHeader>
+              {!isLoaded ? (
+                <FormCardSkeleton />
+              ) : (
+                isSignedIn && (
+                  <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
+                    <CardHeader>
+                      <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
+                        {t("title")}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-muted-foreground sm:text-sm">
+                        {t("subtitle")}
+                      </CardDescription>
+                    </CardHeader>
 
-                  <CardContent>
-                    <GuestbookForm />
-                  </CardContent>
-                </Card>
+                    <CardContent>
+                      <GuestbookForm />
+                    </CardContent>
+                  </Card>
+                )
               )}
             </div>
 

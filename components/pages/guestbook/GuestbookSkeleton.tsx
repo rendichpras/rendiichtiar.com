@@ -8,10 +8,9 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
-function MessageSkeleton() {
+export function MessageSkeleton() {
   return (
     <div className="group">
       <div className="flex gap-4">
@@ -66,29 +65,42 @@ function MessageSkeleton() {
   )
 }
 
-export function GuestbookSkeleton() {
+export function AuthBarSkeleton() {
   return (
-    <Card className="h-full rounded-2xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
-      <CardHeader className="pb-3">
-        <div className="space-y-2">
-          <CardTitle className="text-lg font-semibold text-foreground">
-            <Skeleton className="h-4 w-32 rounded-md" />
-          </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">
-            <Skeleton className="h-3 w-48 rounded-md" />
-          </CardDescription>
-        </div>
-      </CardHeader>
-
-      <ScrollArea className="h-[calc(100%-5rem)]">
-        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-          <div className="space-y-6 pr-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <MessageSkeleton key={i} />
-            ))}
+    <Card className="border-border/30 bg-card">
+      <CardContent className="flex items-start gap-4">
+        <Skeleton className="size-10 rounded-full border-2 border-border/30" />
+        <div className="flex-1">
+          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+            <div className="min-w-0 space-y-1">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-48" />
+            </div>
+            <Skeleton className="h-8 w-20" />
           </div>
-        </CardContent>
-      </ScrollArea>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export function FormCardSkeleton() {
+  return (
+    <Card className="border-border/30 bg-card">
+      <CardHeader>
+        <CardTitle>
+          <Skeleton className="h-4 w-28" />
+        </CardTitle>
+        <CardDescription>
+          <Skeleton className="h-3 w-56" />
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <Skeleton className="h-14 w-full rounded-xl" />
+        <div className="flex justify-end">
+          <Skeleton className="h-10 w-24 rounded-xl" />
+        </div>
+      </CardContent>
     </Card>
   )
 }

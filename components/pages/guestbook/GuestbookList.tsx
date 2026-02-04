@@ -23,7 +23,7 @@ import {
 } from "lucide-react"
 import { SiGoogle, SiGithub } from "react-icons/si"
 
-import { GuestbookSkeleton } from "./GuestbookSkeleton"
+import { MessageSkeleton } from "./GuestbookSkeleton"
 import {
   GuestbookReply,
   GuestbookReplyList,
@@ -351,8 +351,10 @@ export function GuestbookList({
 
   if (loading) {
     return (
-      <div className="pr-4">
-        <GuestbookSkeleton />
+      <div className="space-y-6 pr-4">
+        {[...Array(3)].map((_, i) => (
+          <MessageSkeleton key={i} />
+        ))}
       </div>
     )
   }
