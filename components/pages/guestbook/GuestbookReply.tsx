@@ -46,7 +46,22 @@ export function GuestbookReply({
     setIsSubmitting(true)
 
     try {
-      await addGuestbookEntry(replyMessage, parentId, parentAuthor)
+      const result = await addGuestbookEntry(
+        replyMessage,
+        parentId,
+        parentAuthor
+      )
+
+      if (!result.success && result.error) {
+        if (result.error === "rate_limit_exceeded") {
+          toast.error("Please wait a moment before replying again.")
+        } else if (result.error === "forbidden_words") {
+          toast.error(messages.pages.guestbook.form.forbidden_words)
+        } else {
+          toast.error(messages.pages.guestbook.list.reply.error)
+        }
+        return
+      }
 
       setReplyMessage("")
       onReplyComplete()
@@ -188,7 +203,11 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
         ])
       }
 
-      await toggleLike(guestbookId)
+      const result = await toggleLike(guestbookId)
+
+      if (!result.success) {
+        throw new Error(result.error)
+      }
     } catch {
       setLiked(prev.liked)
       setLocalLikes(prev.localLikes)

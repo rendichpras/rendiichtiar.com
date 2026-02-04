@@ -1,28 +1,50 @@
 import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { requireAdmin } from "@/lib/auth/require-admin"
+import { z } from "zod"
+import { headers } from "next/headers"
+
+const contactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  email: z.string().email("Invalid email address"),
+  message: z.string().min(1, "Message is required").max(1000),
+})
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as {
-      name?: string
-      email?: string
-      message?: string
-    }
+    const json = await req.json()
+    const body = contactSchema.safeParse(json)
 
-    const name = body?.name?.trim() ?? ""
-    const email = body?.email?.trim() ?? ""
-    const message = body?.message?.trim() ?? ""
-
-    if (!name || !email || !message) {
+    if (!body.success) {
       return NextResponse.json(
-        { success: false, error: "Missing fields" },
+        { success: false, error: body.error.issues[0].message },
         { status: 400 }
       )
     }
 
+    const { name, email, message } = body.data
+    const headersList = await headers()
+    const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1"
+
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
+    const recentMessages = await db.contactMessage.count({
+      where: {
+        ipAddress: ip,
+        createdAt: {
+          gte: oneHourAgo,
+        },
+      },
+    })
+
+    if (recentMessages >= 3) {
+      return NextResponse.json(
+        { success: false, error: "Too many messages. Please try again later." },
+        { status: 429 }
+      )
+    }
+
     await db.contactMessage.create({
-      data: { name, email, message, status: "UNREAD" },
+      data: { name, email, message, ipAddress: ip, status: "UNREAD" },
     })
 
     return NextResponse.json({ success: true })

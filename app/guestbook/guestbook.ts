@@ -3,6 +3,7 @@
 import { db } from "@/db"
 import { ensureDbUser } from "@/lib/auth/ensure-db-user"
 import { emitEvent } from "@/lib/realtime"
+import { headers } from "next/headers"
 
 const FORBIDDEN_WORDS = ["memek", "kontol", "anjing", "babi", "bangsat"]
 const MAX_MESSAGE_LENGTH = 280
@@ -132,104 +133,137 @@ export async function addGuestbookEntry(
   parentId?: string,
   parentAuthor?: string
 ) {
-  const dbUser = await ensureDbUser()
-  const trimmed = validateMessage(message)
+  try {
+    const dbUser = await ensureDbUser()
+    const trimmed = validateMessage(message)
+    const headersList = await headers()
+    const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1"
 
-  const mentionedUserId = await resolveMentionedUserId(parentAuthor)
-  const rootId = parentId ? await resolveRootId(parentId) : null
-
-  const entry = await db.guestbookEntry.create({
-    data: {
-      message: trimmed,
-      userId: dbUser.id,
-      parentId: parentId ?? null,
-      rootId,
-      mentionedUserId,
-    },
-    include: {
-      user: {
-        select: { name: true, email: true, imageUrl: true, authProvider: true },
-      },
-      likes: { include: { user: { select: { name: true, email: true } } } },
-    },
-  })
-
-  if (parentId) {
-    emitEvent({
-      type: "guestbook:reply",
-      parentId: rootId ?? parentId,
-      reply: {
-        id: entry.id,
-        message: entry.message,
-        createdAt: entry.createdAt,
-        user: { name: entry.user.name, image: entry.user.imageUrl },
-        mentionedUser: entry.mentionedUserId
-          ? { name: parentAuthor ?? null }
-          : null,
-        likes: [],
-        parentId: entry.parentId,
-        rootId: entry.rootId,
-      },
-    })
-  } else {
-    emitEvent({
-      type: "guestbook:new",
-      entry: {
-        id: entry.id,
-        message: entry.message,
-        createdAt: entry.createdAt,
-        user: {
-          name: entry.user.name,
-          image: entry.user.imageUrl,
-          email: entry.user.email,
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000)
+    const recentEntry = await db.guestbookEntry.findFirst({
+      where: {
+        ipAddress: ip,
+        createdAt: {
+          gte: oneMinuteAgo,
         },
-        provider: entry.user.authProvider ?? "clerk",
-        likes: [],
-        replies: [],
+      },
+      select: { id: true },
+    })
+
+    if (recentEntry) {
+      return { success: false, error: "rate_limit_exceeded" }
+    }
+
+    const mentionedUserId = await resolveMentionedUserId(parentAuthor)
+    const rootId = parentId ? await resolveRootId(parentId) : null
+
+    const entry = await db.guestbookEntry.create({
+      data: {
+        message: trimmed,
+        userId: dbUser.id,
+        parentId: parentId ?? null,
+        rootId,
+        mentionedUserId,
+        ipAddress: ip,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            imageUrl: true,
+            authProvider: true,
+          },
+        },
+        likes: { include: { user: { select: { name: true, email: true } } } },
       },
     })
-  }
 
-  return { success: true, entryId: entry.id }
+    if (parentId) {
+      emitEvent({
+        type: "guestbook:reply",
+        parentId: rootId ?? parentId,
+        reply: {
+          id: entry.id,
+          message: entry.message,
+          createdAt: entry.createdAt,
+          user: { name: entry.user.name, image: entry.user.imageUrl },
+          mentionedUser: entry.mentionedUserId
+            ? { name: parentAuthor ?? null }
+            : null,
+          likes: [],
+          parentId: entry.parentId,
+          rootId: entry.rootId,
+        },
+      })
+    } else {
+      emitEvent({
+        type: "guestbook:new",
+        entry: {
+          id: entry.id,
+          message: entry.message,
+          createdAt: entry.createdAt,
+          user: {
+            name: entry.user.name,
+            image: entry.user.imageUrl,
+            email: entry.user.email,
+          },
+          provider: entry.user.authProvider ?? "clerk",
+          likes: [],
+          replies: [],
+        },
+      })
+    }
+
+    return { success: true, entryId: entry.id }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown_error"
+    return { success: false, error: message }
+  }
 }
 
 export async function toggleLike(entryId: string) {
-  const dbUser = await ensureDbUser()
+  try {
+    const dbUser = await ensureDbUser()
 
-  const existing = await db.like.findUnique({
-    where: {
-      userId_guestbookEntryId: {
+    const existing = await db.like.findUnique({
+      where: {
+        userId_guestbookEntryId: {
+          userId: dbUser.id,
+          guestbookEntryId: entryId,
+        },
+      },
+      select: { id: true },
+    })
+
+    if (existing) {
+      await db.like.delete({ where: { id: existing.id } })
+      emitEvent({
+        type: "guestbook:like",
+        id: entryId,
+        userEmail: dbUser.email,
+        action: "unlike",
+      })
+      return { success: true, liked: false }
+    }
+
+    await db.like.create({
+      data: {
         userId: dbUser.id,
         guestbookEntryId: entryId,
       },
-    },
-    select: { id: true },
-  })
+    })
 
-  if (existing) {
-    await db.like.delete({ where: { id: existing.id } })
     emitEvent({
       type: "guestbook:like",
       id: entryId,
       userEmail: dbUser.email,
-      action: "unlike",
+      action: "like",
     })
-    return { success: true, liked: false }
+
+    return { success: true, liked: true }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown_error"
+    return { success: false, error: message }
   }
-
-  await db.like.create({
-    data: {
-      userId: dbUser.id,
-      guestbookEntryId: entryId,
-    },
-  })
-
-  emitEvent({
-    type: "guestbook:like",
-    id: entryId,
-    userEmail: dbUser.email,
-    action: "like",
-  })
-
-  return { success: true, liked: true }
 }

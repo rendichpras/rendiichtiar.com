@@ -27,11 +27,12 @@ model User {
 model GuestbookEntry {
   id        String   @id @default(cuid())
   message   String
+  ipAddress String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userId String
-  user   User @relation("GuestbookEntryAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation("GuestbookEntryAuthor", fields: [userId], references: [id], onDelete: Cascade)
 
   parentId String?
   parent   GuestbookEntry?  @relation("EntryReplies", fields: [parentId], references: [id], onDelete: Cascade)
@@ -42,7 +43,7 @@ model GuestbookEntry {
   rootChildren GuestbookEntry[] @relation("EntryRoot")
 
   mentionedUserId String?
-  mentionedUser   User? @relation("GuestbookEntryMention", fields: [mentionedUserId], references: [id])
+  mentionedUser   User?   @relation("GuestbookEntryMention", fields: [mentionedUserId], references: [id])
 
   likes Like[]
 
@@ -52,12 +53,12 @@ model GuestbookEntry {
 }
 
 model Like {
-  id             String   @id @default(uuid())
-  createdAt      DateTime @default(now())
-  userId         String
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  userId           String
   guestbookEntryId String
 
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   guestbookEntry GuestbookEntry @relation(fields: [guestbookEntryId], references: [id], onDelete: Cascade)
 
   @@unique([userId, guestbookEntryId])
@@ -75,6 +76,7 @@ model ContactMessage {
   name      String
   email     String
   message   String
+  ipAddress String?
   status    ContactStatus @default(UNREAD)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
@@ -83,11 +85,11 @@ model ContactMessage {
 }
 
 model ContactReply {
-  id             String   @id @default(uuid())
-  contactId      String   @unique
-  contact        ContactMessage @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  message        String
-  subject        String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id        String         @id @default(uuid())
+  contactId String         @unique
+  contact   ContactMessage @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  message   String
+  subject   String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
