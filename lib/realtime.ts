@@ -1,5 +1,3 @@
-import { EventEmitter } from "node:events"
-
 type GBEvent =
   | {
       type: "guestbook:new"
@@ -49,21 +47,16 @@ type GBEvent =
       }
     }
 
-const globalForEmitter = globalThis as unknown as { __gbEmitter: EventEmitter }
+import Pusher from "pusher"
 
-const emitter: EventEmitter = globalForEmitter.__gbEmitter ?? new EventEmitter()
-
-if (!globalForEmitter.__gbEmitter) {
-  globalForEmitter.__gbEmitter = emitter
-}
-
-export function onEvent(cb: (e: GBEvent) => void) {
-  emitter.on("gb", cb)
-  return () => {
-    emitter.off("gb", cb)
-  }
-}
+export const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID!,
+  key: process.env.PUSHER_KEY!,
+  secret: process.env.PUSHER_SECRET!,
+  cluster: process.env.PUSHER_CLUSTER!,
+  useTLS: true,
+})
 
 export function emitEvent(e: GBEvent) {
-  emitter.emit("gb", e)
+  pusher.trigger("guestbook", "gb", e)
 }

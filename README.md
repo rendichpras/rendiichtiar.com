@@ -20,6 +20,7 @@ This project is built using:
 - **Tailwind CSS 4**
 - **Prisma** & **PostgreSQL**
 - **Clerk** (Authentication)
+- **Pusher** (Real-time features)
 - **Framer Motion**
 
 ## Running Locally
@@ -35,7 +36,7 @@ If you want to run this project on your local machine:
     ```
 
 2.  **Environment Setup**
-    Copy `.env.example` to `.env` and fill in the required variables (Database URL, Clerk Keys, etc.).
+    Copy `.env.example` to `.env` and fill in the required variables (Database URL, Clerk Keys, Pusher Keys, etc.).
 
 3.  **Database Setup**
 

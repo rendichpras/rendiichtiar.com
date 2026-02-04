@@ -34,6 +34,7 @@ import { getGuestbookEntries } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
 import { LoginDialog } from "@/components/auth/LoginDialog"
 import { generateId } from "@/lib/utils"
+import Pusher from "pusher-js"
 
 type RawLike = {
   id: string
@@ -231,11 +232,16 @@ export function GuestbookList({
   }, [fetchEntries])
 
   useEffect(() => {
-    const es = new EventSource("/api/guestbook/stream")
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    })
 
-    es.onmessage = (evt) => {
-      try {
-        const ev = JSON.parse(evt.data) as
+    const channel = pusher.subscribe("guestbook")
+
+    channel.bind(
+      "gb",
+      (
+        ev:
           | { type: "guestbook:new"; entry: RawEntry }
           | {
               type: "guestbook:like"
@@ -244,7 +250,7 @@ export function GuestbookList({
               action: "like" | "unlike"
             }
           | { type: "guestbook:reply"; parentId: string; reply: RawReply }
-
+      ) => {
         setEntries((prev) => {
           if (ev.type === "guestbook:new") {
             const e = ev.entry
@@ -252,7 +258,7 @@ export function GuestbookList({
               ...e,
               createdAt: new Date(e.createdAt),
               replies: orderReplies(
-                e.replies.map((r) => ({
+                e.replies.map((r: RawReply) => ({
                   ...r,
                   createdAt: new Date(r.createdAt),
                 })),
@@ -333,13 +339,11 @@ export function GuestbookList({
 
           return prev
         })
-      } catch {}
-    }
-
-    es.onerror = () => {}
+      }
+    )
 
     return () => {
-      es.close()
+      pusher.unsubscribe("guestbook")
     }
   }, [])
 
