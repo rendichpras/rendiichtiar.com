@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
 import { Loader2, Heart } from "lucide-react"
 
 import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
-import { cn } from "@/lib/utils"
+import { cn, generateId } from "@/lib/utils"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -197,7 +197,7 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
         setLocalLikes((ls) => [
           ...ls,
           {
-            id: crypto.randomUUID(),
+            id: generateId(),
             user: { name: null, email: userEmail },
           },
         ])
@@ -217,6 +217,11 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
       setTimeout(() => setIsAnimating(false), 200)
     }
   }
+
+  useEffect(() => {
+    setLocalLikes(likes)
+    setLiked(likes.some((l) => l.user.email === userEmail))
+  }, [likes, userEmail])
 
   return (
     <>

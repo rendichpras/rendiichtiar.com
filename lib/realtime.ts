@@ -59,7 +59,9 @@ if (!globalForEmitter.__gbEmitter) {
 
 export function onEvent(cb: (e: GBEvent) => void) {
   emitter.on("gb", cb)
-  return () => emitter.off("gb", cb)
+  return () => {
+    emitter.off("gb", cb)
+  }
 }
 
 export function emitEvent(e: GBEvent) {

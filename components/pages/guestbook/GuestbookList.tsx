@@ -33,6 +33,7 @@ import {
 import { getGuestbookEntries } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
 import { LoginDialog } from "@/components/auth/LoginDialog"
+import { generateId } from "@/lib/utils"
 
 type RawLike = {
   id: string
@@ -296,7 +297,7 @@ export function GuestbookList({
                   likes = [
                     ...likes,
                     {
-                      id: crypto.randomUUID(),
+                      id: generateId(),
                       user: { name: null, email: userEmail },
                     },
                   ]
@@ -315,7 +316,7 @@ export function GuestbookList({
                   likes = [
                     ...likes,
                     {
-                      id: crypto.randomUUID(),
+                      id: generateId(),
                       user: { name: null, email: userEmail },
                     },
                   ]
@@ -335,9 +336,7 @@ export function GuestbookList({
       } catch {}
     }
 
-    es.onerror = () => {
-      es.close()
-    }
+    es.onerror = () => {}
 
     return () => {
       es.close()
