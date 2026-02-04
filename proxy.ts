@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
 const isProtectedContactApi = createRouteMatcher(["/api/contact(.*)"])
 
-export const proxy = clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth()
 
   if ((isAdminRoute(req) || isProtectedContactApi(req)) && !userId) {
