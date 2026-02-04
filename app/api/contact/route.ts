@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/auth/require-admin"
 import { z } from "zod"
 import { headers } from "next/headers"
 import { containsForbiddenWords } from "@/lib/constants/forbidden-words"
+import { sendEmail } from "@/lib/email"
+import { getContactEmailTemplate } from "@/lib/email-templates"
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -55,6 +57,19 @@ export async function POST(req: Request) {
     await db.contactMessage.create({
       data: { name, email, message, ipAddress: ip, status: "UNREAD" },
     })
+
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL
+      if (adminEmail) {
+        await sendEmail({
+          to: adminEmail,
+          subject: `New Contact Message from ${name}`,
+          html: getContactEmailTemplate(name, email, message),
+        })
+      }
+    } catch (error) {
+      console.error("Failed to send email notification to admin:", error)
+    }
 
     return NextResponse.json({ success: true })
   } catch {

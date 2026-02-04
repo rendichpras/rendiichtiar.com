@@ -2,17 +2,9 @@ import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { requireAdmin } from "@/lib/auth/require-admin"
 import { sendEmail } from "@/lib/email"
+import { getReplyEmailTemplate } from "@/lib/email-templates"
 
 export async function POST(req: Request) {
-  const escapeHtml = (unsafe: string) => {
-    return unsafe
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;")
-  }
-
   try {
     await requireAdmin()
 
@@ -43,20 +35,11 @@ export async function POST(req: Request) {
     }
 
     const subject = `Re: Your message`
-    const html = `
-      <div style="font-family:Arial,sans-serif;line-height:1.6">
-        <p>Hi ${contact.name},</p>
-        <p>Thanks for reaching out! Here is my reply:</p>
-        <blockquote style="margin:16px 0;padding:12px 16px;border-left:4px solid #ccc;background:#f9f9f9;">
-          ${escapeHtml(replyMessage).replace(/\n/g, "<br/>")}
-        </blockquote>
-        <p>---</p>
-        <p><strong>Your original message:</strong></p>
-        <blockquote style="margin:16px 0;padding:12px 16px;border-left:4px solid #eee;background:#fafafa;">
-          ${escapeHtml(contact.message).replace(/\n/g, "<br/>")}
-        </blockquote>
-      </div>
-    `
+    const html = getReplyEmailTemplate(
+      contact.name,
+      replyMessage,
+      contact.message
+    )
 
     await sendEmail({
       to: contact.email,
