@@ -11,6 +11,7 @@ import {
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter, usePathname } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface LanguageSwitcherProps {
   variant?: "default" | "compact"
@@ -54,27 +55,38 @@ export function LanguageSwitcher({
             aria-pressed={locale === "en"}
           >
             <div className="flex items-center justify-center">
-              <div className="flex items-center gap-2">
-                <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
-                  <Image
-                    src={
-                      locale === "id"
-                        ? "https://flagcdn.com/id.svg"
-                        : "https://flagcdn.com/gb.svg"
-                    }
-                    alt={locale === "id" ? t("flag_id_alt") : t("flag_en_alt")}
-                    className="h-full w-full object-cover"
-                    width={16}
-                    height={16}
-                    unoptimized
-                  />
-                </span>
-                {!isCompact && (
-                  <span className="text-sm font-medium text-foreground/90">
-                    {locale === "id" ? "ID" : "EN"}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={locale}
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 20, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  className="flex items-center gap-2"
+                >
+                  <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
+                    <Image
+                      src={
+                        locale === "id"
+                          ? "https://flagcdn.com/id.svg"
+                          : "https://flagcdn.com/gb.svg"
+                      }
+                      alt={
+                        locale === "id" ? t("flag_id_alt") : t("flag_en_alt")
+                      }
+                      className="h-full w-full object-cover"
+                      width={16}
+                      height={16}
+                      unoptimized
+                    />
                   </span>
-                )}
-              </div>
+                  {!isCompact && (
+                    <span className="text-sm font-medium text-foreground/90">
+                      {locale === "id" ? "ID" : "EN"}
+                    </span>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </Button>
         </TooltipTrigger>

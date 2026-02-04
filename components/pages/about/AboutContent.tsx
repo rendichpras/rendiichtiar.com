@@ -10,6 +10,7 @@ import {
 import Image from "next/image"
 import { Separator } from "@/components/ui/separator"
 import { BookOpen, GraduationCap, User2 } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Card,
   CardHeader,
@@ -232,31 +233,84 @@ export function AboutContent() {
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <header className="max-w-2xl space-y-2">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {t("title")}
-            </h1>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="show"
+            className="space-y-6"
+          >
+            <motion.header
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="max-w-2xl space-y-2"
+            >
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {t("title")}
+              </h1>
 
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t("subtitle")}
-            </p>
-          </header>
+              <p className="text-sm text-muted-foreground sm:text-base">
+                {t("subtitle")}
+              </p>
+            </motion.header>
 
-          <Separator className="my-6 bg-border/40" />
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                show: { opacity: 1, scaleX: 1 },
+              }}
+            >
+              <Separator className="bg-border/40" />
+            </motion.div>
 
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {nav.map(({ id, label, icon }) => (
-              <SectionNavCard
-                key={id}
-                icon={icon}
-                label={label}
-                active={activeSection === id}
-                onClick={() => setActiveSection(id)}
-              />
-            ))}
-          </div>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {nav.map(({ id, label, icon }) => (
+                <SectionNavCard
+                  key={id}
+                  icon={icon}
+                  label={label}
+                  active={activeSection === id}
+                  onClick={() => setActiveSection(id)}
+                />
+              ))}
+            </motion.div>
 
-          <div className="mt-6">{contentById[activeSection]({ t })}</div>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="mt-6"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeSection}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {contentById[activeSection]({ t })}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </>

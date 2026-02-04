@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { Separator } from "@/components/ui/separator"
+import { motion } from "framer-motion"
 import {
   Card,
   CardHeader,
@@ -131,176 +132,230 @@ export function ContactContent() {
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 py-0 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <header className="max-w-3xl space-y-2">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {t("title")}
-            </h1>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t("subtitle")}
-            </p>
-          </header>
-
-          <Separator className="my-6 bg-border/40" />
-
-          <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
-            <CardHeader>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0 flex-1">
-                  <CardTitle className="text-lg font-semibold text-foreground">
-                    {t("call.title")}
-                  </CardTitle>
-
-                  <CardDescription className="text-sm text-muted-foreground">
-                    {t("call.subtitle")}
-                  </CardDescription>
-
-                  <div className="mt-4 flex flex-wrap gap-4">
-                    <InfoRow icon={Video} text={t("call.platform")} />
-                    <InfoRow icon={Calendar} text={t("call.duration")} />
-                  </div>
-                </div>
-
-                <Button
-                  asChild
-                  size="lg"
-                  className="shrink-0 self-start rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
-                >
-                  <a
-                    href="https://cal.com/rendiichtiar"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t("call.button")}
-                  </a>
-                </Button>
-              </div>
-            </CardHeader>
-          </Card>
-
-          <Card className="mt-8 border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-foreground">
-                {t("form.title")}
-              </CardTitle>
-              <CardDescription className="text-sm text-muted-foreground">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="show"
+            className="space-y-6"
+          >
+            <motion.header
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="max-w-3xl space-y-2"
+            >
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {t("title")}
+              </h1>
+              <p className="text-sm text-muted-foreground sm:text-base">
                 {t("subtitle")}
-              </CardDescription>
-            </CardHeader>
+              </p>
+            </motion.header>
 
-            <CardContent>
-              <form
-                className="space-y-4"
-                onSubmit={handleSubmit}
-                aria-busy={isLoading}
-                noValidate
-              >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="name"
-                      className="text-sm font-medium text-foreground/90"
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                show: { opacity: 1, scaleX: 1 },
+              }}
+            >
+              <Separator className="bg-border/40" />
+            </motion.div>
+
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+            >
+              <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
+                <CardHeader>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-lg font-semibold text-foreground">
+                        {t("call.title")}
+                      </CardTitle>
+
+                      <CardDescription className="text-sm text-muted-foreground">
+                        {t("call.subtitle")}
+                      </CardDescription>
+
+                      <div className="mt-4 flex flex-wrap gap-4">
+                        <InfoRow icon={Video} text={t("call.platform")} />
+                        <InfoRow icon={Calendar} text={t("call.duration")} />
+                      </div>
+                    </div>
+
+                    <Button
+                      asChild
+                      size="lg"
+                      className="shrink-0 self-start rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
                     >
-                      {t("form.name.label")}
-                    </Label>
-
-                    <Input
-                      id="name"
-                      name="name"
-                      placeholder={t("form.name.placeholder")}
-                      autoComplete="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      disabled={isLoading}
-                      aria-invalid={!!errors.name || undefined}
-                      aria-describedby={errors.name ? "name-error" : undefined}
-                      className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
-                    />
-
-                    {errors.name ? (
-                      <p id="name-error" className="text-xs text-destructive">
-                        {errors.name}
-                      </p>
-                    ) : null}
+                      <a
+                        href="https://cal.com/rendiichtiar"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t("call.button")}
+                      </a>
+                    </Button>
                   </div>
+                </CardHeader>
+              </Card>
+            </motion.div>
 
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="email"
-                      className="text-sm font-medium text-foreground/90"
-                    >
-                      {t("form.email.label")}
-                    </Label>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+            >
+              <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold text-foreground">
+                    {t("form.title")}
+                  </CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground">
+                    {t("subtitle")}
+                  </CardDescription>
+                </CardHeader>
 
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder={t("form.email.placeholder")}
-                      autoComplete="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      disabled={isLoading}
-                      aria-invalid={!!errors.email || undefined}
-                      aria-describedby={
-                        errors.email ? "email-error" : undefined
-                      }
-                      className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
-                    />
-
-                    {errors.email ? (
-                      <p id="email-error" className="text-xs text-destructive">
-                        {errors.email}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="message"
-                    className="text-sm font-medium text-foreground/90"
+                <CardContent>
+                  <form
+                    className="space-y-4"
+                    onSubmit={handleSubmit}
+                    aria-busy={isLoading}
+                    noValidate
                   >
-                    {t("form.message.label")}
-                  </Label>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="name"
+                          className="text-sm font-medium text-foreground/90"
+                        >
+                          {t("form.name.label")}
+                        </Label>
 
-                  <Textarea
-                    id="message"
-                    name="message"
-                    placeholder={t("form.message.placeholder")}
-                    rows={6}
-                    required
-                    value={formData.message}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    aria-invalid={!!errors.message || undefined}
-                    aria-describedby={
-                      errors.message ? "message-error" : undefined
-                    }
-                    className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
-                  />
+                        <Input
+                          id="name"
+                          name="name"
+                          placeholder={t("form.name.placeholder")}
+                          autoComplete="name"
+                          required
+                          value={formData.name}
+                          onChange={handleChange}
+                          disabled={isLoading}
+                          aria-invalid={!!errors.name || undefined}
+                          aria-describedby={
+                            errors.name ? "name-error" : undefined
+                          }
+                          className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                        />
 
-                  {errors.message ? (
-                    <p id="message-error" className="text-xs text-destructive">
-                      {errors.message}
-                    </p>
-                  ) : null}
-                </div>
+                        {errors.name ? (
+                          <p
+                            id="name-error"
+                            className="text-xs text-destructive"
+                          >
+                            {errors.name}
+                          </p>
+                        ) : null}
+                      </div>
 
-                <div className="flex items-center">
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isLoading}
-                    className="ml-auto rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
-                  >
-                    {isLoading ? t("form.sending") : t("form.send")}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="email"
+                          className="text-sm font-medium text-foreground/90"
+                        >
+                          {t("form.email.label")}
+                        </Label>
+
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder={t("form.email.placeholder")}
+                          autoComplete="email"
+                          required
+                          value={formData.email}
+                          onChange={handleChange}
+                          disabled={isLoading}
+                          aria-invalid={!!errors.email || undefined}
+                          aria-describedby={
+                            errors.email ? "email-error" : undefined
+                          }
+                          className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                        />
+
+                        {errors.email ? (
+                          <p
+                            id="email-error"
+                            className="text-xs text-destructive"
+                          >
+                            {errors.email}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="message"
+                        className="text-sm font-medium text-foreground/90"
+                      >
+                        {t("form.message.label")}
+                      </Label>
+
+                      <Textarea
+                        id="message"
+                        name="message"
+                        placeholder={t("form.message.placeholder")}
+                        rows={6}
+                        required
+                        value={formData.message}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        aria-invalid={!!errors.message || undefined}
+                        aria-describedby={
+                          errors.message ? "message-error" : undefined
+                        }
+                        className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                      />
+
+                      {errors.message ? (
+                        <p
+                          id="message-error"
+                          className="text-xs text-destructive"
+                        >
+                          {errors.message}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div className="flex items-center">
+                      <Button
+                        type="submit"
+                        size="lg"
+                        disabled={isLoading}
+                        className="ml-auto rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
+                      >
+                        {isLoading ? t("form.sending") : t("form.send")}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </>

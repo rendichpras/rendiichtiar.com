@@ -3,6 +3,7 @@ import { Link, usePathname } from "@/i18n/routing"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { PanelLeftOpen, PanelRightOpen, ArrowUpRight } from "lucide-react"
+import { motion } from "framer-motion"
 import {
   Tooltip,
   TooltipContent,
@@ -118,10 +119,19 @@ export function Navigation({
           </div>
 
           <TooltipProvider delayDuration={150}>
-            <nav
+            <motion.nav
               className="flex-1 space-y-4 overflow-y-auto p-4"
               role="navigation"
               aria-label={tCommon("navigation.main_menu")}
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.05, delayChildren: 0.2 },
+                },
+              }}
+              initial="hidden"
+              animate="show"
             >
               <div className="space-y-1">
                 {MAIN_NAV.map((it) => {
@@ -150,7 +160,13 @@ export function Navigation({
                   )
 
                   return (
-                    <div key={it.path}>
+                    <motion.div
+                      key={it.path}
+                      variants={{
+                        hidden: { opacity: 0, x: -10 },
+                        show: { opacity: 1, x: 0 },
+                      }}
+                    >
                       {collapsed ? (
                         <Tooltip>
                           <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
@@ -165,17 +181,23 @@ export function Navigation({
                       ) : (
                         linkNode
                       )}
-                    </div>
+                    </motion.div>
                   )
                 })}
               </div>
 
               <div className="space-y-1">
-                <div className={cn("px-3 py-2", collapsed && "sr-only")}>
+                <motion.div
+                  className={cn("px-3 py-2", collapsed && "sr-only")}
+                  variants={{
+                    hidden: { opacity: 0, x: -10 },
+                    show: { opacity: 1, x: 0 },
+                  }}
+                >
                   <p className="text-xs font-medium text-muted-foreground">
                     {tCommon("navigation.apps")}
                   </p>
-                </div>
+                </motion.div>
 
                 {APP_NAV.map((it) => {
                   const Icon = it.icon
@@ -203,7 +225,13 @@ export function Navigation({
                   )
 
                   return (
-                    <div key={it.path}>
+                    <motion.div
+                      key={it.path}
+                      variants={{
+                        hidden: { opacity: 0, x: -10 },
+                        show: { opacity: 1, x: 0 },
+                      }}
+                    >
                       {collapsed ? (
                         <Tooltip>
                           <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
@@ -218,21 +246,33 @@ export function Navigation({
                       ) : (
                         linkNode
                       )}
-                    </div>
+                    </motion.div>
                   )
                 })}
               </div>
 
               {!collapsed && (
                 <div className="space-y-1">
-                  <div className="px-3 py-2">
+                  <motion.div
+                    className="px-3 py-2"
+                    variants={{
+                      hidden: { opacity: 0, x: -10 },
+                      show: { opacity: 1, x: 0 },
+                    }}
+                  >
                     <p className="text-xs font-medium text-muted-foreground">
                       {tCommon("navigation.socials")}
                     </p>
-                  </div>
+                  </motion.div>
 
                   {SOCIAL_NAV.map((s) => (
-                    <div key={s.name}>
+                    <motion.div
+                      key={s.name}
+                      variants={{
+                        hidden: { opacity: 0, x: -10 },
+                        show: { opacity: 1, x: 0 },
+                      }}
+                    >
                       <a
                         href={s.href}
                         target="_blank"
@@ -252,11 +292,11 @@ export function Navigation({
                           aria-hidden="true"
                         />
                       </a>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               )}
-            </nav>
+            </motion.nav>
           </TooltipProvider>
 
           <div

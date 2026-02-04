@@ -2,6 +2,7 @@
 
 import { memo } from "react"
 import { useUser } from "@clerk/nextjs"
+import { motion } from "framer-motion"
 
 import { useTranslations } from "next-intl"
 
@@ -99,70 +100,112 @@ export function GuestbookContent() {
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <div className="max-w-2xl space-y-2">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {t("title")}
-            </h1>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t("subtitle")}
-            </p>
-          </div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="show"
+            className="space-y-6"
+          >
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="max-w-2xl space-y-2"
+            >
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {t("title")}
+              </h1>
+              <p className="text-sm text-muted-foreground sm:text-base">
+                {t("subtitle")}
+              </p>
+            </motion.div>
 
-          <Separator className="my-6 bg-border/40" />
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                show: { opacity: 1, scaleX: 1 },
+              }}
+            >
+              <Separator className="bg-border/40" />
+            </motion.div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr,400px]">
-            <div className="space-y-6">
-              {!isLoaded ? (
-                <AuthBarSkeleton />
-              ) : (
-                <AuthBar
-                  isSignedIn={!!isSignedIn}
-                  name={name}
-                  email={email}
-                  image={image}
-                  signInMessage={t("auth.sign_in_message")}
-                />
-              )}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr,400px]">
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+                className="space-y-6"
+              >
+                {!isLoaded ? (
+                  <AuthBarSkeleton />
+                ) : (
+                  <AuthBar
+                    isSignedIn={!!isSignedIn}
+                    name={name}
+                    email={email}
+                    image={image}
+                    signInMessage={t("auth.sign_in_message")}
+                  />
+                )}
 
-              {!isLoaded ? (
-                <FormCardSkeleton />
-              ) : (
-                isSignedIn && (
-                  <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
-                    <CardHeader>
-                      <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
-                        {t("title")}
-                      </CardTitle>
-                      <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                        {t("subtitle")}
-                      </CardDescription>
-                    </CardHeader>
+                {!isLoaded ? (
+                  <FormCardSkeleton />
+                ) : (
+                  isSignedIn && (
+                    <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
+                      <CardHeader>
+                        <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
+                          {t("title")}
+                        </CardTitle>
+                        <CardDescription className="text-xs text-muted-foreground sm:text-sm">
+                          {t("subtitle")}
+                        </CardDescription>
+                      </CardHeader>
 
-                    <CardContent>
-                      <GuestbookForm />
-                    </CardContent>
-                  </Card>
-                )
-              )}
+                      <CardContent>
+                        <GuestbookForm />
+                      </CardContent>
+                    </Card>
+                  )
+                )}
+              </motion.div>
+
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+              >
+                <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
+                  <CardHeader>
+                    <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
+                      {t("list.title")}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground sm:text-sm">
+                      {t("list.subtitle")}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="flex-1 overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0">
+                    <ScrollArea className="h-full pr-2">
+                      <GuestbookList />
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
-
-            <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
-                  {t("list.title")}
-                </CardTitle>
-                <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                  {t("list.subtitle")}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="flex-1 overflow-hidden p-4 pt-0 sm:p-6 sm:pt-0">
-                <ScrollArea className="h-full pr-2">
-                  <GuestbookList />
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
+          </motion.div>
         </div>
       </section>
     </>

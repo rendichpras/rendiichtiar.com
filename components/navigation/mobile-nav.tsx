@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useState } from "react"
 import { Menu, X, ArrowUpRight } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -126,90 +127,147 @@ export function MobileNav() {
         )}
       </Button>
 
-      {open && (
-        <>
-          <div
-            className="fixed inset-0 z-50 bg-black/40 lg:hidden"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
-          <div
-            className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label={tCommon("navigation.nav_menu")}
-            id="mobile-menu"
-          >
-            <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b p-4">
-                <Logo
-                  homeLabel={tPages("home.to_home")}
-                  verifiedLabel={tPages("home.verified")}
-                />
+      <AnimatePresence>
+        {open && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/40 lg:hidden"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-label={tCommon("navigation.nav_menu")}
+              id="mobile-menu"
+            >
+              <div className="flex h-full flex-col">
+                <div className="flex items-center justify-between border-b p-4">
+                  <Logo
+                    homeLabel={tPages("home.to_home")}
+                    verifiedLabel={tPages("home.verified")}
+                  />
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full"
-                  onClick={() => setOpen(false)}
-                  aria-label={tCommon("navigation.close_menu")}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={() => setOpen(false)}
+                    aria-label={tCommon("navigation.close_menu")}
+                  >
+                    <X className="size-5" aria-hidden="true" />
+                  </Button>
+                </div>
+
+                <motion.nav
+                  className="flex-1 space-y-4 overflow-y-auto p-4"
+                  role="menu"
+                  aria-label={tCommon("navigation.main_menu")}
+                  variants={{
+                    open: {
+                      transition: { staggerChildren: 0.05, delayChildren: 0.1 },
+                    },
+                    closed: {
+                      transition: {
+                        staggerChildren: 0.05,
+                        staggerDirection: -1,
+                      },
+                    },
+                  }}
+                  initial="closed"
+                  animate="open"
                 >
-                  <X className="size-5" aria-hidden="true" />
-                </Button>
-              </div>
-
-              <nav
-                className="flex-1 space-y-4 overflow-y-auto p-4"
-                role="menu"
-                aria-label={tCommon("navigation.main_menu")}
-              >
-                <div className="space-y-1">
-                  {MAIN_NAV.map((it) => (
-                    <MobileNavItem
-                      key={it.path}
-                      item={it}
-                      pathname={pathname}
-                      onNavigate={navigate}
-                      label={t(it.nameKey)}
-                    />
-                  ))}
-                </div>
-
-                <div className="space-y-1">
-                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                    {tCommon("navigation.apps")}
+                  <div className="space-y-1">
+                    {MAIN_NAV.map((it) => (
+                      <motion.div
+                        key={it.path}
+                        variants={{
+                          open: { opacity: 1, x: 0 },
+                          closed: { opacity: 0, x: -20 },
+                        }}
+                      >
+                        <MobileNavItem
+                          item={it}
+                          pathname={pathname}
+                          onNavigate={navigate}
+                          label={t(it.nameKey)}
+                        />
+                      </motion.div>
+                    ))}
                   </div>
 
-                  {APP_NAV.map((it) => (
-                    <MobileNavItem
-                      key={it.path}
-                      item={it}
-                      pathname={pathname}
-                      onNavigate={navigate}
-                      label={t(it.nameKey)}
-                    />
-                  ))}
-                </div>
+                  <div className="space-y-1">
+                    <motion.div
+                      variants={{
+                        open: { opacity: 1, x: 0 },
+                        closed: { opacity: 0, x: -20 },
+                      }}
+                      className="px-3 py-2 text-xs font-medium text-muted-foreground"
+                    >
+                      {tCommon("navigation.apps")}
+                    </motion.div>
 
-                <div className="space-y-1">
-                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                    {tCommon("navigation.socials")}
+                    {APP_NAV.map((it) => (
+                      <motion.div
+                        key={it.path}
+                        variants={{
+                          open: { opacity: 1, x: 0 },
+                          closed: { opacity: 0, x: -20 },
+                        }}
+                      >
+                        <MobileNavItem
+                          item={it}
+                          pathname={pathname}
+                          onNavigate={navigate}
+                          label={t(it.nameKey)}
+                        />
+                      </motion.div>
+                    ))}
                   </div>
 
-                  {SOCIAL_NAV.map((s) => (
-                    <MobileExternalItem key={s.name} {...s} t={tCommon} />
-                  ))}
-                </div>
-              </nav>
+                  <div className="space-y-1">
+                    <motion.div
+                      variants={{
+                        open: { opacity: 1, x: 0 },
+                        closed: { opacity: 0, x: -20 },
+                      }}
+                      className="px-3 py-2 text-xs font-medium text-muted-foreground"
+                    >
+                      {tCommon("navigation.socials")}
+                    </motion.div>
 
-              <div className="flex items-center justify-between p-4 pt-6">
-                <ThemeToggle className="hover:scale-100" />
-                <LanguageSwitcher variant="compact" />
+                    {SOCIAL_NAV.map((s) => (
+                      <motion.div
+                        key={s.name}
+                        variants={{
+                          open: { opacity: 1, x: 0 },
+                          closed: { opacity: 0, x: -20 },
+                        }}
+                      >
+                        <MobileExternalItem {...s} t={tCommon} />
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.nav>
+
+                <div className="flex items-center justify-between p-4 pt-6">
+                  <ThemeToggle className="hover:scale-100" />
+                  <LanguageSwitcher variant="compact" />
+                </div>
               </div>
-            </div>
-          </div>
-        </>
-      )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   )
 }

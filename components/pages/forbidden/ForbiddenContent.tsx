@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { motion } from "framer-motion"
 
 export function ForbiddenContent() {
   const router = useRouter()
@@ -12,9 +13,29 @@ export function ForbiddenContent() {
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center text-center lg:min-h-[calc(100vh-8rem)]">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="show"
+            className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center text-center lg:min-h-[calc(100vh-8rem)]"
+          >
             <div className="flex flex-col items-center space-y-6 sm:space-y-8">
-              <div className="relative">
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  show: { opacity: 1, scale: 1 },
+                }}
+                className="relative"
+              >
                 <h1 className="text-7xl font-bold text-primary/20 sm:text-8xl md:text-9xl">
                   403
                 </h1>
@@ -25,9 +46,15 @@ export function ForbiddenContent() {
                 >
                   🚫
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="space-y-4 text-center">
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+                className="space-y-4 text-center"
+              >
                 <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
                   {t("error.forbidden.heading")}
                 </h2>
@@ -43,9 +70,9 @@ export function ForbiddenContent() {
                 >
                   {t("error.forbidden.back_home")}
                 </Button>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </>

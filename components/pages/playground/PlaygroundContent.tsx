@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import type { OnMount } from "@monaco-editor/react"
 import type * as Monaco from "monaco-editor"
 import { useTranslations } from "next-intl"
+import { motion } from "framer-motion"
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -190,178 +191,214 @@ export function PlaygroundContent() {
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <div className="max-w-2xl space-y-2">
-            <div className="flex items-center gap-2">
-              <JavaScriptIcon />
-              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {t("title")}
-              </h1>
-            </div>
-
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t("subtitle")}
-            </p>
-          </div>
-
-          <Separator className="my-6 bg-border/40" />
-
-          <div>
-            <Card
-              className={cn(
-                "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card p-4 text-foreground transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
-                isFullscreen &&
-                  "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
-              )}
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="show"
+            className="space-y-6"
+          >
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="max-w-2xl space-y-2"
             >
-              <CardContent className="space-y-2 p-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      {t("editor.language")}
-                    </span>
-                  </div>
+              <div className="flex items-center gap-2">
+                <JavaScriptIcon />
+                <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  {t("title")}
+                </h1>
+              </div>
 
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setCode("")
-                        setOutput("")
-                      }}
-                      className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
-                    >
-                      <Trash2 className="size-4" aria-hidden="true" />
-                      <span className="sr-only">
-                        {t("editor.actions.clear")}
+              <p className="text-sm text-muted-foreground sm:text-base">
+                {t("subtitle")}
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                show: { opacity: 1, scaleX: 1 },
+              }}
+            >
+              <Separator className="bg-border/40" />
+            </motion.div>
+
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+            >
+              <Card
+                className={cn(
+                  "grid grid-cols-1 gap-4 rounded-xl border border-border/30 bg-card p-4 text-foreground transition-all duration-300 hover:border-border/50 lg:grid-cols-2",
+                  isFullscreen &&
+                    "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
+                )}
+              >
+                <CardContent className="space-y-2 p-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                        {t("editor.language")}
                       </span>
-                    </Button>
+                    </div>
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setIsFullscreen((s) => !s)}
-                      aria-pressed={isFullscreen}
-                      className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
-                    >
-                      <Expand className="size-4" aria-hidden="true" />
-                      <span className="sr-only">
-                        {t("editor.actions.fullscreen")}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setCode("")
+                          setOutput("")
+                        }}
+                        className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                      >
+                        <Trash2 className="size-4" aria-hidden="true" />
+                        <span className="sr-only">
+                          {t("editor.actions.clear")}
+                        </span>
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsFullscreen((s) => !s)}
+                        aria-pressed={isFullscreen}
+                        className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                      >
+                        <Expand className="size-4" aria-hidden="true" />
+                        <span className="sr-only">
+                          {t("editor.actions.fullscreen")}
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-border/30 bg-background/40 transition-all duration-300 hover:border-border/50">
+                    <Suspense fallback={<EditorLoading />}>
+                      <MonacoEditor
+                        height="500px"
+                        defaultLanguage="javascript"
+                        theme="vs-dark"
+                        value={code}
+                        onChange={(value) => {
+                          if (!editorReady) return
+                          const next = value ?? ""
+                          if (next.length > MAX_LEN) {
+                            toast.error(t("errors.code_too_long"))
+                            return
+                          }
+                          setCode(next)
+                        }}
+                        onMount={handleEditorDidMount}
+                        options={{
+                          minimap: { enabled: false },
+                          fontSize: 14,
+                          lineNumbers: "on",
+                          roundedSelection: false,
+                          scrollBeyondLastLine: false,
+                          readOnly: false,
+                          automaticLayout: true,
+                          wordWrap: "on",
+                          formatOnPaste: true,
+                          formatOnType: true,
+                          tabSize: 2,
+                          insertSpaces: true,
+                          detectIndentation: true,
+                          folding: true,
+                          glyphMargin: false,
+                          guides: {
+                            bracketPairs: true,
+                            indentation: true,
+                          },
+                          mouseWheelZoom: true,
+                          dragAndDrop: true,
+                          copyWithSyntaxHighlighting: true,
+                          acceptSuggestionOnEnter: "on",
+                          autoClosingBrackets: "always",
+                          autoClosingQuotes: "always",
+                          autoIndent: "full",
+                          autoSurround: "languageDefined",
+                          quickSuggestions: {
+                            other: true,
+                            comments: true,
+                            strings: true,
+                          },
+                          snippetSuggestions: "inline",
+                          cursorBlinking: "smooth",
+                          cursorSmoothCaretAnimation: "on",
+                          cursorStyle: "line",
+                          renderControlCharacters: true,
+                          renderWhitespace: "selection",
+                        }}
+                        loading={<EditorLoading />}
+                      />
+                    </Suspense>
+                  </div>
+                </CardContent>
+
+                <CardContent className="space-y-2 p-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                        {t("console.title")}
                       </span>
-                    </Button>
-                  </div>
-                </div>
+                    </div>
 
-                <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-border/30 bg-background/40 transition-all duration-300 hover:border-border/50">
-                  <Suspense fallback={<EditorLoading />}>
-                    <MonacoEditor
-                      height="500px"
-                      defaultLanguage="javascript"
-                      theme="vs-dark"
-                      value={code}
-                      onChange={(value) => {
-                        if (!editorReady) return
-                        const next = value ?? ""
-                        if (next.length > MAX_LEN) {
-                          toast.error(t("errors.code_too_long"))
-                          return
-                        }
-                        setCode(next)
-                      }}
-                      onMount={handleEditorDidMount}
-                      options={{
-                        minimap: { enabled: false },
-                        fontSize: 14,
-                        lineNumbers: "on",
-                        roundedSelection: false,
-                        scrollBeyondLastLine: false,
-                        readOnly: false,
-                        automaticLayout: true,
-                        wordWrap: "on",
-                        formatOnPaste: true,
-                        formatOnType: true,
-                        tabSize: 2,
-                        insertSpaces: true,
-                        detectIndentation: true,
-                        folding: true,
-                        glyphMargin: false,
-                        guides: {
-                          bracketPairs: true,
-                          indentation: true,
-                        },
-                        mouseWheelZoom: true,
-                        dragAndDrop: true,
-                        copyWithSyntaxHighlighting: true,
-                        acceptSuggestionOnEnter: "on",
-                        autoClosingBrackets: "always",
-                        autoClosingQuotes: "always",
-                        autoIndent: "full",
-                        autoSurround: "languageDefined",
-                        quickSuggestions: {
-                          other: true,
-                          comments: true,
-                          strings: true,
-                        },
-                        snippetSuggestions: "inline",
-                        cursorBlinking: "smooth",
-                        cursorSmoothCaretAnimation: "on",
-                        cursorStyle: "line",
-                        renderControlCharacters: true,
-                        renderWhitespace: "selection",
-                      }}
-                      loading={<EditorLoading />}
-                    />
-                  </Suspense>
-                </div>
-              </CardContent>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setOutput("")}
+                        className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                      >
+                        <Trash2 className="size-4" aria-hidden="true" />
+                        <span className="sr-only">{t("console.clear")}</span>
+                      </Button>
 
-              <CardContent className="space-y-2 p-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      {t("console.title")}
-                    </span>
+                      <Button
+                        size="icon"
+                        onClick={runCode}
+                        className="size-8 rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
+                      >
+                        <Play className="size-4" aria-hidden="true" />
+                        <span className="sr-only">
+                          {t("editor.actions.run")}
+                        </span>
+                      </Button>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setOutput("")}
-                      className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
-                    >
-                      <Trash2 className="size-4" aria-hidden="true" />
-                      <span className="sr-only">{t("console.clear")}</span>
-                    </Button>
-
-                    <Button
-                      size="icon"
-                      onClick={runCode}
-                      className="size-8 rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
-                    >
-                      <Play className="size-4" aria-hidden="true" />
-                      <span className="sr-only">{t("editor.actions.run")}</span>
-                    </Button>
+                  <div
+                    className="min-h[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
+                    role="region"
+                    aria-live="polite"
+                    aria-label={t("console.output_label")}
+                  >
+                    {output}
                   </div>
-                </div>
-
-                <div
-                  className="min-h[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
-                  role="region"
-                  aria-live="polite"
-                  aria-label={t("console.output_label")}
-                >
-                  {output}
-                </div>
-                <iframe
-                  id="playground-sandbox"
-                  style={{ display: "none" }}
-                  sandbox="allow-scripts"
-                  title={t("editor.iframe_title")}
-                />
-              </CardContent>
-            </Card>
-          </div>
+                  <iframe
+                    id="playground-sandbox"
+                    style={{ display: "none" }}
+                    sandbox="allow-scripts"
+                    title={t("editor.iframe_title")}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </>

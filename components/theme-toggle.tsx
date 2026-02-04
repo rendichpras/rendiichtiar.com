@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -68,11 +69,22 @@ export function ThemeToggle({
             aria-label={t("theme.toggle")}
             aria-pressed={isDark}
           >
-            {isDark ? (
-              <Moon className="size-4 text-primary" aria-hidden="true" />
-            ) : (
-              <Sun className="size-4 text-primary" aria-hidden="true" />
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme === "dark" ? "dark" : "light"}
+                initial={{ scale: 0.5, rotate: -90, opacity: 0 }}
+                animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                exit={{ scale: 0.5, rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                className="flex items-center justify-center"
+              >
+                {isDark ? (
+                  <Moon className="size-4 text-primary" aria-hidden="true" />
+                ) : (
+                  <Sun className="size-4 text-primary" aria-hidden="true" />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </Button>
         </TooltipTrigger>
 

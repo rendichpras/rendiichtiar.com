@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { formatDistanceToNow } from "date-fns"
 import { id as localeID, enUS as localeEN } from "date-fns/locale"
+import { motion } from "framer-motion"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
@@ -378,9 +379,29 @@ export function GuestbookList({
         </div>
       )}
 
-      <div className="space-y-6 pr-4">
+      <motion.div
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1,
+            },
+          },
+        }}
+        initial="hidden"
+        animate="show"
+        className="space-y-6 pr-4"
+      >
         {entries.map((entry) => (
-          <div key={entry.id} className="group">
+          <motion.div
+            key={entry.id}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0 },
+            }}
+            className="group"
+          >
             <div className="flex gap-4">
               <Avatar className="h-8 w-8 shrink-0 border border-border/30">
                 <AvatarImage
@@ -518,9 +539,9 @@ export function GuestbookList({
             </div>
 
             <Separator className="mt-6 bg-border/40" />
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <LoginDialog
         isOpen={showLoginDialog}

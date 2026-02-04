@@ -4,6 +4,7 @@ import { memo } from "react"
 import Image from "next/image"
 import { Marquee } from "@/components/ui/marquee"
 import { useTranslations } from "next-intl"
+import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -109,8 +110,28 @@ export default function HomeContent() {
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-          <div className="space-y-6 sm:space-y-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.3,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="show"
+            className="space-y-6 sm:space-y-8"
+          >
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6"
+            >
               <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
                 <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
                   <Image
@@ -153,11 +174,24 @@ export default function HomeContent() {
                   {t("bio")}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <Separator className="bg-border/40" />
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                show: { opacity: 1, scaleX: 1 },
+              }}
+            >
+              <Separator className="bg-border/40" />
+            </motion.div>
 
-            <div className="space-y-6 sm:space-y-8">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="space-y-6 sm:space-y-8"
+            >
               <div className="space-y-2">
                 <h2 className="text-xl font-bold text-foreground sm:text-2xl">
                   {t("tech_stack")}
@@ -170,11 +204,24 @@ export default function HomeContent() {
               <div className="space-y-2">
                 <MarqueeRow durationSeconds={60} />
               </div>
-            </div>
+            </motion.div>
 
-            <Separator className="bg-border/40" />
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scaleX: 0 },
+                show: { opacity: 1, scaleX: 1 },
+              }}
+            >
+              <Separator className="bg-border/40" />
+            </motion.div>
 
-            <div className="space-y-8 sm:space-y-12">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="space-y-8 sm:space-y-12"
+            >
               <div className="space-y-4 sm:space-y-6">
                 <h2 className="text-xl font-bold text-foreground sm:text-2xl">
                   {t("work_title")}
@@ -211,8 +258,8 @@ export default function HomeContent() {
                   </Button>
                 </CardFooter>
               </Card>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </>
