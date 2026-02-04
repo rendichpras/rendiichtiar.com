@@ -1,7 +1,7 @@
 "use client"
 
 import { memo } from "react"
-import type { Session } from "next-auth"
+import { useUser } from "@clerk/nextjs"
 
 import { PageTransition } from "@/components/animations/page-transition"
 import { useI18n } from "@/lib/i18n"
@@ -22,28 +22,27 @@ import {
 } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-interface Props {
-  session?: Session | null
-}
-
 const AuthBar = memo(function AuthBar({
-  session,
+  isSignedIn,
+  name,
+  email,
+  image,
   signInMessage,
 }: {
-  session?: Session | null
+  isSignedIn: boolean
+  name: string
+  email: string
+  image: string
   signInMessage: string
 }) {
-  if (session) {
-    const user = session.user
-    const name = user?.name || "Guest"
-    const email = user?.email || ""
-    const initial = name.charAt(0).toUpperCase()
+  if (isSignedIn) {
+    const initial = (name || "G").charAt(0).toUpperCase()
 
     return (
       <Card className="border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
         <CardContent className="flex items-start gap-4">
           <Avatar className="size-10 border-2 border-border/30">
-            <AvatarImage src={user?.image || ""} alt={name} />
+            <AvatarImage src={image} alt={name} />
             <AvatarFallback className="text-sm font-medium text-foreground/90">
               {initial}
             </AvatarFallback>
@@ -82,8 +81,16 @@ const AuthBar = memo(function AuthBar({
   )
 })
 
-export function GuestbookContent({ session }: Props) {
+export function GuestbookContent() {
   const { messages } = useI18n()
+  const { isSignedIn, user } = useUser()
+
+  const email =
+    user?.primaryEmailAddress?.emailAddress ??
+    user?.emailAddresses?.[0]?.emailAddress ??
+    ""
+  const name = user?.fullName || user?.username || "Guest"
+  const image = user?.imageUrl || ""
 
   return (
     <PageTransition>
@@ -101,14 +108,16 @@ export function GuestbookContent({ session }: Props) {
           <Separator className="my-6 bg-border/40" />
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr,400px]">
-            {/* kiri: auth + form */}
             <div className="space-y-6">
               <AuthBar
-                session={session}
+                isSignedIn={!!isSignedIn}
+                name={name}
+                email={email}
+                image={image}
                 signInMessage={messages.pages.guestbook.auth.sign_in_message}
               />
 
-              {session && (
+              {isSignedIn && (
                 <Card className="border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50">
                   <CardHeader>
                     <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
@@ -126,7 +135,6 @@ export function GuestbookContent({ session }: Props) {
               )}
             </div>
 
-            {/* kanan: list message */}
             <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card/50 backdrop-blur-sm transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground sm:text-base">

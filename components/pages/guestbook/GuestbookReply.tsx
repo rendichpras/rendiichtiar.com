@@ -1,11 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { formatDistanceToNow } from "date-fns"
-import { id as localeID } from "date-fns/locale"
+import { useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
-import { CornerUpRight, Loader2, Heart } from "lucide-react"
+import { Loader2, Heart } from "lucide-react"
 
 import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook"
 import { useI18n } from "@/lib/i18n"
@@ -30,12 +28,12 @@ export function GuestbookReply({
   parentAuthor,
   isReplying,
 }: ReplyProps) {
-  const { data: session } = useSession()
+  const { isSignedIn, user } = useUser()
   const [replyMessage, setReplyMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { messages } = useI18n()
 
-  if (!session || !isReplying) return null
+  if (!isSignedIn || !isReplying) return null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -44,29 +42,14 @@ export function GuestbookReply({
       toast.error(messages.pages.guestbook.form.empty_error)
       return
     }
-    if (!session.user?.email) {
-      toast.error(messages.pages.guestbook.form.session_error)
-      return
-    }
 
     setIsSubmitting(true)
 
     try {
-      const messageWithMention = `@${parentAuthor} ${replyMessage}`.slice(
-        0,
-        280
-      )
-
-      await addGuestbookEntry(
-        messageWithMention,
-        parentId,
-        parentAuthor
-      )
+      await addGuestbookEntry(replyMessage, parentId, parentAuthor)
 
       setReplyMessage("")
-
       onReplyComplete()
-
       window.dispatchEvent(new CustomEvent("guestbook:refresh"))
 
       toast.success(messages.pages.guestbook.list.reply.success)
@@ -76,6 +59,9 @@ export function GuestbookReply({
       setIsSubmitting(false)
     }
   }
+
+  const name = user?.fullName || user?.username || "Me"
+  const image = user?.imageUrl || ""
 
   return (
     <div className="mt-4 pl-4 sm:pl-8">
@@ -87,15 +73,12 @@ export function GuestbookReply({
       >
         <div className="flex items-start gap-2 sm:gap-3">
           <Avatar className="mt-1 h-5 w-5 border border-border/30 sm:h-6 sm:w-6">
-            <AvatarImage
-              src={session.user?.image || ""}
-              alt={session.user?.name || "Me"}
-            />
+            <AvatarImage src={image} alt={name} />
             <AvatarFallback
               className="text-[10px] font-medium text-foreground/90"
               aria-hidden="true"
             >
-              {session.user?.name?.charAt(0) || "?"}
+              {name.charAt(0) || "?"}
             </AvatarFallback>
           </Avatar>
 
@@ -262,125 +245,85 @@ interface ReplyListProps {
     createdAt: Date
     user: { name: string | null; image: string | null }
     mentionedUser?: { name: string | null } | null
-    likes: {
-      id: string
-      user: { name: string | null; email: string | null }
-    }[]
+    likes: { id: string; user: { name: string | null; email: string | null } }[]
     parentId?: string | null
     rootId?: string | null
   }[]
-  onReplyClick: (targetId: string, authorName: string, rootId: string) => void
+  userEmail?: string | null
+  onReplyClick: (targetId: string, authorName: string, rootId?: string) => void
+  replyingTo: string | null
+  onReplyComplete: (entryId: string) => void
   rootId: string
-  rootAuthor: string
-  activeReplyId: string | null
-  activeReplyAuthor: string
-  onReplyComplete: () => void
 }
 
 export function GuestbookReplyList({
   replies,
+  userEmail,
   onReplyClick,
-  rootId,
-  rootAuthor,
-  activeReplyId,
-  activeReplyAuthor,
+  replyingTo,
   onReplyComplete,
+  rootId,
 }: ReplyListProps) {
-  const { data: session } = useSession()
   const { messages } = useI18n()
 
-  if (replies.length === 0) return null
+  if (!replies.length) return null
 
   return (
-    <div className="mt-4 space-y-4 pl-4 sm:pl-8">
+    <div className="mt-3 space-y-4 border-l border-border/30 pl-4 sm:pl-8">
       {replies.map((reply) => {
-        const isReplyToReply = !!reply.parentId && reply.parentId !== rootId
-        const isActive = activeReplyId === reply.id
+        const name = reply.user.name || "Guest"
+        const initial = name.charAt(0).toUpperCase()
 
         return (
-          <div
-            key={reply.id}
-            className={cn(
-              "space-y-1",
-              isReplyToReply && "border-l border-border/30 pl-6 sm:pl-10"
-            )}
-          >
-            <div className="flex items-start gap-2 sm:gap-3">
-              <Avatar className="mt-1 h-5 w-5 border border-border/30 sm:h-6 sm:w-6">
-                <AvatarImage
-                  src={reply.user.image || ""}
-                  alt={reply.user.name || "Avatar"}
-                />
-                <AvatarFallback
-                  className="text-[10px] font-medium text-foreground/90"
-                  aria-hidden="true"
-                >
-                  {reply.user.name?.charAt(0) || "?"}
-                </AvatarFallback>
-              </Avatar>
+          <div key={reply.id} className="space-y-2">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <Avatar className="mt-0.5 h-6 w-6 border border-border/30 sm:h-7 sm:w-7">
+                  <AvatarImage src={reply.user.image || ""} alt={name} />
+                  <AvatarFallback className="text-[10px] font-medium text-foreground/90">
+                    {initial}
+                  </AvatarFallback>
+                </Avatar>
 
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-medium text-foreground/90 sm:text-sm">
-                    {reply.user.name}
-                  </span>
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-medium text-foreground/90 sm:text-sm">
+                    {name}
+                  </p>
 
-                  <span className="text-[10px] text-muted-foreground sm:text-xs">
-                    {formatDistanceToNow(reply.createdAt, {
-                      addSuffix: true,
-                      locale: localeID,
-                    })}
-                  </span>
-                </div>
+                  <p className="whitespace-pre-wrap break-words text-xs text-foreground/80 sm:text-sm">
+                    {reply.mentionedUser?.name ? (
+                      <span className="font-medium text-primary">
+                        @{reply.mentionedUser.name}{" "}
+                      </span>
+                    ) : null}
+                    {reply.message}
+                  </p>
 
-                <p className="mt-1 break-all text-xs text-muted-foreground sm:text-sm">
-                  {reply.mentionedUser ? (
-                    <>
-                      <span className="text-primary">
-                        @{reply.mentionedUser.name}
-                      </span>{" "}
-                      {reply.message.split(`@${reply.mentionedUser.name} `)[1]}
-                    </>
-                  ) : (
-                    reply.message
-                  )}
-                </p>
+                  <div className="mt-1 flex items-center gap-3 text-[10px] text-muted-foreground sm:text-xs">
+                    <button
+                      type="button"
+                      onClick={() => onReplyClick(reply.id, name, rootId)}
+                      className="hover:text-foreground"
+                    >
+                      {messages.pages.guestbook.list.reply.button}
+                    </button>
 
-                <div className="mt-2 flex flex-wrap items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      onReplyClick(reply.id, reply.user.name || "", rootId)
-                    }
-                    className="flex items-center gap-1 p-0 text-[10px] text-muted-foreground hover:text-primary sm:text-xs"
-                  >
-                    <CornerUpRight
-                      className="h-3 w-3 sm:h-4 sm:w-4"
-                      aria-hidden="true"
+                    <LikeButton
+                      guestbookId={reply.id}
+                      likes={reply.likes}
+                      userEmail={userEmail}
                     />
-                    {messages.pages.guestbook.list.reply.button}
-                  </Button>
-
-                  <LikeButton
-                    guestbookId={reply.id}
-                    likes={reply.likes}
-                    userEmail={session?.user?.email}
-                  />
+                  </div>
                 </div>
-
-                {isActive && (
-                  <GuestbookReply
-                    parentId={reply.id}
-                    parentAuthor={
-                      activeReplyAuthor || reply.user.name || rootAuthor
-                    }
-                    onReplyComplete={onReplyComplete}
-                    isReplying
-                  />
-                )}
               </div>
             </div>
+
+            <GuestbookReply
+              parentId={reply.id}
+              parentAuthor={name}
+              isReplying={replyingTo === reply.id}
+              onReplyComplete={() => onReplyComplete(rootId)}
+            />
           </div>
         )
       })}

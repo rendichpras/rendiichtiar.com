@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../db/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  clerkId      String   @unique
+  email        String   @unique
+  name         String?
+  imageUrl     String?
+  authProvider String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  guestbookEntries GuestbookEntry[] @relation("GuestbookEntryAuthor")
+
+  mentionedIn GuestbookEntry[] @relation("GuestbookEntryMention")
+
+  likes Like[]
+}
+
+model GuestbookEntry {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User @relation("GuestbookEntryAuthor", fields: [userId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   GuestbookEntry?  @relation("EntryReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  GuestbookEntry[] @relation("EntryReplies")
+
+  rootId       String?
+  root         GuestbookEntry?  @relation("EntryRoot", fields: [rootId], references: [id], onDelete: Cascade)
+  rootChildren GuestbookEntry[] @relation("EntryRoot")
+
+  mentionedUserId String?
+  mentionedUser   User? @relation("GuestbookEntryMention", fields: [mentionedUserId], references: [id])
+
+  likes Like[]
+
+  @@index([userId])
+  @@index([parentId])
+  @@index([rootId])
+}
+
+model Like {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  userId         String
+  guestbookEntryId String
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guestbookEntry GuestbookEntry @relation(fields: [guestbookEntryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, guestbookEntryId])
+  @@index([guestbookEntryId])
+}
+
+enum ContactStatus {
+  UNREAD
+  READ
+  REPLIED
+}
+
+model ContactMessage {
+  id        String        @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  status    ContactStatus @default(UNREAD)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  reply ContactReply?
+}
+
+model ContactReply {
+  id             String   @id @default(uuid())
+  contactId      String   @unique
+  contact        ContactMessage @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  message        String
+  subject        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

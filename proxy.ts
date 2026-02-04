@@ -1,53 +1,26 @@
-import { NextResponse, type NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
-import { withAuth } from "next-auth/middleware"
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
 
-async function baseProxy(req: NextRequest) {
-  const token = await getToken({ req })
-  const isAuth = !!token
+const isAdminRoute = createRouteMatcher(["/admin(.*)"])
+const isProtectedContactApi = createRouteMatcher(["/api/contact(.*)"])
 
-  const pathname = req.nextUrl.pathname
-  const isAuthPage = pathname.startsWith("/auth")
-  const isAdminPage = pathname.startsWith("/admin")
-  const isApiRoute = pathname.startsWith("/api")
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth()
 
-  const isAdmin = token?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL
-
-  if (isAuthPage) {
-    if (isAuth) {
-      return NextResponse.redirect(new URL("/", req.url))
-    }
-    return null
-  }
-
-  const isProtectedApiContact =
-    isApiRoute && pathname.startsWith("/api/contact")
-
-  if (!isAuth && (isAdminPage || isProtectedApiContact)) {
-    if (isApiRoute) {
+  if ((isAdminRoute(req) || isProtectedContactApi(req)) && !userId) {
+    if (req.nextUrl.pathname.startsWith("/api/")) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
-    return NextResponse.redirect(new URL("/forbidden", req.url))
-  }
 
-  if (isAdminPage && !isAdmin) {
-    if (isApiRoute) {
-      return new NextResponse("Forbidden", { status: 403 })
-    }
     return NextResponse.redirect(new URL("/forbidden", req.url))
   }
 
   return NextResponse.next()
-}
-
-const proxy = withAuth(baseProxy, {
-  callbacks: {
-    authorized: ({ token }) => !!token,
-  },
 })
 
-export default proxy
-
 export const config = {
-  matcher: ["/admin/:path*", "/api/contact/:path*"],
+  matcher: [
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
+  ],
 }

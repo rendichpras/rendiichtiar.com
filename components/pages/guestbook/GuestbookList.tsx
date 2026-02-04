@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { formatDistanceToNow } from "date-fns"
 import { id as localeID, enUS as localeEN } from "date-fns/locale"
 
@@ -151,13 +151,17 @@ export function GuestbookList({
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set())
 
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
-  const [replyingToName, setReplyingToName] = useState<string>("")
 
   const [showLoginDialog, setShowLoginDialog] = useState(false)
 
-  const { data: session } = useSession()
+  const { isSignedIn, user } = useUser()
   const { messages, language } = useI18n()
   const dateLocale = language === "id" ? localeID : localeEN
+
+  const userEmail =
+    user?.primaryEmailAddress?.emailAddress ??
+    user?.emailAddresses?.[0]?.emailAddress ??
+    null
 
   const toggleReplies = (entryId: string) => {
     setExpandedEntries((prev) => {
@@ -173,7 +177,6 @@ export function GuestbookList({
 
   const handleReplyComplete = (entryId: string) => {
     setReplyingTo(null)
-    setReplyingToName("")
     setExpandedEntries((prev) => new Set([...prev, entryId]))
   }
 
@@ -182,12 +185,11 @@ export function GuestbookList({
     authorName: string,
     rootId?: string
   ) => {
-    if (!session) {
+    if (!isSignedIn) {
       setShowLoginDialog(true)
       return
     }
     setReplyingTo(targetId)
-    setReplyingToName(authorName)
     setExpandedEntries((prev) => new Set([...prev, rootId ?? targetId]))
   }
 
@@ -235,11 +237,11 @@ export function GuestbookList({
         const ev = JSON.parse(evt.data) as
           | { type: "guestbook:new"; entry: RawEntry }
           | {
-            type: "guestbook:like"
-            id: string
-            userEmail: string
-            action: "like" | "unlike"
-          }
+              type: "guestbook:like"
+              id: string
+              userEmail: string
+              action: "like" | "unlike"
+            }
           | { type: "guestbook:reply"; parentId: string; reply: RawReply }
 
         setEntries((prev) => {
@@ -330,7 +332,7 @@ export function GuestbookList({
 
           return prev
         })
-      } catch { }
+      } catch {}
     }
 
     es.onerror = () => {
@@ -441,8 +443,9 @@ export function GuestbookList({
                       handleReplyClick(entry.id, entry.user.name || "")
                     }
                     className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${messages.pages.guestbook.list.reply.button
-                      } ${entry.user.name || ""}`}
+                    aria-label={`${
+                      messages.pages.guestbook.list.reply.button
+                    } ${entry.user.name || ""}`}
                   >
                     <ReplyIcon
                       className="h-4 w-4 sm:h-5 sm:w-5"
@@ -454,7 +457,7 @@ export function GuestbookList({
                   <LikeButton
                     guestbookId={entry.id}
                     likes={entry.likes}
-                    userEmail={session?.user?.email}
+                    userEmail={userEmail}
                   />
 
                   {entry.replies.length > 0 && (
@@ -509,10 +512,9 @@ export function GuestbookList({
                       replies={entry.replies}
                       onReplyClick={handleReplyClick}
                       rootId={entry.id}
-                      rootAuthor={entry.user.name || ""}
-                      activeReplyId={replyingTo}
-                      activeReplyAuthor={replyingToName}
+                      replyingTo={replyingTo}
                       onReplyComplete={() => handleReplyComplete(entry.id)}
+                      userEmail={userEmail}
                     />
                   </div>
                 )}

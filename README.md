@@ -1,283 +1,54 @@
 # rendiichtiar.com
 
-Personal website and platform for content, guest interaction, and admin tools.
+This repository contains the source code for my personal website, [rendiichtiar.com](https://rendiichtiar.com).
 
-This project includes:
-
-- A public site (home, about, contact, playground).
-- A guestbook with replies and likes.
-- An admin dashboard to manage incoming contact messages.
-- Dark/light theme and bilingual UI (ID / EN).
-
-Built with Next.js, React, Tailwind CSS, Drizzle, and NextAuth.
-
----
+I built this website as a playground to experiment with modern web technologies, while serving as an interactive portfolio.
 
 ## Features
 
-### Public pages
-
-- **Home (`/`)**  
-  Intro, tech stack, and work CTA.
-
-- **About (`/about`)**  
-  Career and education timeline.
-
-- **Guestbook (`/guestbook`)**
-  - Sign in with Google or GitHub.
-  - Post a message.
-  - Reply to messages (threaded).
-  - Like messages.
-  - Realtime updates via Server‑Sent Events (no page refresh).
-  - Owner badge on the author's account.
-
-- **Contact (`/contact`)**
-  - Contact form with validation.
-  - “Book a call” card (external scheduler).
-  - Contact messages are persisted and visible in admin.
-
-- **Playground (`/playground`)**
-  - In‑browser JavaScript sandbox using Monaco Editor.
-  - Console output panel.
-  - Run / Clear / Fullscreen controls.
-  - Unsafe browser APIs are blocked (`window`, `fetch`, `eval`, etc.).
-  - Max code length guard and runtime error handling.
-
-### Admin pages
-
-- **Contact admin (`/admin/contact`)**
-  - View messages submitted from `/contact`.
-  - Track status (unread / read / replied).
-  - Send a reply (email) via a modal dialog.
-
-Admin routes are protected. Only the configured admin email can access them.
-
-### Global UI / DX
-
-- Responsive Navbar with slide‑over mobile menu and desktop sidebar.
-- Dark / light / system theme toggle (`next-themes`).
-- Runtime language switcher (ID / EN) backed by `useI18n`.
-- "Back to top" floating button.
-- Accessible labels and roles on interactive and form elements.
-- Toast notifications using `sonner`.
-- Smooth page transitions using `framer-motion`.
-
----
+- **Realtime Guestbook**: Visitors can leave messages, reply to comments, and like entries in real-time.
+- **Playground**: A simple code editor integrated directly into the browser.
+- **Bilingual**: Supports both Indonesian and English.
+- **Modern UI**: Features Dark Mode support and smooth animations.
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript
-- **React:** React 19
-- **Styling:** Tailwind CSS + custom UI components
-- **Auth:** NextAuth (Google, GitHub providers)
-- **DB / ORM:** Drizzle + PostgreSQL
-- **State / Data Fetching:** React Server Components + Server Actions + SSE
-- **Editor:** Monaco Editor (`@monaco-editor/react`)
-- **Icons:** `lucide-react`, `react-icons`
-- **Date formatting:** `date-fns`
-- **Notifications:** `sonner`
+This project is built using:
 
----
+- **Next.js 16** (App Router & Turbopack)
+- **TypeScript**
+- **Tailwind CSS 4**
+- **Prisma** & **PostgreSQL**
+- **Clerk** (Authentication)
+- **Framer Motion**
 
-## Project Structure (high level)
+## Running Locally
 
-```text
-app/
-  page.tsx                 # Home
-  about/
-  contact/
-  guestbook/
-  playground/
-  admin/
-    contact/
-      page.tsx             # Contact inbox dashboard
-  api/
-    auth/[...nextauth]/    # NextAuth routes
-    guestbook/             # Guestbook post/like/reply API + SSE stream
-    contact/               # Contact form submit + reply
+If you want to run this project on your local machine:
 
-components/
-  animations/
-  auth/                    # LoginDialog, SignInButton, SignOutButton
-  pages/                   # Page-level client components
-  ui/                      # Button, Card, Input, Tooltip, etc.
-  navbar/                  # Navbar / sidebar / mobile menu
-  footer/
-  BackToTop.tsx
+1.  **Clone & Install**
 
-lib/
-  i18n.tsx                 # i18n provider + useI18n hook
-  constants/forbidden-words.ts
-  auth.ts                  # Auth helpers
+    ```bash
+    git clone https://github.com/rendichpras/rendiichtiar.com.git
+    cd rendiichtiar.com
+    npm install
+    ```
 
-messages/
-  id.json                  # Bahasa Indonesia copy
-  en.json                  # English copy
+2.  **Environment Setup**
+    Copy `.env.example` to `.env` and fill in the required variables (Database URL, Clerk Keys, etc.).
 
-public/
-  avatar.jpg
-  og-image.png
-  favicon.ico
-```
+3.  **Database Setup**
 
-Notes:
+    ```bash
+    npm run db:generate
+    npm run db:migrate
+    ```
 
-- All text / UI strings live in `messages/en.json` and `messages/id.json`.
-- `useI18n()` is a client hook. Do not call it directly in a Server Component. If a server page needs localized text, pass it down via props from a Client Component or render static text.
-
----
-
-## Requirements
-
-- Node.js 18+ (or whatever your Next.js version requires)
-- PostgreSQL database
-- Google OAuth client (for NextAuth)
-- GitHub OAuth app (for NextAuth)
-- `.env.local` with required secrets
-
----
-
-## Environment Variables
-
-Create `.env.local` in the project root:
-
-```env
-# App URL
-NEXTAUTH_URL=http://localhost:3000
-
-# NextAuth secret
-NEXTAUTH_SECRET=replace-with-a-long-random-string
-
-# OAuth Providers
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-GITHUB_ID=your-github-client-id
-GITHUB_SECRET=your-github-client-secret
-
-# Admin access
-NEXT_PUBLIC_ADMIN_EMAIL=you@example.com
-
-# App URL
-NEXT_PUBLIC_URL=http://localhost:3000
-
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/rendiichtiar
-
-# (Optional) email settings for contact replies
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=no-reply@example.com
-SMTP_PASS=your-smtp-password
-SITE_EMAIL_FROM="Rendi <no-reply@example.com>"
-SITE_EMAIL_TO="you@example.com"
-```
-
-`ADMIN_EMAIL` controls who can access `/admin/**`.
-
----
-
-## Setup and Development
-
-1. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. Generate Drizzle:
-
-   ```bash
-   npx drizzle-kit generate
-   ```
-
-3. Run database migrations (or create schema locally):
-
-   ```bash
-   npx drizzle-kit migrate
-   ```
-
-4. Start the dev server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open the site:  
-   `http://localhost:3000`
-
-You now have:
-
-- `/` public site
-- `/guestbook` interactive guestbook (login required to post)
-- `/contact` contact form
-- `/playground` JS playground
-- `/admin/contact` admin dashboard (requires login as `ADMIN_EMAIL`)
-
----
-
-## Production Build
-
-To create an optimized production build:
-
-```bash
-npm run build
-npm run start
-```
-
-- `npm run build` runs the Next.js production build.
-- `npm run start` serves the built app.
-
-The production environment must have:
-
-- a valid `.env`
-- access to the production PostgreSQL database
-- OAuth credentials with correct redirect URLs
-
----
-
-## Authentication and Admin Access
-
-Authentication is handled by NextAuth with Google and GitHub providers.
-
-A valid session is required for:
-
-- Posting in the guestbook
-- Liking guestbook messages
-- Replying to guestbook threads
-- Viewing and using `/admin/**`
-
-The app compares `session.user.email` to `ADMIN_EMAIL`.  
-Non-admin users are redirected to `/forbidden` or get `401/403` on protected API routes.
-
----
-
-## Internationalization (i18n)
-
-The UI supports Indonesian and English.
-
-`useI18n()` exposes:
-
-- `language` (`"id"` or `"en"`)
-- `setLanguage(nextLang)`
-- `messages` (localized strings)
-
-Example usage:
-
-```tsx
-const { messages } = useI18n()
-
-<h1>{messages.pages.playground.title}</h1>
-<p>{messages.pages.playground.subtitle}</p>
-<Button>{messages.common.auth.login.google}</Button>
-```
-
-The `LanguageSwitcher` component toggles language at runtime.
-
----
+4.  **Run Dev Server**
+    ```bash
+    npm run dev
+    ```
 
 ## License
 
-MIT License.
-You may use, modify, and distribute with attribution.
+[MIT](LICENSE)

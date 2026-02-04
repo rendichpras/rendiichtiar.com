@@ -13,7 +13,6 @@ import {
   Menu,
   X,
   Home,
-  BookOpen,
   User,
   Mail,
   Code,
@@ -71,6 +70,7 @@ const BASE_DELAY = 0.1
 
 function t(messages: Messages, key: string) {
   const parts = key.split(".")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let cur: any = messages
   for (const p of parts) {
     if (cur && typeof cur === "object" && p in cur) {
@@ -176,82 +176,6 @@ const MobileExternalItem = memo(function MobileExternalItem({
       <span className="font-medium">{name}</span>
       <ArrowUpRight className="ml-auto size-4" aria-hidden="true" />
     </a>
-  )
-})
-
-const MobileNavContent = memo(function MobileNavContent({
-  pathname,
-  onNavigate,
-  messages,
-}: {
-  pathname: string
-  onNavigate: (path: string) => void
-  messages: Messages
-}) {
-  const year = new Date().getFullYear()
-
-  const appsLabel = messages.common.navigation.apps
-  const socialsLabel = messages.common.navigation.socials
-  const verifiedLabel = messages.pages.home.verified
-  const homeAria = messages.pages.home.to_home
-
-  return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b px-6 py-4">
-        <button
-          onClick={() => onNavigate("/")}
-          className="group inline-flex items-center gap-2 hover:text-primary"
-          aria-label={homeAria}
-        >
-          <span className="text-xl font-semibold tracking-tight">
-            rendiichtiar
-          </span>
-          <VerifiedBadge label={verifiedLabel} />
-        </button>
-      </div>
-
-      <nav
-        className="flex-1 space-y-2 p-3"
-        role="menu"
-        aria-label={messages.common.navigation.main_menu}
-      >
-        {MAIN_NAV.map((it) => (
-          <MobileNavItem
-            key={it.path}
-            item={it}
-            pathname={pathname}
-            onNavigate={onNavigate}
-            label={t(messages, it.nameKey)}
-          />
-        ))}
-
-        <div className="px-4 pt-2 text-xs font-medium text-muted-foreground">
-          {appsLabel}
-        </div>
-
-        {APP_NAV.map((it) => (
-          <MobileNavItem
-            key={it.path}
-            item={it}
-            pathname={pathname}
-            onNavigate={onNavigate}
-            label={t(messages, it.nameKey)}
-          />
-        ))}
-
-        <div className="px-4 pt-2 text-xs font-medium text-muted-foreground">
-          {socialsLabel}
-        </div>
-
-        {SOCIAL_NAV.map((s) => (
-          <MobileExternalItem key={s.name} {...s} />
-        ))}
-      </nav>
-
-      <div className="border-t p-6 text-center text-sm text-muted-foreground">
-        © {year} rendiichtiar
-      </div>
-    </div>
   )
 })
 

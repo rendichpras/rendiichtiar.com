@@ -8,10 +8,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { signIn } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useI18n } from "@/lib/i18n"
 import { SiGithub, SiGoogle } from "react-icons/si"
+import { useSignIn } from "@clerk/nextjs"
+import type { OAuthStrategy } from "@clerk/types"
 
 interface LoginDialogProps {
   isOpen: boolean
@@ -27,6 +28,17 @@ export function LoginDialog({
   const { messages } = useI18n()
   const pathname = usePathname()
   const callbackUrl = callbackUrlOverride || pathname || "/"
+
+  const { signIn } = useSignIn()
+
+  const signInWith = (strategy: OAuthStrategy) => {
+    if (!signIn) return
+    void signIn.authenticateWithRedirect({
+      strategy,
+      redirectUrl: "/sso-callback",
+      redirectUrlComplete: callbackUrl,
+    })
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -44,7 +56,7 @@ export function LoginDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={() => signIn("google", { callbackUrl })}
+            onClick={() => signInWith("oauth_google")}
             className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
             aria-label={messages.common.auth.login.google}
           >
@@ -55,7 +67,7 @@ export function LoginDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={() => signIn("github", { callbackUrl })}
+            onClick={() => signInWith("oauth_github")}
             className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
             aria-label={messages.common.auth.login.github}
           >

@@ -1,80 +1,23 @@
 import { NextResponse } from "next/server"
-import { randomUUID } from "crypto"
-import { auth } from "@/lib/auth"
-import { db } from "@/db"
-import { guestbook as guestbookTable, users } from "@/db/schema/schema"
-import { eq, desc } from "drizzle-orm"
-import messages from "@/messages/id"
-
-export async function POST(req: Request) {
-  const session = await auth()
-  if (!session?.user?.email) {
-    return new NextResponse(messages.api.guestbook.error.unauthorized, {
-      status: 401,
-    })
-  }
-
-  const json = await req.json()
-  const message = json.message
-
-  const uRows = await db
-    .select({
-      id: users.id,
-    })
-    .from(users)
-    .where(eq(users.email, session.user.email))
-    .limit(1)
-
-  const userRow = uRows[0]
-  if (!userRow) {
-    return new NextResponse(messages.api.guestbook.error.user_not_found, {
-      status: 404,
-    })
-  }
-
-  const inserted = await db
-    .insert(guestbookTable)
-    .values({
-      id: randomUUID(),
-      message,
-      userId: userRow.id,
-    })
-    .returning({
-      id: guestbookTable.id,
-      message: guestbookTable.message,
-      createdAt: guestbookTable.createdAt,
-      userId: guestbookTable.userId,
-    })
-
-  return NextResponse.json(inserted[0])
-}
+import {
+  getGuestbookEntries,
+  addGuestbookEntry,
+} from "@/app/guestbook/guestbook"
 
 export async function GET() {
-  const rows = await db
-    .select({
-      id: guestbookTable.id,
-      message: guestbookTable.message,
-      createdAt: guestbookTable.createdAt,
-      userId: guestbookTable.userId,
-      userName: users.name,
-      userEmail: users.email,
-      userImage: users.image,
-    })
-    .from(guestbookTable)
-    .leftJoin(users, eq(users.id, guestbookTable.userId))
-    .orderBy(desc(guestbookTable.createdAt))
+  const entries = await getGuestbookEntries()
+  return NextResponse.json({ success: true, entries })
+}
 
-  const entries = rows.map((r) => ({
-    id: r.id,
-    message: r.message,
-    createdAt: r.createdAt,
-    userId: r.userId,
-    user: {
-      name: r.userName,
-      email: r.userEmail,
-      image: r.userImage,
-    },
-  }))
-
-  return NextResponse.json(entries)
+export async function POST(req: Request) {
+  try {
+    const body = (await req.json()) as { message?: string }
+    const message = body?.message ?? ""
+    const res = await addGuestbookEntry(message)
+    return NextResponse.json(res)
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "error"
+    const status = msg === "unauthorized" ? 401 : 400
+    return NextResponse.json({ success: false, error: msg }, { status })
+  }
 }

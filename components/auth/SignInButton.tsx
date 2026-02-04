@@ -1,44 +1,57 @@
 "use client"
 
-import { signIn } from "next-auth/react"
+import { useSignIn } from "@clerk/nextjs"
+import type { OAuthStrategy } from "@clerk/types"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { useI18n } from "@/lib/i18n"
 import { SiGithub, SiGoogle } from "react-icons/si"
+
+function SignInWithProviderButton({
+  label,
+  strategy,
+  icon,
+}: {
+  label: string
+  strategy: OAuthStrategy
+  icon: React.ReactNode
+}) {
+  const { signIn } = useSignIn()
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      className="w-full justify-start gap-3 rounded-xl border-border/30 px-4 py-3 text-sm font-medium hover:border-border/50"
+      onClick={() => {
+        if (!signIn) return
+        void signIn.authenticateWithRedirect({
+          strategy,
+          redirectUrl: "/sso-callback",
+          redirectUrlComplete: "/guestbook",
+        })
+      }}
+    >
+      {icon}
+      <span className="flex-1 text-left">{label}</span>
+    </Button>
+  )
+}
 
 export function SignInButton() {
   const { messages } = useI18n()
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <Button
-        type="button"
-        onClick={() => signIn("google", { callbackUrl: "/guestbook" })}
-        variant="outline"
-        className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
-        aria-label={messages.common.auth.login.google}
-      >
-        <SiGoogle className="h-4 w-4 text-foreground" aria-hidden="true" />
-        <span>{messages.common.auth.login.google}</span>
-      </Button>
-
-      <div className="relative flex items-center">
-        <Separator className="bg-border/60" />
-        <span className="absolute left-1/2 -translate-x-1/2 bg-background px-2 text-[10px] uppercase text-muted-foreground">
-          {messages.common.auth.login.or}
-        </span>
-      </div>
-
-      <Button
-        type="button"
-        onClick={() => signIn("github", { callbackUrl: "/guestbook" })}
-        variant="outline"
-        className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
-        aria-label={messages.common.auth.login.github}
-      >
-        <SiGithub className="h-4 w-4 text-foreground" aria-hidden="true" />
-        <span>{messages.common.auth.login.github}</span>
-      </Button>
+    <div className="flex flex-col gap-3">
+      <SignInWithProviderButton
+        label={messages.common.auth.login.google}
+        strategy="oauth_google"
+        icon={<SiGoogle className="size-4" aria-hidden="true" />}
+      />
+      <SignInWithProviderButton
+        label={messages.common.auth.login.github}
+        strategy="oauth_github"
+        icon={<SiGithub className="size-4" aria-hidden="true" />}
+      />
     </div>
   )
 }

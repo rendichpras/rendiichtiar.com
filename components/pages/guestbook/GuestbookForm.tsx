@@ -1,8 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { useSession } from "next-auth/react"
-
+import { useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
@@ -17,7 +16,7 @@ import { cn } from "@/lib/utils"
 const MAX_LEN = 280
 
 export function GuestbookForm() {
-  const { data: session } = useSession()
+  const { isSignedIn } = useUser()
   const { messages } = useI18n()
 
   const [message, setMessage] = useState("")
@@ -28,13 +27,7 @@ export function GuestbookForm() {
     [message]
   )
 
-  if (!session) {
-    return null
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value)
-  }
+  if (!isSignedIn) return null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -43,26 +36,22 @@ export function GuestbookForm() {
       toast.error(messages.pages.guestbook.form.empty_error)
       return
     }
-    if (!session.user?.email) {
-      toast.error(messages.pages.guestbook.form.session_error)
-      return
-    }
 
     setIsSubmitting(true)
 
     try {
       await addGuestbookEntry(message)
-
       setMessage("")
       toast.success(messages.pages.guestbook.form.success)
 
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("guestbook:refresh"))
-      }
+      window.dispatchEvent(new CustomEvent("guestbook:refresh"))
     } catch (error) {
       if (error instanceof Error && error.message === "forbidden_words") {
         toast.error(messages.pages.guestbook.form.forbidden_words)
-      } else if (error instanceof Error && error.message === "message_too_long") {
+      } else if (
+        error instanceof Error &&
+        error.message === "message_too_long"
+      ) {
         toast.error("Message too long")
       } else {
         toast.error(messages.pages.guestbook.form.error)
@@ -87,7 +76,7 @@ export function GuestbookForm() {
         <Textarea
           id="guestbook-message"
           value={message}
-          onChange={handleChange}
+          onChange={(e) => setMessage(e.target.value)}
           placeholder={messages.pages.guestbook.form.placeholder}
           maxLength={MAX_LEN}
           disabled={isSubmitting}
@@ -106,7 +95,6 @@ export function GuestbookForm() {
           {remainingChars}
         </span>
       </div>
-
 
       <div className="flex justify-end">
         <Button

@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { getServerSession } from "next-auth/next"
 import messages from "@/messages/id"
 import { GuestbookContent } from "@/components/pages/guestbook/GuestbookContent"
 import { SITE_URL } from "@/lib/site"
@@ -50,7 +49,6 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function GuestbookPage() {
-  const session = await getServerSession()
-  return <GuestbookContent session={session} />
+export default function GuestbookPage() {
+  return <GuestbookContent />
 }

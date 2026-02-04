@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import {
@@ -61,10 +62,13 @@ export function LanguageSwitcher({
             >
               <div className="flex items-center gap-2">
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
-                  <img
+                  <Image
                     src="https://flagcdn.com/id.svg"
                     alt={messages.common.language_switcher.flag_id_alt}
                     className="h-full w-full object-cover"
+                    width={16}
+                    height={16}
+                    unoptimized
                   />
                 </span>
                 {!isCompact && (
@@ -85,10 +89,13 @@ export function LanguageSwitcher({
             >
               <div className="flex items-center gap-2">
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
-                  <img
+                  <Image
                     src="https://flagcdn.com/gb.svg"
                     alt={messages.common.language_switcher.flag_en_alt}
                     className="h-full w-full object-cover"
+                    width={16}
+                    height={16}
+                    unoptimized
                   />
                 </span>
                 {!isCompact && (
@@ -101,9 +108,7 @@ export function LanguageSwitcher({
           </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
-          <p className="text-xs">
-            {tooltipText}
-          </p>
+          <p className="text-xs">{tooltipText}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

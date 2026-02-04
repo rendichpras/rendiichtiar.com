@@ -1,225 +1,65 @@
 import { NextResponse } from "next/server"
-import { z } from "zod"
-import nodemailer from "nodemailer"
-import { randomUUID } from "crypto"
-import messages from "@/messages/id"
-import { SITE_URL } from "@/lib/site"
-import { auth } from "@/lib/auth"
-
 import { db } from "@/db"
-import { contacts } from "@/db/schema/schema"
-import { desc } from "drizzle-orm"
+import { requireAdmin } from "@/lib/auth/require-admin"
 
-const contactSchema = z.object({
-  name: z.string().min(2, messages.api.contact.validation.name),
-  email: z.string().email(messages.api.contact.validation.email),
-  message: z.string().min(10, messages.api.contact.validation.message),
-})
-
-const adminEmailTemplate = (
-  data: z.infer<typeof contactSchema>,
-  messageId: string
-) => `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px;">
-        <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #f0f0f0;">
-            <h1 style="color: #333; margin: 0; font-size: 24px;">${messages.api.contact.email.admin.title}</h1>
-        </div>
-        
-        <div style="padding: 20px 0;">
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <p style="margin: 0; color: #666;"><strong style="color: #333;">${messages.api.contact.email.admin.name_label}</strong> ${data.name}</p>
-            </div>
-            
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <p style="margin: 0; color: #666;"><strong style="color: #333;">${messages.api.contact.email.admin.email_label}</strong> ${data.email}</p>
-            </div>
-            
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
-                <p style="margin: 0 0 10px 0; color: #333;"><strong>${messages.api.contact.email.admin.message_label}</strong></p>
-                <p style="margin: 0; color: #666; line-height: 1.6;">${data.message}</p>
-            </div>
-        </div>
-        
-        <div style="text-align: center; padding-top: 20px; border-top: 2px solid #f0f0f0;">
-            <p style="color: #999; font-size: 12px; margin: 0;">${messages.api.contact.email.admin.message_id} ${messageId}</p>
-        </div>
-    </div>
-</body>
-</html>
-`
-
-const userEmailTemplate = (data: z.infer<typeof contactSchema>) => `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px;">
-        <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #f0f0f0;">
-            <h1 style="color: #333; margin: 0; font-size: 24px;">${messages.api.contact.email.user.title.replace(
-  "{name}",
-  data.name
-)}</h1>
-        </div>
-        
-        <div style="padding: 20px 0;">
-            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-                ${messages.api.contact.email.user.thank_you}
-            </p>
-            
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <p style="margin: 0 0 10px 0; color: #333;"><strong>${messages.api.contact.email.user.message_copy
-  }</strong></p>
-                <p style="margin: 0; color: #666; line-height: 1.6; font-style: italic;">${data.message
-  }</p>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <div style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
-                    <a href="${SITE_URL}" style="color: #ffffff; text-decoration: none;">${messages.api.contact.email.user.visit_website
-  }</a>
-                </div>
-            </div>
-        </div>
-        
-        <div style="text-align: center; padding-top: 20px; border-top: 2px solid #f0f0f0;">
-            <p style="color: #666; margin-bottom: 5px;">${messages.api.contact.email.user.regards
-  }</p>
-            <p style="color: #333; font-weight: bold; margin: 0;">${messages.api.contact.email.user.signature
-  }</p>
-            <div style="margin-top: 15px;">
-                <a href="https://linkedin.com/in/rendiichtiar" style="color: #007bff; text-decoration: none; margin: 0 10px;">LinkedIn</a>
-                <a href="https://github.com/rendichpras" style="color: #333; text-decoration: none; margin: 0 10px;">GitHub</a>
-                <a href="https://instagram.com/rendiichtiar" style="color: #e1306c; text-decoration: none; margin: 0 10px;">Instagram</a>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-`
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-})
-
-export async function GET() {
+export async function POST(req: Request) {
   try {
-    const session = await auth()
-    if (!session?.user?.email) {
+    const body = (await req.json()) as {
+      name?: string
+      email?: string
+      message?: string
+    }
+
+    const name = body?.name?.trim() ?? ""
+    const email = body?.email?.trim() ?? ""
+    const message = body?.message?.trim() ?? ""
+
+    if (!name || !email || !message) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
+        { success: false, error: "Missing fields" },
+        { status: 400 }
       )
     }
 
-    const rows = await db
-      .select({
-        id: contacts.id,
-        name: contacts.name,
-        email: contacts.email,
-        message: contacts.message,
-        createdAt: contacts.createdAt,
-        status: contacts.status,
-      })
-      .from(contacts)
-      .orderBy(desc(contacts.createdAt))
-
-    return NextResponse.json({
-      success: true,
-      contacts: rows,
+    await db.contactMessage.create({
+      data: { name, email, message, status: "UNREAD" },
     })
-  } catch (error) {
-    console.error("Error fetching contacts:", error)
+
+    return NextResponse.json({ success: true })
+  } catch {
     return NextResponse.json(
-      {
-        success: false,
-        message: messages.api.contact.error.fetch,
-      },
+      { success: false, error: "Failed to send message" },
       { status: 500 }
     )
   }
 }
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    const body = await req.json()
+    await requireAdmin()
 
-    const validatedData = contactSchema.parse(body)
-
-    const inserted = await db
-      .insert(contacts)
-      .values({
-        id: randomUUID(),
-        name: validatedData.name,
-        email: validatedData.email,
-        message: validatedData.message,
-        status: "UNREAD",
-      })
-      .returning({
-        id: contacts.id,
-        name: contacts.name,
-        email: contacts.email,
-        message: contacts.message,
-        status: contacts.status,
-      })
-
-    const contact = inserted[0]
-
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: process.env.SMTP_TO,
-      subject: messages.api.contact.email.admin.subject.replace(
-        "{name}",
-        validatedData.name
-      ),
-      html: adminEmailTemplate(validatedData, contact.id),
-    })
-
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: validatedData.email,
-      subject: messages.api.contact.email.user.subject,
-      html: userEmailTemplate(validatedData),
+    const contacts = await db.contactMessage.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        message: true,
+        createdAt: true,
+        status: true,
+      },
     })
 
     return NextResponse.json({
       success: true,
-      message: messages.api.contact.success.sent,
+      contacts: contacts.map((c) => ({
+        ...c,
+        createdAt: c.createdAt.toISOString(),
+      })),
     })
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: messages.api.contact.error.validation,
-          errors: error.issues,
-        },
-        { status: 400 }
-      )
-    }
-
-    console.error("Error in contact form:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        message: messages.api.contact.error.general,
-      },
-      { status: 500 }
-    )
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "forbidden"
+    const status = msg === "unauthorized" ? 401 : 403
+    return NextResponse.json({ success: false, error: msg }, { status })
   }
 }

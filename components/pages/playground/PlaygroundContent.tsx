@@ -177,7 +177,7 @@ export function PlaygroundContent() {
 
       const sandbox = {
         console: {
-          log: (...args: any[]) => {
+          log: (...args: unknown[]) => {
             try {
               const line = args
                 .map((arg) => {

@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
 import { id as localeID, enUS as localeEN } from "date-fns/locale"
@@ -63,7 +63,7 @@ type Contact = {
 
 export default function AdminContactPage() {
   const { messages, language } = useI18n()
-  const { data: session, status } = useSession()
+  const { isLoaded, isSignedIn, user } = useUser()
   const dateLocale = language === "id" ? localeID : localeEN
   const router = useRouter()
 
@@ -96,13 +96,23 @@ export default function AdminContactPage() {
   }, [messages.admin.contact.notifications.load_error])
 
   useEffect(() => {
-    if (status === "loading") return
-    if (!session || session.user?.email !== "rendiichtiarprasetyo@gmail.com") {
+    if (!isLoaded) return
+    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ""
+    const email =
+      user?.primaryEmailAddress?.emailAddress ??
+      user?.emailAddresses?.[0]?.emailAddress ??
+      ""
+
+    if (
+      !isSignedIn ||
+      !adminEmail ||
+      email.toLowerCase() !== adminEmail.toLowerCase()
+    ) {
       router.push("/forbidden")
       return
     }
     void fetchContacts()
-  }, [fetchContacts, router, session, status])
+  }, [fetchContacts, router, isLoaded, isSignedIn, user])
 
   const handleReply = useCallback(async () => {
     if (!selectedContact) return
@@ -267,7 +277,7 @@ export default function AdminContactPage() {
     )
   }
 
-  if (!session) return null
+  if (!user) return null
 
   return (
     <PageTransition>
@@ -342,9 +352,9 @@ export default function AdminContactPage() {
                             {h.isPlaceholder
                               ? null
                               : flexRender(
-                                h.column.columnDef.header,
-                                h.getContext()
-                              )}
+                                  h.column.columnDef.header,
+                                  h.getContext()
+                                )}
                           </TableHead>
                         ))}
                       </TableRow>
