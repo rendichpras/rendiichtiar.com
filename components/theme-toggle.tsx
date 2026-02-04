@@ -76,8 +76,8 @@ export function ThemeToggle({
                 opacity: isDark ? 0 : 1,
                 rotate: isDark ? -45 : 0,
               }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="absolute inset-0 flex items-center justify-center"
+              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
+              className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
             >
               <Sun className="size-4 text-primary" aria-hidden="true" />
             </motion.div>
@@ -89,8 +89,8 @@ export function ThemeToggle({
                 opacity: isDark ? 1 : 0,
                 rotate: isDark ? 0 : 45,
               }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="absolute inset-0 flex items-center justify-center"
+              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
+              className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
             >
               <Moon className="size-4 text-primary" aria-hidden="true" />
             </motion.div>

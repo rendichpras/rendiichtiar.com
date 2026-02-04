@@ -62,7 +62,9 @@ export const metadata: Metadata = {
   verification: {
     google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
   },
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: SITE_URL,
+  },
 }
 
 export default function Page() {

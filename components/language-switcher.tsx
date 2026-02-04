@@ -52,13 +52,13 @@ export function LanguageSwitcher({
             aria-pressed={language === "en"}
           >
             <motion.div
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
               initial={false}
               animate={{
                 y: language === "id" ? 0 : -30,
                 opacity: language === "id" ? 1 : 0,
               }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
             >
               <div className="flex items-center gap-2">
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
@@ -79,13 +79,13 @@ export function LanguageSwitcher({
               </div>
             </motion.div>
             <motion.div
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
               initial={false}
               animate={{
                 y: language === "en" ? 0 : 30,
                 opacity: language === "en" ? 1 : 0,
               }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
             >
               <div className="flex items-center gap-2">
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
