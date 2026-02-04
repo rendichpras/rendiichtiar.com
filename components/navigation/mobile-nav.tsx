@@ -1,12 +1,12 @@
 "use client"
 
 import { memo, useCallback, useEffect, useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
 import { Menu, X, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useI18n, t } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
+import { useRouter, usePathname } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import {
@@ -52,7 +52,8 @@ const MobileNavItem = memo(function MobileNavItem({
 const MobileExternalItem = memo(function MobileExternalItem({
   name,
   href,
-}: SocialItem) {
+  t,
+}: SocialItem & { t: (key: string) => string }) {
   return (
     <a
       href={href}
@@ -61,7 +62,9 @@ const MobileExternalItem = memo(function MobileExternalItem({
       className="relative flex w-full items-center gap-3 overflow-hidden rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary"
       role="menuitem"
     >
-      <span className="font-medium">{name}</span>
+      <span className="font-medium">
+        {t(`navigation.social_names.${name.toLowerCase()}`)}
+      </span>
       <ArrowUpRight className="ml-auto size-4" aria-hidden="true" />
     </a>
   )
@@ -71,7 +74,9 @@ export function MobileNav() {
   const pathname = usePathname()
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const { messages } = useI18n()
+  const tCommon = useTranslations("common")
+  const tPages = useTranslations("pages")
+  const t = useTranslations()
 
   const navigate = useCallback(
     (path: string) => {
@@ -108,8 +113,8 @@ export function MobileNav() {
         onClick={() => setOpen((v) => !v)}
         aria-label={
           open
-            ? messages.common.navigation.close_menu
-            : messages.common.navigation.open_menu
+            ? tCommon("navigation.close_menu")
+            : tCommon("navigation.open_menu")
         }
         aria-expanded={open}
         aria-controls="mobile-menu"
@@ -132,14 +137,14 @@ export function MobileNav() {
             className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
             role="dialog"
             aria-modal="true"
-            aria-label={messages.common.navigation.nav_menu}
+            aria-label={tCommon("navigation.nav_menu")}
             id="mobile-menu"
           >
             <div className="flex h-full flex-col">
               <div className="flex items-center justify-between border-b p-4">
                 <Logo
-                  homeLabel={messages.pages.home.to_home}
-                  verifiedLabel={messages.pages.home.verified}
+                  homeLabel={tPages("home.to_home")}
+                  verifiedLabel={tPages("home.verified")}
                 />
 
                 <Button
@@ -147,7 +152,7 @@ export function MobileNav() {
                   size="icon"
                   className="rounded-full"
                   onClick={() => setOpen(false)}
-                  aria-label={messages.common.navigation.close_menu}
+                  aria-label={tCommon("navigation.close_menu")}
                 >
                   <X className="size-5" aria-hidden="true" />
                 </Button>
@@ -156,7 +161,7 @@ export function MobileNav() {
               <nav
                 className="flex-1 space-y-4 overflow-y-auto p-4"
                 role="menu"
-                aria-label={messages.common.navigation.main_menu}
+                aria-label={tCommon("navigation.main_menu")}
               >
                 <div className="space-y-1">
                   {MAIN_NAV.map((it) => (
@@ -165,14 +170,14 @@ export function MobileNav() {
                       item={it}
                       pathname={pathname}
                       onNavigate={navigate}
-                      label={t(messages, it.nameKey)}
+                      label={t(it.nameKey)}
                     />
                   ))}
                 </div>
 
                 <div className="space-y-1">
                   <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                    {messages.common.navigation.apps}
+                    {tCommon("navigation.apps")}
                   </div>
 
                   {APP_NAV.map((it) => (
@@ -181,18 +186,18 @@ export function MobileNav() {
                       item={it}
                       pathname={pathname}
                       onNavigate={navigate}
-                      label={t(messages, it.nameKey)}
+                      label={t(it.nameKey)}
                     />
                   ))}
                 </div>
 
                 <div className="space-y-1">
                   <div className="px-3 py-2 text-xs font-medium text-muted-foreground">
-                    {messages.common.navigation.socials}
+                    {tCommon("navigation.socials")}
                   </div>
 
                   {SOCIAL_NAV.map((s) => (
-                    <MobileExternalItem key={s.name} {...s} />
+                    <MobileExternalItem key={s.name} {...s} t={tCommon} />
                   ))}
                 </div>
               </nav>

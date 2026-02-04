@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 import { SiGithub, SiGoogle } from "react-icons/si"
 import { useSignIn } from "@clerk/nextjs"
 import type { OAuthStrategy } from "@clerk/types"
@@ -25,7 +25,7 @@ export function LoginDialog({
   onClose,
   callbackUrlOverride,
 }: LoginDialogProps) {
-  const { messages } = useI18n()
+  const t = useTranslations("common")
   const pathname = usePathname()
   const callbackUrl = callbackUrlOverride || pathname || "/"
 
@@ -45,10 +45,10 @@ export function LoginDialog({
       <DialogContent className="rounded-xl border border-border/30 bg-background text-foreground sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-foreground">
-            {messages.common.auth.login.title}
+            {t("auth.login.title")}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            {messages.common.auth.login.description}
+            {t("auth.login.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -58,10 +58,10 @@ export function LoginDialog({
             variant="outline"
             onClick={() => signInWith("oauth_google")}
             className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
-            aria-label={messages.common.auth.login.google}
+            aria-label={t("auth.login.google")}
           >
             <SiGoogle className="h-4 w-4 text-foreground" aria-hidden="true" />
-            <span>{messages.common.auth.login.google}</span>
+            <span>{t("auth.login.google")}</span>
           </Button>
 
           <Button
@@ -69,10 +69,10 @@ export function LoginDialog({
             variant="outline"
             onClick={() => signInWith("oauth_github")}
             className="w-full justify-center gap-2 rounded-xl border-border/30 text-sm font-medium hover:border-border/50"
-            aria-label={messages.common.auth.login.github}
+            aria-label={t("auth.login.github")}
           >
             <SiGithub className="h-4 w-4 text-foreground" aria-hidden="true" />
-            <span>{messages.common.auth.login.github}</span>
+            <span>{t("auth.login.github")}</span>
           </Button>
         </div>
       </DialogContent>

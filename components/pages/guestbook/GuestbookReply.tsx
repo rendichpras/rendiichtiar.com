@@ -5,8 +5,8 @@ import { useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
 import { Loader2, Heart } from "lucide-react"
 
-import { addGuestbookEntry, toggleLike } from "@/app/guestbook/guestbook"
-import { useI18n } from "@/lib/i18n"
+import { addGuestbookEntry, toggleLike } from "@/lib/actions/guestbook"
+import { useTranslations } from "next-intl"
 import { cn, generateId } from "@/lib/utils"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -31,7 +31,7 @@ export function GuestbookReply({
   const { isSignedIn, user } = useUser()
   const [replyMessage, setReplyMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { messages } = useI18n()
+  const t = useTranslations("pages.guestbook")
 
   if (!isSignedIn || !isReplying) return null
 
@@ -39,7 +39,7 @@ export function GuestbookReply({
     e.preventDefault()
 
     if (!replyMessage.trim()) {
-      toast.error(messages.pages.guestbook.form.empty_error)
+      toast.error(t("form.empty_error"))
       return
     }
 
@@ -54,11 +54,11 @@ export function GuestbookReply({
 
       if (!result.success && result.error) {
         if (result.error === "rate_limit_exceeded") {
-          toast.error("Please wait a moment before replying again.")
+          toast.error(t("list.reply.error_rate_limit"))
         } else if (result.error === "forbidden_words") {
-          toast.error(messages.pages.guestbook.form.forbidden_words)
+          toast.error(t("form.forbidden_words"))
         } else {
-          toast.error(messages.pages.guestbook.list.reply.error)
+          toast.error(t("list.reply.error"))
         }
         return
       }
@@ -67,15 +67,15 @@ export function GuestbookReply({
       onReplyComplete()
       window.dispatchEvent(new CustomEvent("guestbook:refresh"))
 
-      toast.success(messages.pages.guestbook.list.reply.success)
+      toast.success(t("list.reply.success"))
     } catch {
-      toast.error(messages.pages.guestbook.list.reply.error)
+      toast.error(t("list.reply.error"))
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const name = user?.fullName || user?.username || "Me"
+  const name = user?.fullName || user?.username || t("list.me")
   const image = user?.imageUrl || ""
 
   return (
@@ -100,17 +100,16 @@ export function GuestbookReply({
           <div className="min-w-0 flex-1">
             <div className="space-y-2">
               <Label htmlFor={`reply-${parentId}`} className="sr-only">
-                {messages.pages.guestbook.list.reply.placeholder}
+                {t("list.reply.placeholder_label")}
               </Label>
 
               <Textarea
                 id={`reply-${parentId}`}
                 value={replyMessage}
                 onChange={(e) => setReplyMessage(e.target.value)}
-                placeholder={messages.pages.guestbook.list.reply.placeholder.replace(
-                  "{name}",
-                  parentAuthor
-                )}
+                placeholder={t("list.reply.placeholder", {
+                  name: parentAuthor,
+                })}
                 className={cn(
                   "min-h-[44px] resize-none rounded-xl border-border/30 bg-card text-xs transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary sm:text-sm"
                 )}
@@ -128,7 +127,7 @@ export function GuestbookReply({
                 disabled={isSubmitting}
                 className="h-7 rounded-xl px-2 text-[10px] text-muted-foreground hover:bg-background/80 hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
               >
-                {messages.pages.guestbook.list.reply.cancel}
+                {t("list.reply.cancel")}
               </Button>
 
               <Button
@@ -143,10 +142,10 @@ export function GuestbookReply({
                       className="h-3 w-3 animate-spin sm:h-4 sm:w-4"
                       aria-hidden="true"
                     />
-                    <span>{messages.pages.guestbook.list.reply.sending}</span>
+                    <span>{t("list.reply.sending")}</span>
                   </span>
                 ) : (
-                  messages.pages.guestbook.list.reply.send
+                  t("list.reply.send")
                 )}
               </Button>
             </div>
@@ -174,7 +173,7 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
   )
   const [isAnimating, setIsAnimating] = useState(false)
   const [showLoginDialog, setShowLoginDialog] = useState(false)
-  const { messages } = useI18n()
+  const t = useTranslations("pages.guestbook")
 
   const handleLike = async () => {
     if (!userEmail) {
@@ -211,7 +210,7 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
     } catch {
       setLiked(prev.liked)
       setLocalLikes(prev.localLikes)
-      toast.error(messages.pages.guestbook.list.like.error)
+      toast.error(t("list.like.error"))
     } finally {
       setIsLoading(false)
       setTimeout(() => setIsAnimating(false), 200)
@@ -288,14 +287,14 @@ export function GuestbookReplyList({
   onReplyComplete,
   rootId,
 }: ReplyListProps) {
-  const { messages } = useI18n()
+  const t = useTranslations("pages.guestbook")
 
   if (!replies.length) return null
 
   return (
     <div className="mt-3 space-y-4 border-l border-border/30 pl-4 sm:pl-8">
       {replies.map((reply) => {
-        const name = reply.user.name || "Guest"
+        const name = reply.user.name || t("list.guest")
         const initial = name.charAt(0).toUpperCase()
 
         return (
@@ -329,7 +328,7 @@ export function GuestbookReplyList({
                       onClick={() => onReplyClick(reply.id, name, rootId)}
                       className="hover:text-foreground"
                     >
-                      {messages.pages.guestbook.list.reply.button}
+                      {t("list.reply.button")}
                     </button>
 
                     <LikeButton

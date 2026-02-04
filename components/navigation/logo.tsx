@@ -1,7 +1,7 @@
 "use client"
 
 import { memo } from "react"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
 import { VerifiedBadge } from "./verified-badge"
 

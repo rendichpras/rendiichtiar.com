@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server"
-import {
-  getGuestbookEntries,
-  addGuestbookEntry,
-} from "@/app/guestbook/guestbook"
+import { getGuestbookEntries, addGuestbookEntry } from "@/lib/actions/guestbook"
 
 export async function GET() {
   const entries = await getGuestbookEntries()

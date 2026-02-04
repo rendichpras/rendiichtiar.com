@@ -10,11 +10,11 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 export function BackToTop() {
   const [visible, setVisible] = useState(false)
-  const { messages } = useI18n()
+  const t = useTranslations("common")
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -41,7 +41,7 @@ export function BackToTop() {
             variant="outline"
             size="icon"
             onClick={handleClick}
-            aria-label={messages.common.back_to_top.aria_label}
+            aria-label={t("back_to_top.aria_label")}
             className={cn(
               "fixed bottom-8 right-8 z-50 translate-y-16 rounded-full border-border/30 bg-background shadow-lg transition-all duration-300 hover:scale-110 hover:border-border/50 hover:bg-background",
               "opacity-0",
@@ -53,7 +53,7 @@ export function BackToTop() {
         </TooltipTrigger>
 
         <TooltipContent side="left" className="text-xs font-medium">
-          {messages.common.back_to_top.tooltip}
+          {t("back_to_top.tooltip")}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

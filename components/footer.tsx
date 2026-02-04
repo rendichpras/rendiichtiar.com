@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/routing"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SiGithub, SiLinkedin, SiInstagram } from "react-icons/si"
@@ -41,7 +41,7 @@ function SocialLink({
 
 export function Footer() {
   const year = new Date().getFullYear()
-  const { messages } = useI18n()
+  const t = useTranslations("common")
 
   return (
     <footer className="border-t border-border/30 bg-background">
@@ -49,28 +49,28 @@ export function Footer() {
         <div className="py-6">
           <div className="flex flex-col gap-4 text-center text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <p className="text-xs text-muted-foreground sm:text-sm">
-              {messages.common.footer.copyright.replace("{year}", String(year))}
+              {t("footer.copyright", { year })}
             </p>
 
-            <nav aria-label={messages.common.footer.aria_label}>
+            <nav aria-label={t("footer.aria_label")}>
               <ul className="flex items-center justify-center gap-3 sm:justify-end">
                 <SocialLink
                   href="https://github.com/rendichpras"
-                  label={messages.common.footer.social.github}
+                  label={t("footer.social.github")}
                 >
                   <SiGithub className="h-4 w-4" aria-hidden="true" />
                 </SocialLink>
 
                 <SocialLink
                   href="https://linkedin.com/in/rendiichtiar"
-                  label={messages.common.footer.social.linkedin}
+                  label={t("footer.social.linkedin")}
                 >
                   <SiLinkedin className="h-4 w-4" aria-hidden="true" />
                 </SocialLink>
 
                 <SocialLink
                   href="https://instagram.com/rendiichtiar"
-                  label={messages.common.footer.social.instagram}
+                  label={t("footer.social.instagram")}
                 >
                   <SiInstagram className="h-4 w-4" aria-hidden="true" />
                 </SocialLink>

@@ -3,7 +3,7 @@
 import { memo } from "react"
 import { useUser } from "@clerk/nextjs"
 
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 import { SignInButton } from "@/components/auth/SignInButton"
 import { SignOutButton } from "@/components/auth/SignOutButton"
@@ -81,7 +81,7 @@ const AuthBar = memo(function AuthBar({
 })
 
 export function GuestbookContent() {
-  const { messages } = useI18n()
+  const t = useTranslations("pages.guestbook")
   const { isSignedIn, user } = useUser()
 
   const email =
@@ -97,10 +97,10 @@ export function GuestbookContent() {
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <div className="max-w-2xl space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {messages.pages.guestbook.title}
+              {t("title")}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.pages.guestbook.subtitle}
+              {t("subtitle")}
             </p>
           </div>
 
@@ -113,17 +113,17 @@ export function GuestbookContent() {
                 name={name}
                 email={email}
                 image={image}
-                signInMessage={messages.pages.guestbook.auth.sign_in_message}
+                signInMessage={t("auth.sign_in_message")}
               />
 
               {isSignedIn && (
                 <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
                   <CardHeader>
                     <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
-                      {messages.pages.guestbook.title}
+                      {t("title")}
                     </CardTitle>
                     <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                      {messages.pages.guestbook.subtitle}
+                      {t("subtitle")}
                     </CardDescription>
                   </CardHeader>
 
@@ -137,10 +137,10 @@ export function GuestbookContent() {
             <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
-                  {messages.pages.guestbook.list.title}
+                  {t("list.title")}
                 </CardTitle>
                 <CardDescription className="text-xs text-muted-foreground sm:text-sm">
-                  {messages.pages.guestbook.list.subtitle}
+                  {t("list.subtitle")}
                 </CardDescription>
               </CardHeader>
 

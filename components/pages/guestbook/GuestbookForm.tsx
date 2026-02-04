@@ -9,15 +9,15 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 
-import { addGuestbookEntry } from "@/app/guestbook/guestbook"
-import { useI18n } from "@/lib/i18n"
+import { addGuestbookEntry } from "@/lib/actions/guestbook"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 const MAX_LEN = 280
 
 export function GuestbookForm() {
   const { isSignedIn } = useUser()
-  const { messages } = useI18n()
+  const t = useTranslations("pages.guestbook")
 
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -33,7 +33,7 @@ export function GuestbookForm() {
     e.preventDefault()
 
     if (!message.trim()) {
-      toast.error(messages.pages.guestbook.form.empty_error)
+      toast.error(t("form.empty_error"))
       return
     }
 
@@ -44,23 +44,23 @@ export function GuestbookForm() {
 
       if (!result.success) {
         if (result.error === "forbidden_words") {
-          toast.error(messages.pages.guestbook.form.forbidden_words)
+          toast.error(t("form.forbidden_words"))
         } else if (result.error === "message_too_long") {
-          toast.error("Message too long")
+          toast.error(t("form.too_long"))
         } else if (result.error === "rate_limit_exceeded") {
-          toast.error("Please wait a moment before posting again.")
+          toast.error(t("form.rate_limit"))
         } else {
-          toast.error(messages.pages.guestbook.form.error)
+          toast.error(t("form.error"))
         }
         return
       }
 
       setMessage("")
-      toast.success(messages.pages.guestbook.form.success)
+      toast.success(t("form.success"))
 
       window.dispatchEvent(new CustomEvent("guestbook:refresh"))
     } catch {
-      toast.error(messages.pages.guestbook.form.error)
+      toast.error(t("form.error"))
     } finally {
       setIsSubmitting(false)
     }
@@ -75,14 +75,14 @@ export function GuestbookForm() {
     >
       <div className="relative space-y-1">
         <Label htmlFor="guestbook-message" className="sr-only">
-          {messages.pages.guestbook.form.placeholder}
+          {t("form.placeholder")}
         </Label>
 
         <Textarea
           id="guestbook-message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={messages.pages.guestbook.form.placeholder}
+          placeholder={t("form.placeholder")}
           maxLength={MAX_LEN}
           disabled={isSubmitting}
           className={cn(
@@ -113,10 +113,10 @@ export function GuestbookForm() {
           {isSubmitting ? (
             <span className="flex items-center gap-2 text-primary">
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              <span>{messages.pages.guestbook.form.sending}</span>
+              <span>{t("form.sending")}</span>
             </span>
           ) : (
-            messages.pages.guestbook.form.send
+            t("form.send")
           )}
         </Button>
       </div>

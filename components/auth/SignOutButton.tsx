@@ -2,10 +2,10 @@
 
 import { useClerk } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 export function SignOutButton() {
-  const { messages } = useI18n()
+  const t = useTranslations("common")
   const clerk = useClerk()
 
   return (
@@ -15,7 +15,7 @@ export function SignOutButton() {
       className="rounded-lg border-border/30 text-xs hover:border-border/50"
       onClick={() => void clerk.signOut({ redirectUrl: "/" })}
     >
-      {messages.common.auth.logout.title}
+      {t("auth.logout.title")}
     </Button>
   )
 }

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import type { OnMount } from "@monaco-editor/react"
 import type * as Monaco from "monaco-editor"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -39,78 +39,81 @@ function JavaScriptIcon() {
 }
 
 export function PlaygroundContent() {
-  const { messages } = useI18n()
+  const t = useTranslations("pages.playground")
 
   const [code, setCode] = useState<string>(DEFAULT_CODE)
   const [output, setOutput] = useState<string>("")
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
   const [editorReady, setEditorReady] = useState<boolean>(false)
 
-  const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
-    try {
-      setEditorReady(true)
+  const handleEditorDidMount: OnMount = useCallback(
+    (editor, monaco) => {
+      try {
+        setEditorReady(true)
 
-      editor.updateOptions({
-        tabSize: 2,
-        insertSpaces: true,
-        autoClosingBrackets: "always",
-        autoClosingQuotes: "always",
-        formatOnPaste: true,
-        formatOnType: true,
-        quickSuggestions: { other: true, comments: true, strings: true },
-        snippetSuggestions: "inline",
-        acceptSuggestionOnEnter: "on",
-        autoClosingOvertype: "always",
-        autoIndent: "full",
-        autoSurround: "languageDefined",
-      })
+        editor.updateOptions({
+          tabSize: 2,
+          insertSpaces: true,
+          autoClosingBrackets: "always",
+          autoClosingQuotes: "always",
+          formatOnPaste: true,
+          formatOnType: true,
+          quickSuggestions: { other: true, comments: true, strings: true },
+          snippetSuggestions: "inline",
+          acceptSuggestionOnEnter: "on",
+          autoClosingOvertype: "always",
+          autoIndent: "full",
+          autoSurround: "languageDefined",
+        })
 
-      monaco.languages.registerCompletionItemProvider("javascript", {
-        provideCompletionItems(
-          model: Monaco.editor.ITextModel,
-          position: Monaco.Position
-        ): Monaco.languages.ProviderResult<Monaco.languages.CompletionList> {
-          try {
-            const word = model.getWordUntilPosition(position)
+        monaco.languages.registerCompletionItemProvider("javascript", {
+          provideCompletionItems(
+            model: Monaco.editor.ITextModel,
+            position: Monaco.Position
+          ): Monaco.languages.ProviderResult<Monaco.languages.CompletionList> {
+            try {
+              const word = model.getWordUntilPosition(position)
 
-            const range: Monaco.IRange = {
-              startLineNumber: position.lineNumber,
-              endLineNumber: position.lineNumber,
-              startColumn: word.startColumn,
-              endColumn: word.endColumn,
+              const range: Monaco.IRange = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn,
+              }
+
+              return {
+                suggestions: [
+                  {
+                    label: "cl",
+                    kind: monaco.languages.CompletionItemKind.Snippet,
+                    insertText: "console.log($1)",
+                    insertTextRules:
+                      monaco.languages.CompletionItemInsertTextRule
+                        .InsertAsSnippet,
+                    detail: t("editor.autocomplete.console_log"),
+                    range,
+                  },
+                ],
+              }
+            } catch {
+              return { suggestions: [] }
             }
-
-            return {
-              suggestions: [
-                {
-                  label: "cl",
-                  kind: monaco.languages.CompletionItemKind.Snippet,
-                  insertText: "console.log($1)",
-                  insertTextRules:
-                    monaco.languages.CompletionItemInsertTextRule
-                      .InsertAsSnippet,
-                  detail: "Console log",
-                  range,
-                },
-              ],
-            }
-          } catch {
-            return { suggestions: [] }
-          }
-        },
-      })
-    } catch {}
-  }, [])
+          },
+        })
+      } catch {}
+    },
+    [t]
+  )
 
   const runCode = useCallback(() => {
     if (!editorReady) {
-      toast.error(messages.pages.playground.errors.editor_not_ready)
+      toast.error(t("errors.editor_not_ready"))
       return
     }
 
     try {
       if (code.length > MAX_LEN) {
-        toast.error(messages.pages.playground.errors.code_too_long)
+        toast.error(t("errors.code_too_long"))
         return
       }
 
@@ -166,16 +169,10 @@ export function PlaygroundContent() {
         toast.error(error.message)
       } else {
         setOutput(String(error))
-        toast.error(messages.pages.playground.errors.runtime_error)
+        toast.error(t("errors.runtime_error"))
       }
     }
-  }, [
-    code,
-    editorReady,
-    messages.pages.playground.errors.editor_not_ready,
-    messages.pages.playground.errors.runtime_error,
-    messages.pages.playground.errors.code_too_long,
-  ])
+  }, [code, editorReady, t])
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
@@ -197,12 +194,12 @@ export function PlaygroundContent() {
             <div className="flex items-center gap-2">
               <JavaScriptIcon />
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {messages.pages.playground.title}
+                {t("title")}
               </h1>
             </div>
 
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.pages.playground.subtitle}
+              {t("subtitle")}
             </p>
           </div>
 
@@ -220,7 +217,7 @@ export function PlaygroundContent() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      {messages.pages.playground.editor.language}
+                      {t("editor.language")}
                     </span>
                   </div>
 
@@ -236,7 +233,7 @@ export function PlaygroundContent() {
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
                       <span className="sr-only">
-                        {messages.pages.playground.editor.actions.clear}
+                        {t("editor.actions.clear")}
                       </span>
                     </Button>
 
@@ -249,7 +246,7 @@ export function PlaygroundContent() {
                     >
                       <Expand className="size-4" aria-hidden="true" />
                       <span className="sr-only">
-                        {messages.pages.playground.editor.actions.fullscreen}
+                        {t("editor.actions.fullscreen")}
                       </span>
                     </Button>
                   </div>
@@ -266,9 +263,7 @@ export function PlaygroundContent() {
                         if (!editorReady) return
                         const next = value ?? ""
                         if (next.length > MAX_LEN) {
-                          toast.error(
-                            messages.pages.playground.errors.code_too_long
-                          )
+                          toast.error(t("errors.code_too_long"))
                           return
                         }
                         setCode(next)
@@ -324,7 +319,7 @@ export function PlaygroundContent() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      {messages.pages.playground.console.title}
+                      {t("console.title")}
                     </span>
                   </div>
 
@@ -336,9 +331,7 @@ export function PlaygroundContent() {
                       className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
-                      <span className="sr-only">
-                        {messages.pages.playground.console.clear}
-                      </span>
+                      <span className="sr-only">{t("console.clear")}</span>
                     </Button>
 
                     <Button
@@ -347,9 +340,7 @@ export function PlaygroundContent() {
                       className="size-8 rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                     >
                       <Play className="size-4" aria-hidden="true" />
-                      <span className="sr-only">
-                        {messages.pages.playground.editor.actions.run}
-                      </span>
+                      <span className="sr-only">{t("editor.actions.run")}</span>
                     </Button>
                   </div>
                 </div>
@@ -358,10 +349,7 @@ export function PlaygroundContent() {
                   className="min-h[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
                   role="region"
                   aria-live="polite"
-                  aria-label={
-                    messages.pages.playground.console.output_label ??
-                    "Console output"
-                  }
+                  aria-label={t("console.output_label")}
                 >
                   {output}
                 </div>
@@ -369,7 +357,7 @@ export function PlaygroundContent() {
                   id="playground-sandbox"
                   style={{ display: "none" }}
                   sandbox="allow-scripts"
-                  title="Playground Sandbox"
+                  title={t("editor.iframe_title")}
                 />
               </CardContent>
             </Card>

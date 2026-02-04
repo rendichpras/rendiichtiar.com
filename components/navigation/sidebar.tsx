@@ -1,13 +1,8 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
-import { ArrowUpRight, PanelRightOpen, PanelLeftOpen } from "lucide-react"
-import Link from "next/link"
-
+import { useTranslations } from "next-intl"
+import { Link, usePathname } from "@/i18n/routing"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useI18n, t } from "@/lib/i18n"
+import { PanelLeftOpen, PanelRightOpen, ArrowUpRight } from "lucide-react"
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import { MobileNav } from "./mobile-nav"
 import { MAIN_NAV, APP_NAV, SOCIAL_NAV } from "./nav-config"
+import { useEffect, useState } from "react"
 
 export function Navigation({
   collapsed,
@@ -30,7 +26,9 @@ export function Navigation({
 }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
-  const { messages } = useI18n()
+  const tCommon = useTranslations("common")
+  const tPages = useTranslations("pages")
+  const t = useTranslations()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,14 +54,14 @@ export function Navigation({
           <nav
             className="flex h-16 items-center justify-between"
             role="navigation"
-            aria-label={messages.common.navigation.main_menu}
+            aria-label={tCommon("navigation.main_menu")}
           >
             <div className="flex items-center gap-2">
               <MobileNav />
               <Logo
                 className="text-lg"
-                homeLabel={messages.pages.home.to_home}
-                verifiedLabel={messages.pages.home.verified}
+                homeLabel={tPages("home.to_home")}
+                verifiedLabel={tPages("home.verified")}
               />
             </div>
           </nav>
@@ -76,7 +74,7 @@ export function Navigation({
           collapsed ? "w-16" : "w-64"
         )}
         role="complementary"
-        aria-label={messages.common.navigation.nav_menu}
+        aria-label={tCommon("navigation.nav_menu")}
       >
         <div
           className={cn(
@@ -95,8 +93,8 @@ export function Navigation({
             >
               <Logo
                 className="text-xl"
-                homeLabel={messages.pages.home.to_home}
-                verifiedLabel={messages.pages.home.verified}
+                homeLabel={tPages("home.to_home")}
+                verifiedLabel={tPages("home.verified")}
               />
             </div>
 
@@ -107,8 +105,8 @@ export function Navigation({
               onClick={onToggle}
               aria-label={
                 collapsed
-                  ? messages.common.navigation.open_menu
-                  : messages.common.navigation.close_menu
+                  ? tCommon("navigation.open_menu")
+                  : tCommon("navigation.close_menu")
               }
             >
               {collapsed ? (
@@ -123,13 +121,13 @@ export function Navigation({
             <nav
               className="flex-1 space-y-4 overflow-y-auto p-4"
               role="navigation"
-              aria-label={messages.common.navigation.main_menu}
+              aria-label={tCommon("navigation.main_menu")}
             >
               <div className="space-y-1">
                 {MAIN_NAV.map((it) => {
                   const Icon = it.icon
                   const active = pathname === it.path
-                  const label = t(messages, it.nameKey)
+                  const label = t(it.nameKey)
 
                   const linkNode = (
                     <Link
@@ -175,14 +173,14 @@ export function Navigation({
               <div className="space-y-1">
                 <div className={cn("px-3 py-2", collapsed && "sr-only")}>
                   <p className="text-xs font-medium text-muted-foreground">
-                    {messages.common.navigation.apps}
+                    {tCommon("navigation.apps")}
                   </p>
                 </div>
 
                 {APP_NAV.map((it) => {
                   const Icon = it.icon
                   const active = pathname === it.path
-                  const label = t(messages, it.nameKey)
+                  const label = t(it.nameKey)
 
                   const linkNode = (
                     <Link
@@ -229,7 +227,7 @@ export function Navigation({
                 <div className="space-y-1">
                   <div className="px-3 py-2">
                     <p className="text-xs font-medium text-muted-foreground">
-                      {messages.common.navigation.socials}
+                      {tCommon("navigation.socials")}
                     </p>
                   </div>
 
@@ -244,7 +242,11 @@ export function Navigation({
                           "gap-3 px-3"
                         )}
                       >
-                        <span>{s.name}</span>
+                        <span>
+                          {tCommon(
+                            `navigation.social_names.${s.name.toLowerCase()}`
+                          )}
+                        </span>
                         <ArrowUpRight
                           className="ml-auto size-4"
                           aria-hidden="true"

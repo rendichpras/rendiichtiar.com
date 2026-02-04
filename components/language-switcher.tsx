@@ -8,7 +8,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
-import { useI18n } from "@/lib/i18n"
+import { useLocale, useTranslations } from "next-intl"
+import { useRouter, usePathname } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
 
 interface LanguageSwitcherProps {
@@ -20,19 +21,21 @@ export function LanguageSwitcher({
   variant = "default",
   className,
 }: LanguageSwitcherProps) {
-  const { language, setLanguage, messages } = useI18n()
+  const locale = useLocale()
+  const t = useTranslations("common.language_switcher")
+  const router = useRouter()
+  const pathname = usePathname()
+
   const isCompact = variant === "compact"
-  const nextLang = language === "id" ? "en" : "id"
+  const nextLang = locale === "id" ? "en" : "id"
 
-  const ariaLabel =
-    language === "id"
-      ? messages.common.language_switcher.aria_to_en
-      : messages.common.language_switcher.aria_to_id
+  const ariaLabel = locale === "id" ? t("aria_to_en") : t("aria_to_id")
 
-  const tooltipText =
-    language === "id"
-      ? messages.common.language_switcher.tooltip_id
-      : messages.common.language_switcher.tooltip_en
+  const tooltipText = locale === "id" ? t("tooltip_id") : t("tooltip_en")
+
+  const toggleLanguage = () => {
+    router.push(pathname, { locale: nextLang as "id" | "en" })
+  }
 
   return (
     <TooltipProvider>
@@ -41,29 +44,25 @@ export function LanguageSwitcher({
           <Button
             variant="ghost"
             size={isCompact ? "icon" : "default"}
-            onClick={() => setLanguage(nextLang)}
+            onClick={toggleLanguage}
             className={cn(
               "relative overflow-hidden rounded-full hover:bg-accent",
               isCompact ? "size-8" : "h-9 min-w-[2.25rem] px-3",
               className
             )}
             aria-label={ariaLabel}
-            aria-pressed={language === "en"}
+            aria-pressed={locale === "en"}
           >
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-2">
                 <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
                   <Image
                     src={
-                      language === "id"
+                      locale === "id"
                         ? "https://flagcdn.com/id.svg"
                         : "https://flagcdn.com/gb.svg"
                     }
-                    alt={
-                      language === "id"
-                        ? messages.common.language_switcher.flag_id_alt
-                        : messages.common.language_switcher.flag_en_alt
-                    }
+                    alt={locale === "id" ? t("flag_id_alt") : t("flag_en_alt")}
                     className="h-full w-full object-cover"
                     width={16}
                     height={16}
@@ -72,7 +71,7 @@ export function LanguageSwitcher({
                 </span>
                 {!isCompact && (
                   <span className="text-sm font-medium text-foreground/90">
-                    {language === "id" ? "ID" : "EN"}
+                    {locale === "id" ? "ID" : "EN"}
                   </span>
                 )}
               </div>

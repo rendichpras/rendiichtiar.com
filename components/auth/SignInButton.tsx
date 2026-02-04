@@ -3,7 +3,7 @@
 import { useSignIn } from "@clerk/nextjs"
 import type { OAuthStrategy } from "@clerk/types"
 import { Button } from "@/components/ui/button"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 import { SiGithub, SiGoogle } from "react-icons/si"
 
 function SignInWithProviderButton({
@@ -38,17 +38,17 @@ function SignInWithProviderButton({
 }
 
 export function SignInButton() {
-  const { messages } = useI18n()
+  const t = useTranslations("common")
 
   return (
     <div className="flex flex-col gap-3">
       <SignInWithProviderButton
-        label={messages.common.auth.login.google}
+        label={t("auth.login.google")}
         strategy="oauth_google"
         icon={<SiGoogle className="size-4" aria-hidden="true" />}
       />
       <SignInWithProviderButton
-        label={messages.common.auth.login.github}
+        label={t("auth.login.github")}
         strategy="oauth_github"
         icon={<SiGithub className="size-4" aria-hidden="true" />}
       />

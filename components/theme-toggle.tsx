@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/tooltip"
 
 import { cn } from "@/lib/utils"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 interface ThemeToggleProps {
   className?: string
@@ -26,7 +26,7 @@ export function ThemeToggle({
 }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  const { messages } = useI18n()
+  const t = useTranslations("common")
 
   const isCompact = variant === "compact"
   const isDark = theme === "dark"
@@ -45,7 +45,7 @@ export function ThemeToggle({
           isCompact ? "size-8" : "size-9",
           className
         )}
-        aria-label={messages.common.theme.toggle}
+        aria-label={t("theme.toggle")}
       >
         <span className="size-4" />
       </Button>
@@ -65,7 +65,7 @@ export function ThemeToggle({
               isCompact ? "size-8" : "size-9",
               className
             )}
-            aria-label={messages.common.theme.toggle}
+            aria-label={t("theme.toggle")}
             aria-pressed={isDark}
           >
             {isDark ? (
@@ -78,9 +78,7 @@ export function ThemeToggle({
 
         <TooltipContent side="top">
           <p className="text-xs">
-            {isDark
-              ? messages.common.theme.current_dark
-              : messages.common.theme.current_light}
+            {isDark ? t("theme.current_dark") : t("theme.current_light")}
           </p>
         </TooltipContent>
       </Tooltip>

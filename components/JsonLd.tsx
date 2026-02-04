@@ -1,11 +1,15 @@
 import { SITE_URL } from "@/lib/site"
+import { useTranslations } from "next-intl"
 
 export default function JsonLd() {
+  const t = useTranslations("metadata.common")
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Rendi Ichtiar Prasetyo",
-    jobTitle: "Software Engineer",
+    jobTitle: t("job_title"),
+    description: t("description"),
     url: SITE_URL,
     sameAs: [
       "https://github.com/rendichpras",

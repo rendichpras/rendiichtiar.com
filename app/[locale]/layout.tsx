@@ -2,11 +2,84 @@ import { Sora, IBM_Plex_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import JsonLd from "@/components/JsonLd"
-import { metadata } from "./metadata"
 import { cn } from "@/lib/utils"
-import { I18nProvider } from "@/lib/i18n"
+import { NextIntlClientProvider } from "next-intl"
+import {
+  getMessages,
+  setRequestLocale,
+  getTranslations,
+  getLocale,
+} from "next-intl/server"
+import { notFound } from "next/navigation"
+import { routing } from "@/i18n/routing"
 import { AppShell } from "@/components/app-shell"
 import { ClerkProvider } from "@clerk/nextjs"
+import { Metadata } from "next"
+import { SITE_URL } from "@/lib/site"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  const t = await getTranslations({ locale, namespace: "metadata.common" })
+
+  return {
+    title: {
+      default: t("title"),
+      template: `%s | ${t("title")}`,
+    },
+    description: t("description"),
+    metadataBase: new URL(SITE_URL),
+    keywords: t.raw("keywords"),
+    authors: [{ name: "Rendi Ichtiar Prasetyo" }],
+    creator: "Rendi Ichtiar Prasetyo",
+    publisher: "Rendi Ichtiar Prasetyo",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+      },
+    },
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      url: "/",
+      type: "website",
+      siteName: t("title"),
+      locale: locale === "id" ? "id_ID" : "en_US",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: `${t("title")} - Personal Website`,
+        },
+      ],
+    },
+    twitter: {
+      title: t("title"),
+      description: t("description"),
+      card: "summary_large_image",
+      creator: "@rendiichtiar",
+      site: "@rendiichtiar",
+      images: ["/og-image.png"],
+    },
+    verification: {
+      google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
+    },
+    alternates: {
+      canonical: "/",
+      languages: {
+        id: "/id",
+        en: "/en",
+        "x-default": "/id",
+      },
+    },
+  }
+}
 
 const sora = Sora({
   subsets: ["latin"],
@@ -24,19 +97,31 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 })
 
-export { metadata }
-
 const APPLE_ICON_SIZES = [57, 60, 72, 76, 114, 120, 144, 152] as const
 const PNG_ICON_SIZES = [16, 32, 96] as const
 
-export default function RootLayout({
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }))
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const locale = await getLocale()
+
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+    notFound()
+  }
+
+  setRequestLocale(locale)
+
+  const messages = await getMessages()
+
   return (
     <ClerkProvider>
-      <html lang="id" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <head>
           {APPLE_ICON_SIZES.map((s) => (
             <link
@@ -96,10 +181,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <I18nProvider>
+            <NextIntlClientProvider messages={messages}>
               <JsonLd />
               <AppShell>{children}</AppShell>
-            </I18nProvider>
+            </NextIntlClientProvider>
           </ThemeProvider>
         </body>
       </html>

@@ -30,8 +30,8 @@ import {
   LikeButton,
 } from "./GuestbookReply"
 
-import { getGuestbookEntries } from "@/app/guestbook/guestbook"
-import { useI18n } from "@/lib/i18n"
+import { getGuestbookEntries } from "@/lib/actions/guestbook"
+import { useTranslations, useLocale } from "next-intl"
 import { LoginDialog } from "@/components/auth/LoginDialog"
 import { generateId } from "@/lib/utils"
 import Pusher from "pusher-js"
@@ -101,7 +101,7 @@ function orderReplies(list: Reply[], rootId: string): Reply[] {
 }
 
 function ProviderIcon({ provider }: { provider: string }) {
-  const { messages } = useI18n()
+  const t = useTranslations("common")
 
   if (provider === "google") {
     return (
@@ -115,7 +115,7 @@ function ProviderIcon({ provider }: { provider: string }) {
               <SiGoogle className="h-4 w-4" />
             </span>
           </TooltipTrigger>
-          <TooltipContent>{messages.common.auth.login.google}</TooltipContent>
+          <TooltipContent>{t("auth.login.google")}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     )
@@ -133,7 +133,7 @@ function ProviderIcon({ provider }: { provider: string }) {
               <SiGithub className="h-4 w-4" />
             </span>
           </TooltipTrigger>
-          <TooltipContent>{messages.common.auth.login.github}</TooltipContent>
+          <TooltipContent>{t("auth.login.github")}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     )
@@ -157,8 +157,10 @@ export function GuestbookList({
   const [showLoginDialog, setShowLoginDialog] = useState(false)
 
   const { isSignedIn, user } = useUser()
-  const { messages, language } = useI18n()
-  const dateLocale = language === "id" ? localeID : localeEN
+  const t = useTranslations("pages.guestbook")
+  const tCommon = useTranslations("common")
+  const locale = useLocale()
+  const dateLocale = locale === "id" ? localeID : localeEN
 
   const userEmail =
     user?.primaryEmailAddress?.emailAddress ??
@@ -358,9 +360,7 @@ export function GuestbookList({
   if (entries.length === 0) {
     return (
       <div className="flex h-full items-center justify-center py-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          {messages.pages.guestbook.list.empty}
-        </p>
+        <p className="text-sm text-muted-foreground">{t("list.empty")}</p>
       </div>
     )
   }
@@ -370,11 +370,9 @@ export function GuestbookList({
       {showHeader && (
         <div className="mb-4 space-y-1">
           <p className="text-sm font-semibold text-foreground">
-            {messages.pages.guestbook.list.title}
+            {t("list.title")}
           </p>
-          <p className="text-xs text-muted-foreground">
-            {messages.pages.guestbook.list.subtitle}
-          </p>
+          <p className="text-xs text-muted-foreground">{t("list.subtitle")}</p>
         </div>
       )}
 
@@ -385,7 +383,7 @@ export function GuestbookList({
               <Avatar className="h-8 w-8 shrink-0 border border-border/30">
                 <AvatarImage
                   src={entry.user.image || ""}
-                  alt={entry.user.name || "Avatar"}
+                  alt={entry.user.name || tCommon("navigation.avatar")}
                 />
                 <AvatarFallback
                   className="text-[10px] font-medium text-foreground/90"
@@ -410,7 +408,7 @@ export function GuestbookList({
                           <TooltipTrigger asChild>
                             <span
                               className="flex items-center text-primary"
-                              aria-label={messages.pages.guestbook.list.owner}
+                              aria-label={t("list.owner")}
                             >
                               <BadgeCheck
                                 className="h-4 w-4"
@@ -418,9 +416,7 @@ export function GuestbookList({
                               />
                             </span>
                           </TooltipTrigger>
-                          <TooltipContent>
-                            {messages.pages.guestbook.list.owner}
-                          </TooltipContent>
+                          <TooltipContent>{t("list.owner")}</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     )}
@@ -446,15 +442,13 @@ export function GuestbookList({
                       handleReplyClick(entry.id, entry.user.name || "")
                     }
                     className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${
-                      messages.pages.guestbook.list.reply.button
-                    } ${entry.user.name || ""}`}
+                    aria-label={`${t("list.reply.button")} ${entry.user.name || ""}`}
                   >
                     <ReplyIcon
                       className="h-4 w-4 sm:h-5 sm:w-5"
                       aria-hidden="true"
                     />
-                    <span>{messages.pages.guestbook.list.reply.button}</span>
+                    <span>{t("list.reply.button")}</span>
                   </Button>
 
                   <LikeButton
@@ -478,9 +472,7 @@ export function GuestbookList({
                             className="h-4 w-4 sm:h-5 sm:w-5"
                             aria-hidden="true"
                           />
-                          <span>
-                            {messages.pages.guestbook.list.hide_replies}
-                          </span>
+                          <span>{t("list.hide_replies")}</span>
                         </span>
                       ) : (
                         <span className="flex items-center gap-1.5">
@@ -489,10 +481,9 @@ export function GuestbookList({
                             aria-hidden="true"
                           />
                           <span>
-                            {messages.pages.guestbook.list.show_replies.replace(
-                              "{count}",
-                              String(entry.replies.length)
-                            )}
+                            {t("list.show_replies", {
+                              count: entry.replies.length,
+                            })}
                           </span>
                         </span>
                       )}

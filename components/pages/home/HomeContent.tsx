@@ -3,7 +3,7 @@
 import { memo } from "react"
 import Image from "next/image"
 import { Marquee } from "@/components/ui/marquee"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -103,7 +103,7 @@ const MarqueeRow = memo(function MarqueeRow({
 })
 
 export default function HomeContent() {
-  const { messages } = useI18n()
+  const t = useTranslations("pages.home")
 
   return (
     <>
@@ -115,7 +115,7 @@ export default function HomeContent() {
                 <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
                   <Image
                     src="/avatar.jpg"
-                    alt="Rendi Ichtiar Prasetyo"
+                    alt={t("profile_alt")}
                     priority
                     fill
                     sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 128px"
@@ -127,7 +127,7 @@ export default function HomeContent() {
               <div className="flex-1 space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
-                    {messages.pages.home.greeting}
+                    {t("greeting")}
                   </h1>
 
                   <div className="flex flex-wrap gap-3 text-sm text-muted-foreground sm:gap-4 sm:text-base">
@@ -136,7 +136,7 @@ export default function HomeContent() {
                         className="h-4 w-4 text-primary/70"
                         aria-hidden="true"
                       />
-                      <span>{messages.pages.home.location}</span>
+                      <span>{t("location")}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -144,13 +144,13 @@ export default function HomeContent() {
                         className="h-4 w-4 text-primary/70"
                         aria-hidden="true"
                       />
-                      <span>{messages.pages.home.remote_worker}</span>
+                      <span>{t("remote_worker")}</span>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  {messages.pages.home.bio}
+                  {t("bio")}
                 </p>
               </div>
             </div>
@@ -160,10 +160,10 @@ export default function HomeContent() {
             <div className="space-y-6 sm:space-y-8">
               <div className="space-y-2">
                 <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                  {messages.pages.home.tech_stack}
+                  {t("tech_stack")}
                 </h2>
                 <p className="text-sm text-muted-foreground sm:text-base">
-                  {messages.pages.home.tech_stack_desc}
+                  {t("tech_stack_desc")}
                 </p>
               </div>
 
@@ -177,11 +177,11 @@ export default function HomeContent() {
             <div className="space-y-8 sm:space-y-12">
               <div className="space-y-4 sm:space-y-6">
                 <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                  {messages.pages.home.work_title}
+                  {t("work_title")}
                 </h2>
 
                 <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-                  {messages.pages.home.work_desc}
+                  {t("work_desc")}
                 </p>
               </div>
 
@@ -193,12 +193,12 @@ export default function HomeContent() {
                       aria-hidden="true"
                     />
                     <CardTitle className="text-lg font-semibold text-foreground sm:text-xl">
-                      {messages.pages.home.lets_work}
+                      {t("lets_work")}
                     </CardTitle>
                   </div>
 
                   <CardDescription className="text-sm text-muted-foreground sm:text-base">
-                    {messages.pages.home.work_cta}
+                    {t("work_cta")}
                   </CardDescription>
                 </CardHeader>
 
@@ -207,9 +207,7 @@ export default function HomeContent() {
                     asChild
                     className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                   >
-                    <a href="mailto:rendichpras@gmail.com">
-                      {messages.pages.home.contact_me}
-                    </a>
+                    <a href="mailto:rendichpras@gmail.com">{t("contact_me")}</a>
                   </Button>
                 </CardFooter>
               </Card>

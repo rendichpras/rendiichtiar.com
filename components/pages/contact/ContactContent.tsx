@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar, Video } from "lucide-react"
 import { toast } from "sonner"
 import { z } from "zod"
-import { useI18n, type Messages } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 type ContactFormData = {
   name: string
@@ -26,11 +26,11 @@ type ContactFormData = {
 
 type FormErrors = Partial<Record<keyof ContactFormData, string>>
 
-function makeContactSchema(messages: Messages) {
+function makeContactSchema(t: (key: string) => string) {
   return z.object({
-    name: z.string().min(2, messages.pages.contact.form.validation.name),
-    email: z.string().email(messages.pages.contact.form.validation.email),
-    message: z.string().min(10, messages.pages.contact.form.validation.message),
+    name: z.string().min(2, t("form.validation.name")),
+    email: z.string().email(t("form.validation.email")),
+    message: z.string().min(10, t("form.validation.message")),
   })
 }
 
@@ -50,7 +50,8 @@ function InfoRow({
 }
 
 export function ContactContent() {
-  const { messages } = useI18n()
+  const t = useTranslations("pages.contact")
+  const tGuestbook = useTranslations("pages.guestbook")
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<ContactFormData>({
@@ -60,7 +61,7 @@ export function ContactContent() {
   })
   const [errors, setErrors] = useState<FormErrors>({})
 
-  const contactSchema = useMemo(() => makeContactSchema(messages), [messages])
+  const contactSchema = useMemo(() => makeContactSchema(t), [t])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -88,12 +89,12 @@ export function ContactContent() {
 
       if (!res.ok) {
         const errorCode = data?.error
-        let errorMessage = messages.pages.contact.form.error.general
+        let errorMessage = t("form.error.general")
 
         if (errorCode === "forbidden_words") {
-          errorMessage = messages.pages.guestbook.form.forbidden_words
+          errorMessage = tGuestbook("form.forbidden_words")
         } else if (errorCode === "rate_limit_exceeded") {
-          errorMessage = messages.pages.contact.form.error.rate_limit
+          errorMessage = t("form.error.rate_limit")
         } else if (typeof errorCode === "string") {
           errorMessage = errorCode
         }
@@ -102,7 +103,7 @@ export function ContactContent() {
       }
 
       setFormData({ name: "", email: "", message: "" })
-      toast.success(messages.pages.contact.form.success)
+      toast.success(t("form.success"))
     } catch (err) {
       if (err instanceof z.ZodError) {
         const fieldErrors: FormErrors = {}
@@ -119,7 +120,7 @@ export function ContactContent() {
       } else if (err instanceof Error) {
         toast.error(err.message)
       } else {
-        toast.error(messages.pages.contact.form.error.general)
+        toast.error(t("form.error.general"))
       }
     } finally {
       setIsLoading(false)
@@ -132,10 +133,10 @@ export function ContactContent() {
         <div className="container mx-auto px-4 py-0 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <header className="max-w-3xl space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {messages.pages.contact.title}
+              {t("title")}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.pages.contact.subtitle}
+              {t("subtitle")}
             </p>
           </header>
 
@@ -146,22 +147,16 @@ export function ContactContent() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <CardTitle className="text-lg font-semibold text-foreground">
-                    {messages.pages.contact.call.title}
+                    {t("call.title")}
                   </CardTitle>
 
                   <CardDescription className="text-sm text-muted-foreground">
-                    {messages.pages.contact.call.subtitle}
+                    {t("call.subtitle")}
                   </CardDescription>
 
                   <div className="mt-4 flex flex-wrap gap-4">
-                    <InfoRow
-                      icon={Video}
-                      text={messages.pages.contact.call.platform}
-                    />
-                    <InfoRow
-                      icon={Calendar}
-                      text={messages.pages.contact.call.duration}
-                    />
+                    <InfoRow icon={Video} text={t("call.platform")} />
+                    <InfoRow icon={Calendar} text={t("call.duration")} />
                   </div>
                 </div>
 
@@ -175,7 +170,7 @@ export function ContactContent() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {messages.pages.contact.call.button}
+                    {t("call.button")}
                   </a>
                 </Button>
               </div>
@@ -185,10 +180,10 @@ export function ContactContent() {
           <Card className="mt-8 border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-foreground">
-                {messages.pages.contact.form.title}
+                {t("form.title")}
               </CardTitle>
               <CardDescription className="text-sm text-muted-foreground">
-                {messages.pages.contact.subtitle}
+                {t("subtitle")}
               </CardDescription>
             </CardHeader>
 
@@ -205,13 +200,13 @@ export function ContactContent() {
                       htmlFor="name"
                       className="text-sm font-medium text-foreground/90"
                     >
-                      {messages.pages.contact.form.name.label}
+                      {t("form.name.label")}
                     </Label>
 
                     <Input
                       id="name"
                       name="name"
-                      placeholder={messages.pages.contact.form.name.placeholder}
+                      placeholder={t("form.name.placeholder")}
                       autoComplete="name"
                       required
                       value={formData.name}
@@ -234,16 +229,14 @@ export function ContactContent() {
                       htmlFor="email"
                       className="text-sm font-medium text-foreground/90"
                     >
-                      {messages.pages.contact.form.email.label}
+                      {t("form.email.label")}
                     </Label>
 
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      placeholder={
-                        messages.pages.contact.form.email.placeholder
-                      }
+                      placeholder={t("form.email.placeholder")}
                       autoComplete="email"
                       required
                       value={formData.email}
@@ -269,15 +262,13 @@ export function ContactContent() {
                     htmlFor="message"
                     className="text-sm font-medium text-foreground/90"
                   >
-                    {messages.pages.contact.form.message.label}
+                    {t("form.message.label")}
                   </Label>
 
                   <Textarea
                     id="message"
                     name="message"
-                    placeholder={
-                      messages.pages.contact.form.message.placeholder
-                    }
+                    placeholder={t("form.message.placeholder")}
                     rows={6}
                     required
                     value={formData.message}
@@ -304,9 +295,7 @@ export function ContactContent() {
                     disabled={isLoading}
                     className="ml-auto rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
                   >
-                    {isLoading
-                      ? messages.pages.contact.form.sending
-                      : messages.pages.contact.form.send}
+                    {isLoading ? t("form.sending") : t("form.send")}
                   </Button>
                 </div>
               </form>

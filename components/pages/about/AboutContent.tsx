@@ -19,15 +19,15 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useI18n, type Messages } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 type SectionId = "intro" | "career" | "education"
 
 interface SectionContent {
   id: SectionId
   icon: ComponentType<{ className?: string }>
-  titleKey: keyof Messages["pages"]["about"]["sections"]
-  content: (props: { messages: Messages }) => ReactNode
+  titleKey: string
+  content: (props: { t: (key: string) => string }) => ReactNode
 }
 
 const SectionNavCard = memo(function SectionNavCard({
@@ -122,33 +122,31 @@ const sections: readonly SectionContent[] = [
   {
     id: "intro",
     icon: User2,
-    titleKey: "intro",
-    content: ({ messages }) => (
+    titleKey: "sections.intro",
+    content: ({ t }) => (
       <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
-            {messages.pages.about.sections.intro}
+            {t("sections.intro")}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground sm:text-base">
-            {messages.pages.about.intro.headline}
+            {t("intro.headline")}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4 text-sm leading-relaxed text-foreground/90 sm:text-base">
           {[
-            messages.pages.about.intro.greeting,
-            messages.pages.about.intro.bio1,
-            messages.pages.about.intro.bio2,
-            messages.pages.about.intro.bio3,
-            messages.pages.about.intro.bio4,
-            messages.pages.about.intro.bio5,
-          ].map((t, i) => (
-            <p key={i}>{t}</p>
+            t("intro.greeting"),
+            t("intro.bio1"),
+            t("intro.bio2"),
+            t("intro.bio3"),
+            t("intro.bio4"),
+            t("intro.bio5"),
+          ].map((text, i) => (
+            <p key={i}>{text}</p>
           ))}
 
-          <p className="text-sm text-muted-foreground">
-            {messages.pages.about.intro.closing}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("intro.closing")}</p>
         </CardContent>
       </Card>
     ),
@@ -156,20 +154,20 @@ const sections: readonly SectionContent[] = [
   {
     id: "career",
     icon: BookOpen,
-    titleKey: "career",
-    content: ({ messages }) => (
+    titleKey: "sections.career",
+    content: ({ t }) => (
       <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
-            {messages.pages.about.sections.career}
+            {t("sections.career")}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground sm:text-base">
-            {messages.pages.about.career.headline}
+            {t("career.headline")}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="p-6 pt-0 text-center text-sm text-muted-foreground sm:text-base">
-          {messages.pages.about.career.empty}
+          {t("career.empty")}
         </CardContent>
       </Card>
     ),
@@ -177,33 +175,33 @@ const sections: readonly SectionContent[] = [
   {
     id: "education",
     icon: GraduationCap,
-    titleKey: "education",
-    content: ({ messages }) => (
+    titleKey: "sections.education",
+    content: ({ t }) => (
       <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
-            {messages.pages.about.sections.education}
+            {t("sections.education")}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground sm:text-base">
-            {messages.pages.about.education.headline}
+            {t("education.headline")}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <EducationItem
             src="/upb.png"
-            name={messages.pages.about.education.upb.name}
-            major={messages.pages.about.education.upb.major}
-            period={messages.pages.about.education.upb.period}
-            location={messages.pages.about.education.upb.location}
+            name={t("education.upb.name")}
+            major={t("education.upb.major")}
+            period={t("education.upb.period")}
+            location={t("education.upb.location")}
           />
 
           <EducationItem
             src="/smkhsagung.png"
-            name={messages.pages.about.education.smk.name}
-            major={messages.pages.about.education.smk.major}
-            period={messages.pages.about.education.smk.period}
-            location={messages.pages.about.education.smk.location}
+            name={t("education.smk.name")}
+            major={t("education.smk.major")}
+            period={t("education.smk.period")}
+            location={t("education.smk.location")}
           />
         </CardContent>
       </Card>
@@ -212,12 +210,12 @@ const sections: readonly SectionContent[] = [
 ] as const
 
 export function AboutContent() {
-  const { messages } = useI18n()
+  const t = useTranslations("pages.about")
   const [activeSection, setActiveSection] = useState<SectionId>("intro")
 
   const nav = sections.map((s) => ({
     id: s.id,
-    label: messages.pages.about.sections[s.titleKey],
+    label: t(s.titleKey),
     icon: s.icon,
   }))
 
@@ -236,11 +234,11 @@ export function AboutContent() {
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <header className="max-w-2xl space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {messages.pages.about.title}
+              {t("title")}
             </h1>
 
             <p className="text-sm text-muted-foreground sm:text-base">
-              {messages.pages.about.subtitle}
+              {t("subtitle")}
             </p>
           </header>
 
@@ -258,7 +256,7 @@ export function AboutContent() {
             ))}
           </div>
 
-          <div className="mt-6">{contentById[activeSection]({ messages })}</div>
+          <div className="mt-6">{contentById[activeSection]({ t })}</div>
         </div>
       </section>
     </>

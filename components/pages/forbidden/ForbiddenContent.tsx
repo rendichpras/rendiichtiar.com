@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { useI18n } from "@/lib/i18n"
+import { useTranslations } from "next-intl"
 
 export function ForbiddenContent() {
   const router = useRouter()
-  const { messages } = useI18n()
+  const t = useTranslations("common")
 
   return (
     <>
@@ -29,11 +29,11 @@ export function ForbiddenContent() {
 
               <div className="space-y-4 text-center">
                 <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-                  {messages.common.error.forbidden.heading}
+                  {t("error.forbidden.heading")}
                 </h2>
 
                 <p className="mx-auto max-w-sm text-sm text-muted-foreground sm:text-base">
-                  {messages.common.error.forbidden.message}
+                  {t("error.forbidden.message")}
                 </p>
 
                 <Button
@@ -41,7 +41,7 @@ export function ForbiddenContent() {
                   onClick={() => router.push("/")}
                   className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                 >
-                  {messages.common.error.forbidden.back_home}
+                  {t("error.forbidden.back_home")}
                 </Button>
               </div>
             </div>
