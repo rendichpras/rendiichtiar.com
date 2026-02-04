@@ -207,7 +207,8 @@
           "message": "Message must be at least 10 characters"
         },
         "error": {
-          "general": "Something went wrong. Please try again later."
+          "general": "Something went wrong. Please try again later.",
+          "rate_limit": "Too many messages. Please try again later."
         }
       }
     },

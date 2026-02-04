@@ -207,7 +207,8 @@
           "message": "Pesan minimal 10 karakter"
         },
         "error": {
-          "general": "Terjadi kesalahan. Silakan coba lagi nanti."
+          "general": "Terjadi kesalahan. Silakan coba lagi nanti.",
+          "rate_limit": "Terlalu banyak pesan. Silakan coba lagi nanti."
         }
       }
     },

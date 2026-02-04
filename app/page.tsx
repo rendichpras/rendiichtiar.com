@@ -1,24 +1,16 @@
 import type { Metadata } from "next"
+import messages from "@/messages/id"
 import HomeContent from "@/components/pages/home/HomeContent"
 import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Rendi Ichtiar Prasetyo | Frontend Engineer",
+    default: messages.metadata.home.title,
     template: "%s | Rendi Ichtiar Prasetyo",
   },
-  description:
-    "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
-  keywords: [
-    "Full Stack Developer",
-    "Web Developer",
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Tailwind CSS",
-    "Portfolio",
-  ],
+  description: messages.metadata.home.description,
+  keywords: messages.metadata.home.keywords,
   authors: [{ name: "Rendi Ichtiar Prasetyo" }],
   creator: "Rendi Ichtiar Prasetyo",
   publisher: "Rendi Ichtiar Prasetyo",
@@ -34,9 +26,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Rendi Ichtiar Prasetyo | Frontend Engineer",
-    description:
-      "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
+    title: messages.metadata.home.title,
+    description: messages.metadata.home.description,
     url: "/",
     type: "website",
     siteName: "Rendi Ichtiar Prasetyo",
@@ -46,14 +37,15 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Rendi Ichtiar Prasetyo - Personal Website",
+        alt:
+          messages.metadata.home.og_alt ||
+          "Rendi Ichtiar Prasetyo - Personal Website",
       },
     ],
   },
   twitter: {
-    title: "Rendi Ichtiar Prasetyo | Frontend Engineer",
-    description:
-      "A Frontend Engineer focusing on modern web application development with React, Next.js, and TypeScript.",
+    title: messages.metadata.home.title,
+    description: messages.metadata.home.description,
     card: "summary_large_image",
     creator: "@rendiichtiar",
     site: "@rendiichtiar",

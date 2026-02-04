@@ -88,9 +88,18 @@ export function ContactContent() {
       const data = await res.json().catch(() => ({}))
 
       if (!res.ok) {
-        throw new Error(
-          data?.message || messages.pages.contact.form.error.general
-        )
+        const errorCode = data?.error
+        let errorMessage = messages.pages.contact.form.error.general
+
+        if (errorCode === "forbidden_words") {
+          errorMessage = messages.pages.guestbook.form.forbidden_words
+        } else if (errorCode === "rate_limit_exceeded") {
+          errorMessage = messages.pages.contact.form.error.rate_limit
+        } else if (typeof errorCode === "string") {
+          errorMessage = errorCode
+        }
+
+        throw new Error(errorMessage)
       }
 
       setFormData({ name: "", email: "", message: "" })
@@ -108,6 +117,8 @@ export function ContactContent() {
         }
 
         setErrors(fieldErrors)
+      } else if (err instanceof Error) {
+        toast.error(err.message)
       } else {
         toast.error(messages.pages.contact.form.error.general)
       }

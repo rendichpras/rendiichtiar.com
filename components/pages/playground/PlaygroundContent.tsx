@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useCallback, useMemo, useState } from "react"
+import { Suspense, useCallback, useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { Trash2, Play, Expand } from "lucide-react"
@@ -22,32 +22,7 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 
 const DEFAULT_CODE = `console.log("Hello");`
 
-const BLOCKED_KEYWORDS = [
-  "document",
-  "window",
-  "location",
-  "history",
-  "localStorage",
-  "sessionStorage",
-  "indexedDB",
-  "fetch",
-  "XMLHttpRequest",
-  "WebSocket",
-  "eval",
-  "Function",
-  "setTimeout",
-  "setInterval",
-  "requestAnimationFrame",
-  "alert",
-  "confirm",
-  "prompt",
-] as const
-
 const MAX_LEN = 5000
-
-function escapeRegex(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-}
 
 function EditorLoading() {
   return (
@@ -72,16 +47,6 @@ export function PlaygroundContent() {
   const [output, setOutput] = useState<string>("")
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
   const [editorReady, setEditorReady] = useState<boolean>(false)
-
-  const blockedPattern = useMemo(
-    () =>
-      new RegExp(
-        String.raw`\b(?:${BLOCKED_KEYWORDS.map((k) => escapeRegex(k)).join(
-          "|"
-        )})\b`
-      ),
-    []
-  )
 
   const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
     try {
@@ -139,31 +104,6 @@ export function PlaygroundContent() {
     } catch {}
   }, [])
 
-  const validateCode = useCallback(
-    (c: string): boolean => {
-      try {
-        if (c.length > MAX_LEN) {
-          toast.error(messages.pages.playground.errors.code_too_long)
-          return false
-        }
-        if (blockedPattern.test(c)) {
-          toast.error(messages.pages.playground.errors.blocked_keyword)
-          return false
-        }
-        return true
-      } catch {
-        toast.error(messages.pages.playground.errors.validation_error)
-        return false
-      }
-    },
-    [
-      blockedPattern,
-      messages.pages.playground.errors.blocked_keyword,
-      messages.pages.playground.errors.code_too_long,
-      messages.pages.playground.errors.validation_error,
-    ]
-  )
-
   const runCode = useCallback(() => {
     if (!editorReady) {
       toast.error(messages.pages.playground.errors.editor_not_ready)
@@ -171,44 +111,57 @@ export function PlaygroundContent() {
     }
 
     try {
-      if (!validateCode(code)) return
-
-      const logs: string[] = []
-
-      const sandbox = {
-        console: {
-          log: (...args: unknown[]) => {
-            try {
-              const line = args
-                .map((arg) => {
-                  if (arg instanceof Error) return arg.message
-                  if (typeof arg === "object")
-                    return JSON.stringify(arg, null, 2)
-                  return String(arg)
-                })
-                .join(" ")
-              logs.push(line)
-            } catch {
-              logs.push("[Error logging output]")
-            }
-          },
-        },
+      if (code.length > MAX_LEN) {
+        toast.error(messages.pages.playground.errors.code_too_long)
+        return
       }
 
-      const fn = new Function(
-        "console",
-        `
-        "use strict";
-        try {
-          ${code}
-        } catch (error) {
-          console.log(error);
-        }
-      `
-      ) as (c: Console) => void
+      setOutput("")
 
-      fn(sandbox.console as unknown as Console)
-      setOutput(logs.filter(Boolean).join("\n"))
+      const iframe = document.getElementById(
+        "playground-sandbox"
+      ) as HTMLIFrameElement
+      if (!iframe) return
+
+      const sandboxContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <script>
+              (function() {
+                const logs = [];
+                const originalLog = console.log;
+                console.log = function(...args) {
+                  const line = args.map(arg => {
+                    if (arg instanceof Error) return arg.message;
+                    if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
+                    return String(arg);
+                  }).join(' ');
+                  window.parent.postMessage({ type: 'log', content: line }, '*');
+                };
+
+                window.addEventListener('message', (e) => {
+                  if (e.data.type === 'run') {
+                    try {
+                      const fn = new Function(e.data.code);
+                      fn();
+                    } catch (err) {
+                      console.log(err);
+                    }
+                  }
+                });
+              })();
+            </script>
+          </head>
+          <body></body>
+        </html>
+      `
+      iframe.srcdoc = sandboxContent
+
+      iframe.onload = () => {
+        iframe.contentWindow?.postMessage({ type: "run", code: code }, "*")
+      }
     } catch (error) {
       if (error instanceof Error) {
         setOutput(error.message)
@@ -223,8 +176,20 @@ export function PlaygroundContent() {
     editorReady,
     messages.pages.playground.errors.editor_not_ready,
     messages.pages.playground.errors.runtime_error,
-    validateCode,
+    messages.pages.playground.errors.code_too_long,
   ])
+
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data.type === "log") {
+        setOutput((prev) =>
+          prev ? prev + "\n" + e.data.content : e.data.content
+        )
+      }
+    }
+    window.addEventListener("message", handleMessage)
+    return () => window.removeEventListener("message", handleMessage)
+  }, [])
 
   return (
     <PageTransition>
@@ -410,6 +375,13 @@ export function PlaygroundContent() {
                 >
                   {output}
                 </div>
+                {/* Hidden Sandbox Iframe */}
+                <iframe
+                  id="playground-sandbox"
+                  style={{ display: "none" }}
+                  sandbox="allow-scripts"
+                  title="Playground Sandbox"
+                />
               </CardContent>
             </Card>
           </motion.div>

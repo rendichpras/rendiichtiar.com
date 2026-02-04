@@ -3,6 +3,7 @@ import { db } from "@/db"
 import { requireAdmin } from "@/lib/auth/require-admin"
 import { z } from "zod"
 import { headers } from "next/headers"
+import { containsForbiddenWords } from "@/lib/constants/forbidden-words"
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -23,6 +24,14 @@ export async function POST(req: Request) {
     }
 
     const { name, email, message } = body.data
+
+    if (containsForbiddenWords(message) || containsForbiddenWords(name)) {
+      return NextResponse.json(
+        { success: false, error: "forbidden_words" },
+        { status: 400 }
+      )
+    }
+
     const headersList = await headers()
     const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1"
 
@@ -38,7 +47,7 @@ export async function POST(req: Request) {
 
     if (recentMessages >= 3) {
       return NextResponse.json(
-        { success: false, error: "Too many messages. Please try again later." },
+        { success: false, error: "rate_limit_exceeded" },
         { status: 429 }
       )
     }

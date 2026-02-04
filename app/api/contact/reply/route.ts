@@ -4,6 +4,15 @@ import { requireAdmin } from "@/lib/auth/require-admin"
 import { sendEmail } from "@/lib/email"
 
 export async function POST(req: Request) {
+  const escapeHtml = (unsafe: string) => {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;")
+  }
+
   try {
     await requireAdmin()
 
@@ -39,12 +48,12 @@ export async function POST(req: Request) {
         <p>Hi ${contact.name},</p>
         <p>Thanks for reaching out! Here is my reply:</p>
         <blockquote style="margin:16px 0;padding:12px 16px;border-left:4px solid #ccc;background:#f9f9f9;">
-          ${replyMessage.replace(/\n/g, "<br/>")}
+          ${escapeHtml(replyMessage).replace(/\n/g, "<br/>")}
         </blockquote>
         <p>---</p>
         <p><strong>Your original message:</strong></p>
         <blockquote style="margin:16px 0;padding:12px 16px;border-left:4px solid #eee;background:#fafafa;">
-          ${contact.message.replace(/\n/g, "<br/>")}
+          ${escapeHtml(contact.message).replace(/\n/g, "<br/>")}
         </blockquote>
       </div>
     `
