@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 
 import { Logo } from "./Logo"
 import { MobileNav } from "./MobileNav"
+import { UserProfile } from "./UserProfile"
 import { MAIN_NAV, APP_NAV, SOCIAL_NAV } from "./nav-config"
 import { useEffect, useState } from "react"
 
@@ -301,12 +302,20 @@ export function Navigation({
 
           <div
             className={cn(
-              "mt-auto flex items-center border-t px-4 py-4",
-              collapsed ? "justify-center" : "justify-between"
+              "mt-auto flex flex-col gap-2 border-t px-2 py-4",
+              !collapsed && "px-4"
             )}
           >
-            <ThemeToggle className="hover:scale-100" />
-            {!collapsed && <LanguageSwitcher variant="compact" />}
+            <UserProfile collapsed={collapsed} />
+            <div
+              className={cn(
+                "flex items-center gap-2",
+                collapsed ? "justify-center flex-col" : "justify-between"
+              )}
+            >
+              <ThemeToggle className="hover:scale-100" />
+              {!collapsed && <LanguageSwitcher variant="compact" />}
+            </div>
           </div>
         </div>
       </aside>

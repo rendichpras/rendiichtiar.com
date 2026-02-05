@@ -8,6 +8,7 @@ import { motion } from "framer-motion"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Tooltip,
   TooltipContent,
@@ -391,7 +392,7 @@ export function GuestbookList({
         }}
         initial="hidden"
         animate="show"
-        className="space-y-6 pr-4"
+        className="space-y-6"
       >
         {entries.map((entry) => (
           <motion.div
@@ -402,143 +403,149 @@ export function GuestbookList({
             }}
             className="group"
           >
-            <div className="flex gap-4">
-              <Avatar className="h-8 w-8 shrink-0 border border-border">
-                <AvatarImage
-                  src={entry.user.image || ""}
-                  alt={entry.user.name || tCommon("navigation.avatar")}
-                />
-                <AvatarFallback
-                  className="text-[10px] font-medium text-foreground/90"
-                  aria-hidden="true"
-                >
-                  {entry.user.name?.charAt(0) || "?"}
-                </AvatarFallback>
-              </Avatar>
+            <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
+              <CardContent>
+                <div className="flex gap-4">
+                  <Avatar className="h-10 w-10 shrink-0 border border-border">
+                    <AvatarImage
+                      src={entry.user.image || ""}
+                      alt={entry.user.name || tCommon("navigation.avatar")}
+                    />
+                    <AvatarFallback
+                      className="font-medium text-foreground/90"
+                      aria-hidden="true"
+                    >
+                      {entry.user.name?.charAt(0) || "?"}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <div className="flex-1 space-y-2">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium leading-none text-foreground/90">
-                      {entry.user.name}
-                    </span>
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-foreground">
+                          {entry.user.name}
+                        </span>
 
-                    <ProviderIcon provider={entry.provider} />
+                        <ProviderIcon provider={entry.provider} />
 
-                    {entry.user.email === OWNER_EMAIL && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span
-                              className="flex items-center text-primary"
-                              aria-label={t("list.owner")}
-                            >
-                              <BadgeCheck
+                        {entry.user.email === OWNER_EMAIL && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span
+                                  className="flex items-center text-primary"
+                                  aria-label={t("list.owner")}
+                                >
+                                  <BadgeCheck
+                                    className="h-4 w-4"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>{t("list.owner")}</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
+
+                      <span className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(entry.createdAt, {
+                          addSuffix: true,
+                          locale: dateLocale,
+                        })}
+                      </span>
+                    </div>
+
+                    <p className="break-all text-sm leading-relaxed text-foreground/90">
+                      {entry.message}
+                    </p>
+
+                    <Separator className="bg-border/50" />
+
+                    <div className="flex flex-wrap items-center gap-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleReplyClick(entry.id, entry.user.name || "")
+                        }
+                        className="flex h-8 items-center gap-1.5 px-2 text-xs text-muted-foreground hover:bg-secondary hover:text-primary sm:text-sm"
+                        aria-label={`${t("list.reply.button")} ${entry.user.name || ""}`}
+                      >
+                        <ReplyIcon className="h-4 w-4" aria-hidden="true" />
+                        <span>{t("list.reply.button")}</span>
+                      </Button>
+
+                      <LikeButton
+                        guestbookId={entry.id}
+                        likes={entry.likes}
+                        userEmail={userEmail}
+                      />
+
+                      {entry.replies.length > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleReplies(entry.id)}
+                          className="flex h-8 items-center gap-1.5 px-2 text-xs text-muted-foreground hover:bg-secondary hover:text-primary sm:text-sm"
+                          aria-expanded={expandedEntries.has(entry.id)}
+                          aria-controls={`replies-${entry.id}`}
+                        >
+                          {expandedEntries.has(entry.id) ? (
+                            <span className="flex items-center gap-1.5">
+                              <ChevronDown
                                 className="h-4 w-4"
                                 aria-hidden="true"
                               />
+                              <span>{t("list.hide_replies")}</span>
                             </span>
-                          </TooltipTrigger>
-                          <TooltipContent>{t("list.owner")}</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-                  </div>
-
-                  <span className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(entry.createdAt, {
-                      addSuffix: true,
-                      locale: dateLocale,
-                    })}
-                  </span>
-                </div>
-
-                <p className="break-all text-sm leading-relaxed text-muted-foreground">
-                  {entry.message}
-                </p>
-
-                <div className="mt-2 flex flex-wrap items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      handleReplyClick(entry.id, entry.user.name || "")
-                    }
-                    className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                    aria-label={`${t("list.reply.button")} ${entry.user.name || ""}`}
-                  >
-                    <ReplyIcon
-                      className="h-4 w-4 sm:h-5 sm:w-5"
-                      aria-hidden="true"
-                    />
-                    <span>{t("list.reply.button")}</span>
-                  </Button>
-
-                  <LikeButton
-                    guestbookId={entry.id}
-                    likes={entry.likes}
-                    userEmail={userEmail}
-                  />
-
-                  {entry.replies.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleReplies(entry.id)}
-                      className="flex min-w-[60px] items-center gap-1.5 p-0 text-xs text-muted-foreground hover:text-primary sm:text-sm"
-                      aria-expanded={expandedEntries.has(entry.id)}
-                      aria-controls={`replies-${entry.id}`}
-                    >
-                      {expandedEntries.has(entry.id) ? (
-                        <span className="flex items-center gap-1.5">
-                          <ChevronDown
-                            className="h-4 w-4 sm:h-5 sm:w-5"
-                            aria-hidden="true"
-                          />
-                          <span>{t("list.hide_replies")}</span>
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1.5">
-                          <ChevronRight
-                            className="h-4 w-4 sm:h-5 sm:w-5"
-                            aria-hidden="true"
-                          />
-                          <span>
-                            {t("list.show_replies", {
-                              count: entry.replies.length,
-                            })}
-                          </span>
-                        </span>
+                          ) : (
+                            <span className="flex items-center gap-1.5">
+                              <ChevronRight
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                              <span>
+                                {t("list.show_replies", {
+                                  count: entry.replies.length,
+                                })}
+                              </span>
+                            </span>
+                          )}
+                        </Button>
                       )}
-                    </Button>
-                  )}
-                </div>
+                    </div>
 
-                {replyingTo === entry.id && (
-                  <GuestbookReply
-                    parentId={entry.id}
-                    parentAuthor={entry.user.name || ""}
-                    onReplyComplete={() => handleReplyComplete(entry.id)}
-                    isReplying
-                  />
-                )}
+                    {replyingTo === entry.id && (
+                      <div className="pt-2">
+                        <GuestbookReply
+                          parentId={entry.id}
+                          parentAuthor={entry.user.name || ""}
+                          onReplyComplete={() => handleReplyComplete(entry.id)}
+                          isReplying
+                        />
+                      </div>
+                    )}
 
-                {entry.replies.length > 0 && expandedEntries.has(entry.id) && (
-                  <div id={`replies-${entry.id}`}>
-                    <GuestbookReplyList
-                      replies={entry.replies}
-                      onReplyClick={handleReplyClick}
-                      rootId={entry.id}
-                      replyingTo={replyingTo}
-                      onReplyComplete={() => handleReplyComplete(entry.id)}
-                      userEmail={userEmail}
-                    />
+                    {entry.replies.length > 0 &&
+                      expandedEntries.has(entry.id) && (
+                        <div id={`replies-${entry.id}`} className="pt-2">
+                          <GuestbookReplyList
+                            replies={entry.replies}
+                            onReplyClick={handleReplyClick}
+                            rootId={entry.id}
+                            replyingTo={replyingTo}
+                            onReplyComplete={() =>
+                              handleReplyComplete(entry.id)
+                            }
+                            userEmail={userEmail}
+                          />
+                        </div>
+                      )}
                   </div>
-                )}
-              </div>
-            </div>
-
-            <Separator className="mt-6 bg-border" />
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
         ))}
       </motion.div>

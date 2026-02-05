@@ -17,6 +17,7 @@ import {
   type NavItem,
   type SocialItem,
 } from "./nav-config"
+import { UserProfile } from "./UserProfile"
 
 const MobileNavItem = memo(function MobileNavItem({
   item,
@@ -259,9 +260,12 @@ export function MobileNav() {
                   </div>
                 </motion.nav>
 
-                <div className="flex items-center justify-between p-4 pt-6">
-                  <ThemeToggle className="hover:scale-100" />
-                  <LanguageSwitcher variant="compact" />
+                <div className="mt-auto flex flex-col gap-2 border-t px-4 py-4">
+                  <UserProfile />
+                  <div className="flex items-center justify-between">
+                    <ThemeToggle className="hover:scale-100" />
+                    <LanguageSwitcher variant="compact" />
+                  </div>
                 </div>
               </div>
             </motion.div>

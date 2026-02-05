@@ -4,20 +4,17 @@ import { db } from "@/db"
 import { ensureDbUser } from "@/lib/auth/ensure-db-user"
 import { emitEvent } from "@/lib/realtime"
 import { headers } from "next/headers"
-import { containsForbiddenWords } from "@/lib/constants/forbidden-words"
-
-const MAX_MESSAGE_LENGTH = 280
+import { guestbookSchema } from "@/lib/validations/guestbook"
 
 function validateMessage(message: string) {
-  const trimmed = message.trim()
-  if (!trimmed) throw new Error("empty")
-  if (trimmed.length > MAX_MESSAGE_LENGTH) throw new Error("message_too_long")
+  const result = guestbookSchema.safeParse({ message })
 
-  if (containsForbiddenWords(trimmed)) {
-    throw new Error("forbidden_words")
+  if (!result.success) {
+    const error = result.error.issues[0].message
+    throw new Error(error)
   }
 
-  return trimmed
+  return result.data.message.trim()
 }
 
 async function resolveMentionedUserId(parentAuthor?: string) {

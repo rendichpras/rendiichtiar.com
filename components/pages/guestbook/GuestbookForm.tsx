@@ -3,11 +3,13 @@
 import { useMemo, useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, Send } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 import { addGuestbookEntry } from "@/lib/actions/guestbook"
 import { useTranslations } from "next-intl"
@@ -67,59 +69,73 @@ export function GuestbookForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-3"
-      noValidate
-      aria-busy={isSubmitting}
-    >
-      <div className="relative space-y-1">
-        <Label htmlFor="guestbook-message" className="sr-only">
-          {t("form.placeholder")}
-        </Label>
-
-        <Textarea
-          id="guestbook-message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder={t("form.placeholder")}
-          maxLength={MAX_LEN}
-          disabled={isSubmitting}
-          className={cn(
-            "min-h-[44px] resize-none pr-12 rounded-xl border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
-          )}
-        />
-
-        <span
-          className={cn(
-            "absolute bottom-2 right-3 text-xs tabular-nums",
-            remainingChars <= 20 ? "text-destructive" : "text-muted-foreground"
-          )}
-          aria-live="polite"
+    <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
+      <CardContent>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+          noValidate
+          aria-busy={isSubmitting}
         >
-          {remainingChars}
-        </span>
-      </div>
+          <div className="relative">
+            <Label htmlFor="guestbook-message" className="sr-only">
+              {t("form.placeholder")}
+            </Label>
 
-      <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className={cn(
-            "relative rounded-xl bg-secondary text-primary hover:bg-secondary/80",
-            isSubmitting && "cursor-wait opacity-80"
-          )}
-        >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2 text-primary">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              <span>{t("form.sending")}</span>
+            <Textarea
+              id="guestbook-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder={t("form.placeholder")}
+              maxLength={MAX_LEN}
+              disabled={isSubmitting}
+              className={cn(
+                "min-h-[100px] w-full resize-none border-0 bg-transparent p-0 text-base placeholder:text-muted-foreground focus-visible:ring-0 sm:text-sm"
+              )}
+            />
+          </div>
+
+          <Separator className="bg-border/50" />
+
+          <div className="flex items-center justify-between">
+            <span
+              className={cn(
+                "text-xs tabular-nums",
+                remainingChars <= 20
+                  ? "text-destructive"
+                  : "text-muted-foreground"
+              )}
+              aria-live="polite"
+            >
+              {remainingChars} / {MAX_LEN}
             </span>
-          ) : (
-            t("form.send")
-          )}
-        </Button>
-      </div>
-    </form>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting || !message.trim()}
+              className={cn(
+                "rounded-full px-6 font-semibold",
+                isSubmitting && "cursor-wait opacity-80"
+              )}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2
+                    className="mr-2 h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span>{t("form.sending")}</span>
+                </>
+              ) : (
+                <>
+                  <span>{t("form.send")}</span>
+                  <Send className="ml-2 h-4 w-4" aria-hidden="true" />
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   )
 }

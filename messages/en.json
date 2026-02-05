@@ -76,7 +76,8 @@
         "description": "Sign in with your preferred account to continue.",
         "google": "Continue with Google",
         "github": "Continue with GitHub",
-        "or": "or"
+        "or": "or",
+        "action": "Sign In"
       },
       "logout": {
         "title": "Sign Out"

@@ -3,24 +3,23 @@ import { db } from "@/db"
 import { requireAdmin } from "@/lib/auth/require-admin"
 import { sendEmail } from "@/lib/email"
 import { getReplyEmailTemplate } from "@/lib/email-templates"
+import { contactReplySchema } from "@/lib/validations/contact"
 
 export async function POST(req: Request) {
   try {
     await requireAdmin()
 
-    const body = (await req.json()) as {
-      contactId?: string
-      replyMessage?: string
-    }
-    const contactId = body?.contactId ?? ""
-    const replyMessage = body?.replyMessage?.trim() ?? ""
+    const json = await req.json()
+    const result = contactReplySchema.safeParse(json)
 
-    if (!contactId || !replyMessage) {
+    if (!result.success) {
       return NextResponse.json(
-        { success: false, error: "Missing fields" },
+        { success: false, error: result.error.issues[0].message },
         { status: 400 }
       )
     }
+
+    const { contactId, replyMessage } = result.data
 
     const contact = await db.contactMessage.findUnique({
       where: { id: contactId },

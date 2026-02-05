@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { db } from "@/db"
 import { Prisma } from "@/db/generated/client"
+import { blogSchema } from "@/lib/validations/blog"
 
 function generateSlug(title: string) {
   return title
@@ -25,21 +26,36 @@ export async function createPost(
   prevState: CreatePostState,
   formData: FormData
 ) {
-  const title = formData.get("title") as string
-  const content = formData.get("content") as string
-  const excerpt = formData.get("excerpt") as string
-  const coverImage = formData.get("coverImage") as string
-  const published = formData.get("published") === "on"
-  if (!title || title.length < 3) {
+  const rawData = {
+    title: formData.get("title") as string,
+    content: formData.get("content") as string,
+    excerpt: formData.get("excerpt") as string,
+    coverImage: formData.get("coverImage") as string,
+    published: formData.get("published") === "on",
+    slug: formData.get("slug") as string | undefined,
+  }
+
+  if (!rawData.slug) delete rawData.slug
+
+  const result = blogSchema.safeParse(rawData)
+
+  if (!result.success) {
     return {
-      errors: {
-        title: ["Title must be at least 3 characters long."],
-      },
-      message: "Missing Fields. Failed to Create Post.",
+      errors: result.error.flatten().fieldErrors,
+      message: "Validation Error. Failed to Create Post.",
     }
   }
 
-  let slug = generateSlug(title)
+  const {
+    title,
+    content,
+    excerpt,
+    coverImage,
+    published,
+    slug: slugInput,
+  } = result.data
+
+  let slug = slugInput || generateSlug(title)
   const existingPost = await db.post.findUnique({ where: { slug } })
   if (existingPost) {
     slug = `${slug}-${Date.now()}`
@@ -73,16 +89,35 @@ export async function updatePost(
   prevState: CreatePostState,
   formData: FormData
 ) {
-  const title = formData.get("title") as string
-  const content = formData.get("content") as string
-  const excerpt = formData.get("excerpt") as string
-  const coverImage = formData.get("coverImage") as string
-  const published = formData.get("published") === "on"
-  const slugInput = formData.get("slug") as string
-
-  if (!title) {
-    return { message: "Title required" }
+  const rawData = {
+    title: formData.get("title") as string,
+    content: formData.get("content") as string,
+    excerpt: formData.get("excerpt") as string,
+    coverImage: formData.get("coverImage") as string,
+    published: formData.get("published") === "on",
+    slug: formData.get("slug") as string | undefined,
   }
+
+  // Remove empty slug
+  if (!rawData.slug) delete rawData.slug
+
+  const result = blogSchema.safeParse(rawData)
+
+  if (!result.success) {
+    return {
+      errors: result.error.flatten().fieldErrors,
+      message: "Validation Error. Failed to Update Post.",
+    }
+  }
+
+  const {
+    title,
+    content,
+    excerpt,
+    coverImage,
+    published,
+    slug: slugInput,
+  } = result.data
 
   const slug = slugInput || generateSlug(title)
 

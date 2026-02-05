@@ -1,38 +1,24 @@
 import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { requireAdmin } from "@/lib/auth/require-admin"
-import { z } from "zod"
 import { headers } from "next/headers"
-import { containsForbiddenWords } from "@/lib/constants/forbidden-words"
 import { sendEmail } from "@/lib/email"
 import { getContactEmailTemplate } from "@/lib/email-templates"
-
-const contactSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  email: z.string().email("Invalid email address"),
-  message: z.string().min(1, "Message is required").max(1000),
-})
+import { contactSchema } from "@/lib/validations/contact"
 
 export async function POST(req: Request) {
   try {
     const json = await req.json()
-    const body = contactSchema.safeParse(json)
+    const result = contactSchema.safeParse(json)
 
-    if (!body.success) {
+    if (!result.success) {
       return NextResponse.json(
-        { success: false, error: body.error.issues[0].message },
+        { success: false, error: result.error.issues[0].message },
         { status: 400 }
       )
     }
 
-    const { name, email, message } = body.data
-
-    if (containsForbiddenWords(message) || containsForbiddenWords(name)) {
-      return NextResponse.json(
-        { success: false, error: "forbidden_words" },
-        { status: 400 }
-      )
-    }
+    const { name, email, message } = result.data
 
     const headersList = await headers()
     const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1"

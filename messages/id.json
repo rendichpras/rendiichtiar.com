@@ -76,7 +76,8 @@
         "description": "Masuk dengan akun pilihan Anda untuk melanjutkan.",
         "google": "Lanjutkan dengan Google",
         "github": "Lanjutkan dengan GitHub",
-        "or": "atau"
+        "or": "atau",
+        "action": "Masuk"
       },
       "logout": {
         "title": "Keluar"
