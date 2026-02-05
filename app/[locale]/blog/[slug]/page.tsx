@@ -1,19 +1,17 @@
 import { getPostBySlug } from "@/lib/actions/blog"
 import { notFound } from "next/navigation"
 import { setRequestLocale } from "next-intl/server"
-import { useTranslations } from "next-intl"
-import { getTranslations } from "next-intl/server"
-import { parse } from "html-react-parser"
+import parse from "html-react-parser"
 import { Link } from "@/i18n/routing"
 import { sanitizeHtml } from "@/lib/security/sanitize-html"
-import Footer from "@/components/Footer"
+import { Footer } from "@/components/Footer"
 
 type Props = {
-  params: { slug: string; locale: string }
+  params: Promise<{ slug: string; locale: string }>
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { slug } = params
+  const { slug } = await params
   const post = await getPostBySlug(slug)
 
   if (!post) {
@@ -38,7 +36,7 @@ function calculateReadingTime(htmlContent: string) {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { slug, locale } = params
+  const { slug, locale } = await params
   setRequestLocale(locale)
 
   const post = await getPostBySlug(slug)
@@ -103,7 +101,7 @@ export default async function BlogPostPage({ params }: Props) {
           {parse(safeHtml)}
         </article>
       </div>
-      <Footer locale={locale} />
+      <Footer />
     </div>
   )
 }

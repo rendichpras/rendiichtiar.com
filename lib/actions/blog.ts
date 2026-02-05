@@ -8,7 +8,7 @@ import { requireAdmin } from "@/lib/auth/require-admin"
 import { sanitizeHtml } from "@/lib/security/sanitize-html"
 import { blogSchema } from "@/lib/validations/blog"
 import { redirect } from "@/i18n/routing"
-import { routing } from "@/i18n/routing"
+import { routing, locales } from "@/i18n/routing"
 
 function generateSlug(title: string) {
   return title
@@ -20,7 +20,9 @@ function generateSlug(title: string) {
 function getSafeLocaleFromFormData(formData: FormData, fallback: string) {
   const raw = formData.get("locale")
   const value = typeof raw === "string" ? raw : ""
-  return routing.locales.includes(value as any) ? value : fallback
+  return routing.locales.includes(value as (typeof locales)[number])
+    ? value
+    : fallback
 }
 
 export type CreatePostState = {
@@ -39,7 +41,7 @@ export type CreatePostState = {
 export async function createPost(
   prevState: CreatePostState,
   formData: FormData
-) {
+): Promise<CreatePostState> {
   await requireAdmin()
 
   const locale = getSafeLocaleFromFormData(formData, await getLocale())
@@ -102,6 +104,7 @@ export async function createPost(
   revalidatePath(`/${locale}/admin/blog`)
 
   redirect({ href: "/admin/blog", locale })
+  return { message: "Redirecting..." }
 }
 
 export async function updatePost(
@@ -176,7 +179,7 @@ export async function deletePost(id: string, locale?: string) {
     await db.post.delete({ where: { id } })
 
     const safeLocale =
-      locale && routing.locales.includes(locale as any)
+      locale && routing.locales.includes(locale as (typeof locales)[number])
         ? locale
         : await getLocale()
 

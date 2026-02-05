@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
 import { motion } from "framer-motion"
 
 export function ForbiddenContent() {
   const router = useRouter()
   const t = useTranslations("common")
+  const locale = useLocale()
 
   return (
     <>
@@ -65,7 +67,7 @@ export function ForbiddenContent() {
 
                 <Button
                   size="lg"
-                  onClick={() => router.push("/")}
+                  onClick={() => router.push(`/${locale}`)}
                   className="rounded-xl border border-border bg-secondary text-primary hover:bg-secondary/80"
                 >
                   {t("error.forbidden.back_home")}

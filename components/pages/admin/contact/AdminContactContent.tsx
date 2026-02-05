@@ -97,7 +97,7 @@ export default function AdminContactContent() {
     } finally {
       setPageLoading(false)
     }
-  }, [t, router])
+  }, [t, router, locale])
 
   useEffect(() => {
     if (!isLoaded) return
@@ -106,7 +106,7 @@ export default function AdminContactContent() {
       return
     }
     void fetchContacts()
-  }, [fetchContacts, router, isLoaded, isSignedIn])
+  }, [fetchContacts, router, isLoaded, isSignedIn, locale])
 
   const handleReply = useCallback(async () => {
     if (!selectedContact) return

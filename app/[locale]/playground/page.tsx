@@ -3,11 +3,11 @@ import { PlaygroundContent } from "@/components/pages/playground/PlaygroundConte
 import type { Metadata } from "next"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: "metadata.playground" })
 
   return {
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PlaygroundPage({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   return <PlaygroundContent />
 }

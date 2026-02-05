@@ -3,11 +3,11 @@ import { ContactContent } from "@/components/pages/contact/ContactContent"
 import type { Metadata } from "next"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: "metadata.contact" })
 
   return {
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ContactPage({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   return <ContactContent />
 }

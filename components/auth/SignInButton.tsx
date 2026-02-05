@@ -4,6 +4,7 @@ import { useSignIn } from "@clerk/nextjs"
 import type { OAuthStrategy } from "@clerk/types"
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
 import { SiGithub, SiGoogle } from "react-icons/si"
 
 function SignInWithProviderButton({
@@ -16,6 +17,7 @@ function SignInWithProviderButton({
   icon: React.ReactNode
 }) {
   const { signIn } = useSignIn()
+  const locale = useLocale()
 
   return (
     <Button
@@ -26,8 +28,8 @@ function SignInWithProviderButton({
         if (!signIn) return
         void signIn.authenticateWithRedirect({
           strategy,
-          redirectUrl: "/sso-callback",
-          redirectUrlComplete: "/guestbook",
+          redirectUrl: `/${locale}/sso-callback`,
+          redirectUrlComplete: `/${locale}/guestbook`,
         })
       }}
     >

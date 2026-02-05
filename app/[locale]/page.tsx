@@ -4,7 +4,7 @@ import HomeContent from "@/components/pages/home/HomeContent"
 import type { Metadata } from "next"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export function generateStaticParams() {
@@ -12,7 +12,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: "metadata.home" })
 
   return {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   return <HomeContent />
 }

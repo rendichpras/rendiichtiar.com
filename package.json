@@ -27,8 +27,10 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma migrate deploy --config prisma.config.ts && next build",
+    "ci:build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
     "postinstall": "prisma generate --config prisma.config.ts",
     "db:generate": "prisma generate --config prisma.config.ts",

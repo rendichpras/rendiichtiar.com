@@ -1,11 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 
-export function SearchInput({ placeholder }: { placeholder: string }) {
+export function SearchInput(props: { placeholder: string }) {
+  return (
+    <Suspense fallback={<div className="h-10 w-full" />}>
+      <SearchInputContent {...props} />
+    </Suspense>
+  )
+}
+
+function SearchInputContent({ placeholder }: { placeholder: string }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()

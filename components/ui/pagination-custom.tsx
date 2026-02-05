@@ -1,5 +1,7 @@
 "use client"
 
+import { Suspense } from "react"
+
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
   ChevronLeft,
@@ -14,7 +16,15 @@ interface PaginationProps {
   totalPages: number
 }
 
-export function Pagination({ page, totalPages }: PaginationProps) {
+export function Pagination(props: PaginationProps) {
+  return (
+    <Suspense>
+      <PaginationContent {...props} />
+    </Suspense>
+  )
+}
+
+function PaginationContent({ page, totalPages }: PaginationProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()

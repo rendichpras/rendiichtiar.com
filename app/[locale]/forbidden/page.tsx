@@ -3,11 +3,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import type { Metadata } from "next"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
   const t = await getTranslations({
     locale,
     namespace: "common.error.forbidden",
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ForbiddenPage({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   return <ForbiddenContent />
 }

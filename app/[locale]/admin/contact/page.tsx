@@ -5,11 +5,11 @@ import { requireAdmin } from "@/lib/auth/require-admin"
 import { setRequestLocale } from "next-intl/server"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
   const t = await getTranslations({
     locale,
     namespace: "metadata.admin.contact",
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AdminContactPage({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   await requireAdmin()
   return <AdminContactContent />

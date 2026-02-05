@@ -3,11 +3,11 @@ import { requireAdmin } from "@/lib/auth/require-admin"
 import { setRequestLocale } from "next-intl/server"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export default async function NewPostPage({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   await requireAdmin()
   return <AdminBlogNewContent />

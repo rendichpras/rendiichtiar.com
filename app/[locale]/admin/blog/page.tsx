@@ -5,11 +5,11 @@ import AdminBlogContent from "@/components/pages/admin/blog/AdminBlogContent"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
   const t = await getTranslations({
     locale,
     namespace: "metadata.admin.blog",
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AdminBlogPage({ params }: Props) {
-  const { locale } = params
+  const { locale } = await params
   setRequestLocale(locale)
   await requireAdmin()
   const { posts } = await getAllPosts(false, undefined, 1, 100)

@@ -2,7 +2,7 @@ import { clerkMiddleware } from "@clerk/nextjs/server"
 import createIntlMiddleware from "next-intl/middleware"
 import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/auth/require-admin"
-import { routing } from "./i18n/routing"
+import { routing, locales } from "./i18n/routing"
 
 const intlMiddleware = createIntlMiddleware(routing)
 
@@ -88,7 +88,7 @@ export default clerkMiddleware(async (auth, req) => {
       await requireAdmin()
     } catch {
       const safeLocale =
-        (locale && routing.locales.includes(locale as any)
+        (locale && routing.locales.includes(locale as (typeof locales)[number])
           ? locale
           : routing.defaultLocale) ?? routing.defaultLocale
 
