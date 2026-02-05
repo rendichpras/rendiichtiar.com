@@ -1,4 +1,4 @@
-import { Home, User, Mail, Code, NotebookPen } from "lucide-react"
+import { Home, User, Mail, Code, NotebookPen, BookOpen } from "lucide-react"
 
 export type IconComp = React.ComponentType<{ className?: string }>
 export type NavItem = { path: string; nameKey: string; icon: IconComp }
@@ -12,6 +12,7 @@ export const MAIN_NAV: readonly NavItem[] = [
     nameKey: "common.navigation.guestbook",
     icon: NotebookPen,
   },
+  { path: "/blog", nameKey: "common.navigation.blog", icon: BookOpen },
   { path: "/contact", nameKey: "common.navigation.contact", icon: Mail },
 ] as const
 

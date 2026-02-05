@@ -4,12 +4,12 @@ import { memo, useCallback, useEffect, useState } from "react"
 import { Menu, X, ArrowUpRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { LanguageSwitcher } from "@/components/language-switcher"
+import { ThemeToggle } from "@/components/ThemeToggle"
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 import { useTranslations } from "next-intl"
 import { useRouter, usePathname } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
-import { Logo } from "./logo"
+import { Logo } from "./Logo"
 import {
   MAIN_NAV,
   APP_NAV,

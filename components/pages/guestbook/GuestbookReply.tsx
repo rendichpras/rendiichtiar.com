@@ -125,7 +125,7 @@ export function GuestbookReply({
                 size="sm"
                 onClick={onReplyComplete}
                 disabled={isSubmitting}
-                className="h-7 rounded-xl px-2 text-[10px] text-muted-foreground hover:bg-background/80 hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
+                className="h-7 rounded-xl px-2 text-[10px] text-muted-foreground hover:bg-muted hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
               >
                 {t("list.reply.cancel")}
               </Button>

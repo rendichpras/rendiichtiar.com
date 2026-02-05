@@ -12,7 +12,7 @@ import {
 } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
-import { AppShell } from "@/components/app-shell"
+import { AppShell } from "@/components/AppShell"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Metadata } from "next"
 import { SITE_URL } from "@/lib/site"

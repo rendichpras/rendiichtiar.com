@@ -101,7 +101,7 @@ function EducationItem({
           </div>
 
           <div className="min-w-0 flex-1">
-            <h3 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-base font-semibold leading-tight text-transparent sm:text-lg">
+            <h3 className="text-base font-semibold leading-tight text-foreground sm:text-lg">
               {name}
             </h3>
 

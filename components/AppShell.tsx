@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Navigation } from "@/components/navigation/sidebar"
+import { Navigation } from "@/components/navigation/Sidebar"
 import { cn } from "@/lib/utils"
 import { BackToTop } from "@/components/BackToTop"
-import { Footer } from "@/components/footer"
+import { Footer } from "@/components/Footer"
 import { Toaster } from "@/components/ui/sonner"
 
-import { PageTransition } from "@/components/page-transition"
+import { PageTransition } from "@/components/PageTransition"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)

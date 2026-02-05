@@ -4,6 +4,7 @@
       "home": "Beranda",
       "about": "Tentang",
       "guestbook": "Buku Tamu",
+      "blog": "Blog",
       "contact": "Kontak",
       "playground": "JS Playground",
       "apps": "Aplikasi",
@@ -253,6 +254,19 @@
         "editor_not_ready": "Tunggu sebentar—editor masih dimuat.",
         "runtime_error": "Kode Anda mengalami error saat dijalankan."
       }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Pemikiran, tutorial, dan wawasan tentang pengembangan perangkat lunak.",
+      "search_placeholder": "Cari artikel...",
+      "empty": {
+        "title": "Belum ada postingan.",
+        "subtitle": "Nantikan konten terbaru!"
+      },
+      "back_to_blog": "Kembali ke Blog",
+      "min_read": "{count} menit baca",
+      "no_cover_image": "Tidak Ada Gambar",
+      "no_excerpt": "Tidak ada ringkasan."
     }
   },
   "admin": {
@@ -299,6 +313,60 @@
         "load_error": "Tidak bisa memuat pesan. Silakan coba lagi.",
         "reply_success": "Balasan berhasil dikirim!",
         "reply_error": "Tidak bisa mengirim balasan Anda. Silakan coba lagi."
+      }
+    },
+    "blog": {
+      "list": {
+        "title": "Postingan Blog",
+        "subtitle": "Kelola artikel dan konten Anda.",
+        "create_new": "Buat Baru",
+        "empty": "Belum ada postingan.",
+        "columns": {
+          "title": "Judul",
+          "status": "Status",
+          "views": "Dilihat",
+          "date": "Tanggal",
+          "actions": "Aksi"
+        },
+        "status": {
+          "published": "Dipublikasikan",
+          "draft": "Draf"
+        }
+      },
+      "new": {
+        "title": "Buat Postingan Baru",
+        "subtitle": "Membuat artikel baru."
+      },
+      "edit": {
+        "title": "Edit Postingan",
+        "subtitle": "Memperbarui: {title}"
+      },
+      "form": {
+        "article_content": "Konten Artikel",
+        "article_content_desc": "Isi utama postingan Anda.",
+        "update_desc": "Perbarui detail postingan di bawah.",
+        "title_label": "Judul",
+        "title_placeholder": "Masukkan judul artikel...",
+        "content_label": "Konten",
+        "publishing": "Publikasi",
+        "published": "Dipublikasikan",
+        "visible": "Terlihat oleh pengunjung",
+        "save": "Simpan Postingan",
+        "update": "Perbarui Postingan",
+        "discard": "Buang Draf",
+        "cancel": "Batal",
+        "delete": "Hapus Postingan",
+        "metadata": "Metadata",
+        "slug": "Slug",
+        "slug_placeholder": "slug-otomatis",
+        "slug_hint": "Kosongkan untuk generate otomatis dari judul.",
+        "slug_hint_edit": "Kosongkan untuk mempertahankan slug saat ini.",
+        "excerpt": "Ringkasan",
+        "excerpt_placeholder": "Ringkasan singkat untuk SEO cards...",
+        "media": "Media",
+        "cover_image": "URL Gambar Cover",
+        "cover_placeholder": "https://",
+        "cover_hint": "Gunakan URL lengkap dari hosting eksternal (contoh: Unsplash)."
       }
     }
   },
@@ -394,6 +462,10 @@
       "title": "Buku Tamu | Rendi Ichtiar Prasetyo",
       "description": "Tinggalkan pesan, sapa, atau bagikan feedback di buku tamu digital saya."
     },
+    "blog": {
+      "title": "Blog | Rendi Ichtiar Prasetyo",
+      "description": "Menulis tentang pengembangan web, Next.js, TypeScript, dan best practices rekayasa perangkat lunak."
+    },
     "contact": {
       "title": "Kontak | Rendi Ichtiar Prasetyo",
       "description": "Punya proyek atau ide? Hubungi saya dan mari ciptakan sesuatu yang luar biasa bersama."
@@ -406,6 +478,10 @@
       "contact": {
         "title": "Kotak Masuk Pesan",
         "description": "Panel admin untuk mengelola pesan kontak."
+      },
+      "blog": {
+        "title": "Manajemen Blog",
+        "description": "Panel admin untuk mengelola postingan blog."
       }
     }
   }

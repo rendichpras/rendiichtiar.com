@@ -286,7 +286,7 @@ export function PlaygroundContent() {
                     </div>
                   </div>
 
-                  <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-border/30 bg-background/40 transition-all duration-300 hover:border-border/50">
+                  <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-border/30 bg-background transition-all duration-300 hover:border-border/50">
                     <Suspense fallback={<EditorLoading />}>
                       <MonacoEditor
                         height="500px"
@@ -382,7 +382,7 @@ export function PlaygroundContent() {
                   </div>
 
                   <div
-                    className="min-h[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background/40 p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
+                    className="min-h[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border/30 bg-background p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-border/50"
                     role="region"
                     aria-live="polite"
                     aria-label={t("console.output_label")}

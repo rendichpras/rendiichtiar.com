@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl"
 import { Link, usePathname } from "@/i18n/routing"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { LanguageSwitcher } from "@/components/language-switcher"
+import { ThemeToggle } from "@/components/ThemeToggle"
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 import { PanelLeftOpen, PanelRightOpen, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import {
@@ -13,8 +13,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-import { Logo } from "./logo"
-import { MobileNav } from "./mobile-nav"
+import { Logo } from "./Logo"
+import { MobileNav } from "./MobileNav"
 import { MAIN_NAV, APP_NAV, SOCIAL_NAV } from "./nav-config"
 import { useEffect, useState } from "react"
 

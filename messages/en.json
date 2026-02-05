@@ -4,6 +4,7 @@
       "home": "Home",
       "about": "About",
       "guestbook": "Guestbook",
+      "blog": "Blog",
       "contact": "Contact",
       "playground": "JS Playground",
       "apps": "Apps",
@@ -253,6 +254,19 @@
         "editor_not_ready": "Just a moment—the editor is still loading.",
         "runtime_error": "Your code encountered an error while running."
       }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Thoughts, tutorials, and insights about software development, design, and technology.",
+      "search_placeholder": "Search articles...",
+      "empty": {
+        "title": "No posts found yet.",
+        "subtitle": "Check back later for new content!"
+      },
+      "back_to_blog": "Back to Blog",
+      "min_read": "{count} min read",
+      "no_cover_image": "No Cover Image",
+      "no_excerpt": "No excerpt available."
     }
   },
   "admin": {
@@ -299,6 +313,60 @@
         "load_error": "Couldn't load messages. Please try again.",
         "reply_success": "Reply sent successfully!",
         "reply_error": "Couldn't send your reply. Please try again."
+      }
+    },
+    "blog": {
+      "list": {
+        "title": "Blog Posts",
+        "subtitle": "Manage your articles and content.",
+        "create_new": "Create New",
+        "empty": "No posts found.",
+        "columns": {
+          "title": "Title",
+          "status": "Status",
+          "views": "Views",
+          "date": "Date",
+          "actions": "Actions"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft"
+        }
+      },
+      "new": {
+        "title": "Create New Post",
+        "subtitle": "Drafting a new article."
+      },
+      "edit": {
+        "title": "Edit Post",
+        "subtitle": "Updating: {title}"
+      },
+      "form": {
+        "article_content": "Article Content",
+        "article_content_desc": "The main body of your post.",
+        "update_desc": "Update your post details below.",
+        "title_label": "Title",
+        "title_placeholder": "Enter article title...",
+        "content_label": "Content",
+        "publishing": "Publishing",
+        "published": "Published",
+        "visible": "Visible to visitors",
+        "save": "Save Post",
+        "update": "Update Post",
+        "discard": "Discard Draft",
+        "cancel": "Cancel",
+        "delete": "Delete Post",
+        "metadata": "Metadata",
+        "slug": "Slug",
+        "slug_placeholder": "auto-generated-slug",
+        "slug_hint": "Leave empty to auto-generate from title.",
+        "slug_hint_edit": "Leave empty to keep existing slug.",
+        "excerpt": "Excerpt",
+        "excerpt_placeholder": "Brief summary for SEO cards...",
+        "media": "Media",
+        "cover_image": "Cover Image URL",
+        "cover_placeholder": "https://",
+        "cover_hint": "Use full URL from external hosting (e.g. Unsplash)."
       }
     }
   },
@@ -394,6 +462,10 @@
       "title": "Guestbook | Rendi Ichtiar Prasetyo",
       "description": "Leave a message, say hello, or share your feedback in my digital guestbook."
     },
+    "blog": {
+      "title": "Blog | Rendi Ichtiar Prasetyo",
+      "description": "Writing about web development, Next.js, TypeScript, and software engineering best practices."
+    },
     "contact": {
       "title": "Contact | Rendi Ichtiar Prasetyo",
       "description": "Have a project or idea? Get in touch and let's create something amazing together."
@@ -406,6 +478,10 @@
       "contact": {
         "title": "Message Inbox",
         "description": "Admin panel for managing contact messages."
+      },
+      "blog": {
+        "title": "Blog Management",
+        "description": "Admin panel for managing blog posts."
       }
     }
   }
