@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { requireAdmin } from "@/lib/auth/require-admin"
-import { headers } from "next/headers"
+import { getClientIp } from "@/lib/security/client-ip"
 import { sendEmail } from "@/lib/email"
 import { getContactEmailTemplate } from "@/lib/email-templates"
 import { contactSchema } from "@/lib/validations/contact"
 
 export async function POST(req: Request) {
   try {
-    const json = await req.json()
+    let json: unknown
+    try {
+      json = await req.json()
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "invalid_json" },
+        { status: 400 }
+      )
+    }
     const result = contactSchema.safeParse(json)
 
     if (!result.success) {
@@ -20,20 +28,31 @@ export async function POST(req: Request) {
 
     const { name, email, message } = result.data
 
-    const headersList = await headers()
-    const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1"
-
+    const ip = await getClientIp()
+    const emailKey = email.trim().toLowerCase()
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
-    const recentMessages = await db.contactMessage.count({
-      where: {
-        ipAddress: ip,
-        createdAt: {
-          gte: oneHourAgo,
-        },
-      },
-    })
 
-    if (recentMessages >= 3) {
+    const [recentByIp, recentByEmail, recentGlobal] = await Promise.all([
+      ip
+        ? db.contactMessage.count({
+            where: { ipAddress: ip, createdAt: { gte: oneHourAgo } },
+          })
+        : Promise.resolve(0),
+      db.contactMessage.count({
+        where: { email: emailKey, createdAt: { gte: oneHourAgo } },
+      }),
+      db.contactMessage.count({ where: { createdAt: { gte: oneHourAgo } } }),
+    ])
+
+    const maxPerIp = Number(process.env.CONTACT_RATE_LIMIT_IP_MAX ?? 3)
+    const maxPerEmail = Number(process.env.CONTACT_RATE_LIMIT_EMAIL_MAX ?? 3)
+    const maxGlobal = Number(process.env.CONTACT_RATE_LIMIT_GLOBAL_MAX ?? 50)
+
+    if (
+      (ip && recentByIp >= maxPerIp) ||
+      recentByEmail >= maxPerEmail ||
+      recentGlobal >= maxGlobal
+    ) {
       return NextResponse.json(
         { success: false, error: "rate_limit_exceeded" },
         { status: 429 }
@@ -41,7 +60,7 @@ export async function POST(req: Request) {
     }
 
     await db.contactMessage.create({
-      data: { name, email, message, ipAddress: ip, status: "UNREAD" },
+      data: { name, email: emailKey, message, ipAddress: ip, status: "UNREAD" },
     })
 
     try {

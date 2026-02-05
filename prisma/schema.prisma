@@ -84,8 +84,10 @@ model ContactMessage {
   reply ContactReply?
 
   @@index([email])
+  @@index([email, createdAt])
   @@index([status])
   @@index([ipAddress, createdAt])
+  @@index([createdAt])
 }
 
 model ContactReply {

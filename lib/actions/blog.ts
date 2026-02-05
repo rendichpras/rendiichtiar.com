@@ -98,7 +98,6 @@ export async function updatePost(
     slug: formData.get("slug") as string | undefined,
   }
 
-  // Remove empty slug
   if (!rawData.slug) delete rawData.slug
 
   const result = blogSchema.safeParse(rawData)

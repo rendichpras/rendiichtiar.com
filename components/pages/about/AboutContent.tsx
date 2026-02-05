@@ -167,7 +167,7 @@ const sections: readonly SectionContent[] = [
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="p-6 pt-0 text-center text-sm text-muted-foreground sm:text-base">
+        <CardContent className="text-center text-sm text-muted-foreground sm:text-base">
           {t("career.empty")}
         </CardContent>
       </Card>

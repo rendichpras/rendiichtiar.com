@@ -41,6 +41,7 @@ export async function ensureDbUser() {
     },
     select: {
       id: true,
+      clerkId: true,
       email: true,
       name: true,
       imageUrl: true,

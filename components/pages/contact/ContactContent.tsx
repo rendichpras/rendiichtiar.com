@@ -131,7 +131,7 @@ export function ContactContent() {
   return (
     <>
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
-        <div className="container mx-auto px-4 py-0 sm:px-6 md:px-8 lg:px-12 xl:px-24">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <motion.div
             variants={{
               hidden: { opacity: 0 },
@@ -220,7 +220,7 @@ export function ContactContent() {
               }}
             >
               <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
-                <CardHeader className="pb-4">
+                <CardHeader>
                   <CardTitle className="text-lg font-semibold text-foreground">
                     {t("form.title")}
                   </CardTitle>

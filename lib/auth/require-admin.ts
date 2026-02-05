@@ -4,8 +4,20 @@ export async function requireAdmin() {
   const user = await currentUser()
   if (!user) throw new Error("unauthorized")
 
-  const adminEmail =
-    process.env.ADMIN_EMAIL || process.env.NEXT_PUBLIC_ADMIN_EMAIL || ""
+  const adminClerkId = process.env.ADMIN_CLERK_ID || ""
+  const adminEmail = process.env.ADMIN_EMAIL || ""
+
+  if (adminClerkId) {
+    if (user.id !== adminClerkId) throw new Error("forbidden")
+    const email =
+      user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
+        ?.emailAddress ??
+      user.emailAddresses[0]?.emailAddress ??
+      ""
+    return { email }
+  }
+
+  if (!adminEmail) throw new Error("forbidden")
 
   const email =
     user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)

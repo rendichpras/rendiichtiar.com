@@ -223,7 +223,7 @@ export default function HomeContent() {
               </div>
 
               <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
-                <CardHeader className="space-y-2 pb-3">
+                <CardHeader className="space-y-2">
                   <div className="flex items-center gap-2">
                     <MessageCircle
                       className="h-5 w-5 text-primary/70"

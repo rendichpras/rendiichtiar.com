@@ -1,62 +1,25 @@
-type GBEvent =
-  | {
-      type: "guestbook:new"
-      entry: {
-        id: string
-        message: string
-        createdAt: Date
-        user: {
-          name: string | null
-          image: string | null
-          email: string | null
-        }
-        provider: string
-        likes: {
-          id: string
-          user: { name: string | null; email: string | null }
-        }[]
-        replies: {
-          id: string
-          message: string
-          createdAt: Date
-          user: { name: string | null; image: string | null }
-        }[]
-      }
-    }
-  | {
-      type: "guestbook:like"
-      id: string
-      userEmail: string
-      action: "like" | "unlike"
-    }
-  | {
-      type: "guestbook:reply"
-      parentId: string
-      reply: {
-        id: string
-        message: string
-        createdAt: Date
-        user: { name: string | null; image: string | null }
-        mentionedUser: { name: string | null } | null
-        likes: {
-          id: string
-          user: { name: string | null; email: string | null }
-        }[]
-        parentId: string | null
-        rootId: string | null
-      }
-    }
+export type GBEvent = {
+  type: "guestbook:refresh"
+  reason: "new" | "reply" | "like" | "unlike" | "delete" | "admin"
+  entryId?: string
+  rootId?: string
+  ts: number
+}
 
 import Pusher from "pusher"
 
-export const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID!,
-  key: process.env.PUSHER_KEY!,
-  secret: process.env.PUSHER_SECRET!,
-  cluster: process.env.PUSHER_CLUSTER!,
-  useTLS: true,
-})
+function getPusher(): Pusher | null {
+  const appId = process.env.PUSHER_APP_ID
+  const key = process.env.PUSHER_KEY
+  const secret = process.env.PUSHER_SECRET
+  const cluster = process.env.PUSHER_CLUSTER
+  if (!appId || !key || !secret || !cluster) return null
+  return new Pusher({ appId, key, secret, cluster, useTLS: true })
+}
 
-export function emitEvent(e: GBEvent) {
-  pusher.trigger("guestbook", "gb", e)
+const pusher = getPusher()
+
+export async function emitEvent(e: GBEvent): Promise<void> {
+  if (!pusher) return
+  await pusher.trigger("guestbook", "refresh", e)
 }

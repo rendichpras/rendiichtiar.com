@@ -160,7 +160,8 @@
       "list": {
         "title": "Pesan Terbaru",
         "subtitle": "Lihat apa yang orang lain bagikan",
-        "empty": "Belum ada pesan. Jadilah yang pertama menyapa!",
+        "empty": "Belum ada pesan.",
+        "empty_description": "Jadilah yang pertama menyapa!",
         "owner": "Pemilik",
         "me": "Saya",
         "guest": "Tamu",

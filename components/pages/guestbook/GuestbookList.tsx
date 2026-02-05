@@ -26,6 +26,7 @@ import {
 import { SiGoogle, SiGithub } from "react-icons/si"
 
 import { MessageSkeleton } from "./GuestbookSkeleton"
+import { EmptyState } from "@/components/ui/empty-state"
 import {
   GuestbookReply,
   GuestbookReplyList,
@@ -35,19 +36,18 @@ import {
 import { getGuestbookEntries } from "@/lib/actions/guestbook"
 import { useTranslations, useLocale } from "next-intl"
 import { LoginDialog } from "@/components/auth/LoginDialog"
-import { generateId } from "@/lib/utils"
 import Pusher from "pusher-js"
 
 type RawLike = {
   id: string
-  user: { name: string | null; email: string | null }
+  user: { name: string | null; clerkId: string }
 }
 
 type RawReply = {
   id: string
   message: string
   createdAt: string | Date
-  user: { name: string | null; image: string | null }
+  user: { name: string | null; image: string | null; isOwner: boolean }
   mentionedUser?: { name: string | null } | null
   likes: RawLike[]
   parentId?: string | null
@@ -61,7 +61,7 @@ type RawEntry = {
   user: {
     name: string | null
     image: string | null
-    email: string | null
+    isOwner: boolean
   }
   provider: string
   likes: RawLike[]
@@ -73,8 +73,6 @@ type GuestbookEntry = Omit<RawEntry, "createdAt" | "replies"> & {
   createdAt: Date
   replies: Reply[]
 }
-
-const OWNER_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ""
 
 function orderReplies(list: Reply[], rootId: string): Reply[] {
   const byParent = new Map<string, Reply[]>()
@@ -164,10 +162,7 @@ export function GuestbookList({
   const locale = useLocale()
   const dateLocale = locale === "id" ? localeID : localeEN
 
-  const userEmail =
-    user?.primaryEmailAddress?.emailAddress ??
-    user?.emailAddresses?.[0]?.emailAddress ??
-    null
+  const userClerkId = user?.id ?? null
 
   const toggleReplies = (entryId: string) => {
     setExpandedEntries((prev) => {
@@ -236,120 +231,23 @@ export function GuestbookList({
   }, [fetchEntries])
 
   useEffect(() => {
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-    })
+    const key = process.env.NEXT_PUBLIC_PUSHER_KEY
+    const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER
+    if (!key || !cluster) return
 
+    const pusher = new Pusher(key, { cluster })
     const channel = pusher.subscribe("guestbook")
 
-    channel.bind(
-      "gb",
-      (
-        ev:
-          | { type: "guestbook:new"; entry: RawEntry }
-          | {
-              type: "guestbook:like"
-              id: string
-              userEmail: string
-              action: "like" | "unlike"
-            }
-          | { type: "guestbook:reply"; parentId: string; reply: RawReply }
-      ) => {
-        setEntries((prev) => {
-          if (ev.type === "guestbook:new") {
-            const e = ev.entry
-            const newEntry: GuestbookEntry = {
-              ...e,
-              createdAt: new Date(e.createdAt),
-              replies: orderReplies(
-                e.replies.map((r: RawReply) => ({
-                  ...r,
-                  createdAt: new Date(r.createdAt),
-                })),
-                e.id
-              ),
-            }
-            if (prev.some((p) => p.id === newEntry.id)) return prev
-            return [newEntry, ...prev]
-          }
-
-          if (ev.type === "guestbook:reply") {
-            const r: Reply = {
-              ...ev.reply,
-              createdAt: new Date(ev.reply.createdAt),
-            }
-
-            const targetRootId =
-              r.rootId ||
-              prev.find((en) => en.id === ev.parentId)?.id ||
-              prev.find((en) =>
-                en.replies.some((x) => x.id === (r.parentId ?? ev.parentId))
-              )?.id
-
-            if (!targetRootId) return prev
-
-            return prev.map((en) => {
-              if (en.id !== targetRootId) return en
-              if (en.replies.some((x) => x.id === r.id)) return en
-              const next = orderReplies([...en.replies, r], en.id)
-              return { ...en, replies: next }
-            })
-          }
-
-          if (ev.type === "guestbook:like") {
-            const { id, userEmail, action } = ev
-
-            return prev.map((en) => {
-              if (en.id === id) {
-                const liked = en.likes.some((l) => l.user.email === userEmail)
-                let likes = en.likes
-                if (action === "like" && !liked) {
-                  likes = [
-                    ...likes,
-                    {
-                      id: generateId(),
-                      user: { name: null, email: userEmail },
-                    },
-                  ]
-                }
-                if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail)
-                }
-                return { ...en, likes }
-              }
-
-              const replies = en.replies.map((rr) => {
-                if (rr.id !== id) return rr
-                const liked = rr.likes.some((l) => l.user.email === userEmail)
-                let likes = rr.likes
-                if (action === "like" && !liked) {
-                  likes = [
-                    ...likes,
-                    {
-                      id: generateId(),
-                      user: { name: null, email: userEmail },
-                    },
-                  ]
-                }
-                if (action === "unlike" && liked) {
-                  likes = likes.filter((l) => l.user.email !== userEmail)
-                }
-                return { ...rr, likes }
-              })
-
-              return { ...en, replies }
-            })
-          }
-
-          return prev
-        })
-      }
-    )
+    channel.bind("refresh", () => {
+      void fetchEntries()
+    })
 
     return () => {
+      channel.unbind_all()
       pusher.unsubscribe("guestbook")
+      pusher.disconnect()
     }
-  }, [])
+  }, [fetchEntries])
 
   if (loading) {
     return (
@@ -363,9 +261,10 @@ export function GuestbookList({
 
   if (entries.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center py-8 text-center">
-        <p className="text-sm text-muted-foreground">{t("list.empty")}</p>
-      </div>
+      <EmptyState
+        title={t("list.empty")}
+        description={t("list.empty_description")}
+      />
     )
   }
 
@@ -428,7 +327,7 @@ export function GuestbookList({
 
                         <ProviderIcon provider={entry.provider} />
 
-                        {entry.user.email === OWNER_EMAIL && (
+                        {entry.user.isOwner && (
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
@@ -479,7 +378,7 @@ export function GuestbookList({
                       <LikeButton
                         guestbookId={entry.id}
                         likes={entry.likes}
-                        userEmail={userEmail}
+                        userClerkId={userClerkId}
                       />
 
                       {entry.replies.length > 0 && (
@@ -538,7 +437,7 @@ export function GuestbookList({
                             onReplyComplete={() =>
                               handleReplyComplete(entry.id)
                             }
-                            userEmail={userEmail}
+                            userClerkId={userClerkId}
                           />
                         </div>
                       )}

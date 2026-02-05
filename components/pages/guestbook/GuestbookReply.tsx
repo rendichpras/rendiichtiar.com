@@ -160,23 +160,28 @@ interface LikeButtonProps {
   guestbookId: string
   likes: {
     id: string
-    user: { name: string | null; email: string | null }
+    user: { name: string | null; clerkId: string }
   }[]
-  userEmail?: string | null
+  userClerkId?: string | null
 }
 
-export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
+export function LikeButton({
+  guestbookId,
+  likes,
+  userClerkId,
+}: LikeButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [localLikes, setLocalLikes] = useState(likes)
-  const [liked, setLiked] = useState(() =>
-    localLikes.some((l) => l.user.email === userEmail)
+  const [liked, setLiked] = useState(
+    () =>
+      !!userClerkId && localLikes.some((l) => l.user.clerkId === userClerkId)
   )
   const [isAnimating, setIsAnimating] = useState(false)
   const [showLoginDialog, setShowLoginDialog] = useState(false)
   const t = useTranslations("pages.guestbook")
 
   const handleLike = async () => {
-    if (!userEmail) {
+    if (!userClerkId) {
       setShowLoginDialog(true)
       return
     }
@@ -190,14 +195,14 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
     try {
       if (liked) {
         setLiked(false)
-        setLocalLikes((ls) => ls.filter((l) => l.user.email !== userEmail))
+        setLocalLikes((ls) => ls.filter((l) => l.user.clerkId !== userClerkId))
       } else {
         setLiked(true)
         setLocalLikes((ls) => [
           ...ls,
           {
             id: generateId(),
-            user: { name: null, email: userEmail },
+            user: { name: null, clerkId: userClerkId },
           },
         ])
       }
@@ -219,8 +224,8 @@ export function LikeButton({ guestbookId, likes, userEmail }: LikeButtonProps) {
 
   useEffect(() => {
     setLocalLikes(likes)
-    setLiked(likes.some((l) => l.user.email === userEmail))
-  }, [likes, userEmail])
+    setLiked(!!userClerkId && likes.some((l) => l.user.clerkId === userClerkId))
+  }, [likes, userClerkId])
 
   return (
     <>
@@ -266,13 +271,13 @@ interface ReplyListProps {
     id: string
     message: string
     createdAt: Date
-    user: { name: string | null; image: string | null }
+    user: { name: string | null; image: string | null; isOwner?: boolean }
     mentionedUser?: { name: string | null } | null
-    likes: { id: string; user: { name: string | null; email: string | null } }[]
+    likes: { id: string; user: { name: string | null; clerkId: string } }[]
     parentId?: string | null
     rootId?: string | null
   }[]
-  userEmail?: string | null
+  userClerkId?: string | null
   onReplyClick: (targetId: string, authorName: string, rootId?: string) => void
   replyingTo: string | null
   onReplyComplete: (entryId: string) => void
@@ -281,7 +286,7 @@ interface ReplyListProps {
 
 export function GuestbookReplyList({
   replies,
-  userEmail,
+  userClerkId,
   onReplyClick,
   replyingTo,
   onReplyComplete,
@@ -336,7 +341,7 @@ export function GuestbookReplyList({
                     <LikeButton
                       guestbookId={reply.id}
                       likes={reply.likes}
-                      userEmail={userEmail}
+                      userClerkId={userClerkId}
                     />
                   </div>
                 </div>

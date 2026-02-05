@@ -160,7 +160,8 @@
       "list": {
         "title": "Recent Messages",
         "subtitle": "See what others have shared",
-        "empty": "No messages yet. Be the first to say hi!",
+        "empty": "No messages yet.",
+        "empty_description": "Be the first to say hi!",
         "owner": "Owner",
         "me": "Me",
         "guest": "Guest",

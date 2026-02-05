@@ -61,24 +61,49 @@ export function GuestbookContent() {
               <Separator className="bg-border" />
             </motion.div>
 
-            <div className="grid gap-8">
-              {!isLoaded ? (
-                <FormCardSkeleton />
-              ) : isSignedIn ? (
-                <GuestbookForm />
-              ) : (
-                <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
-                  <CardContent className="flex items-center justify-between gap-4 p-6">
-                    <div className="text-sm text-muted-foreground">
-                      {t("auth.sign_in_message")}
-                    </div>
-                    <SignInButton />
-                  </CardContent>
-                </Card>
-              )}
+            <motion.div
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              className="grid gap-6"
+            >
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+              >
+                {!isLoaded ? (
+                  <FormCardSkeleton />
+                ) : isSignedIn ? (
+                  <GuestbookForm />
+                ) : (
+                  <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
+                    <CardContent className="flex flex-col gap-4">
+                      <div className="text-sm text-muted-foreground">
+                        {t("auth.sign_in_message")}
+                      </div>
+                      <SignInButton />
+                    </CardContent>
+                  </Card>
+                )}
+              </motion.div>
 
-              <GuestbookList />
-            </div>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+              >
+                <GuestbookList />
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </section>

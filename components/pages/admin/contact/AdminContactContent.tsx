@@ -82,6 +82,10 @@ export default function AdminContactContent() {
   const fetchContacts = useCallback(async () => {
     try {
       const res = await fetch("/api/contact")
+      if (res.status === 401 || res.status === 403) {
+        router.push("/forbidden")
+        return
+      }
       const data = await res.json()
       if (data?.success) {
         setContacts(data.contacts as Contact[])
@@ -93,26 +97,16 @@ export default function AdminContactContent() {
     } finally {
       setPageLoading(false)
     }
-  }, [t])
+  }, [t, router])
 
   useEffect(() => {
     if (!isLoaded) return
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ""
-    const email =
-      user?.primaryEmailAddress?.emailAddress ??
-      user?.emailAddresses?.[0]?.emailAddress ??
-      ""
-
-    if (
-      !isSignedIn ||
-      !adminEmail ||
-      email.toLowerCase() !== adminEmail.toLowerCase()
-    ) {
+    if (!isSignedIn) {
       router.push("/forbidden")
       return
     }
     void fetchContacts()
-  }, [fetchContacts, router, isLoaded, isSignedIn, user])
+  }, [fetchContacts, router, isLoaded, isSignedIn])
 
   const handleReply = useCallback(async () => {
     if (!selectedContact) return

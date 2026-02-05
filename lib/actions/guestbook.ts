@@ -3,7 +3,7 @@
 import { db } from "@/db"
 import { ensureDbUser } from "@/lib/auth/ensure-db-user"
 import { emitEvent } from "@/lib/realtime"
-import { headers } from "next/headers"
+import { getClientIp } from "@/lib/security/client-ip"
 import { guestbookSchema } from "@/lib/validations/guestbook"
 
 function validateMessage(message: string) {
@@ -62,15 +62,24 @@ async function resolveRootId(parentId: string) {
 }
 
 export async function getGuestbookEntries() {
+  const adminClerkId = process.env.ADMIN_CLERK_ID ?? ""
+
   const entries = await db.guestbookEntry.findMany({
     where: { parentId: null },
     orderBy: { createdAt: "desc" },
     take: 50,
     include: {
       user: {
-        select: { name: true, email: true, imageUrl: true, authProvider: true },
+        select: {
+          name: true,
+          clerkId: true,
+          imageUrl: true,
+          authProvider: true,
+        },
       },
-      likes: { include: { user: { select: { name: true, email: true } } } },
+      likes: {
+        include: { user: { select: { name: true, clerkId: true } } },
+      },
     },
   })
 
@@ -80,9 +89,11 @@ export async function getGuestbookEntries() {
     where: { rootId: { in: rootIds } },
     orderBy: { createdAt: "asc" },
     include: {
-      user: { select: { name: true, imageUrl: true } },
+      user: { select: { name: true, clerkId: true, imageUrl: true } },
       mentionedUser: { select: { name: true } },
-      likes: { include: { user: { select: { name: true, email: true } } } },
+      likes: {
+        include: { user: { select: { name: true, clerkId: true } } },
+      },
     },
   })
 
@@ -101,22 +112,26 @@ export async function getGuestbookEntries() {
     user: {
       name: e.user.name,
       image: e.user.imageUrl,
-      email: e.user.email,
+      isOwner: adminClerkId ? e.user.clerkId === adminClerkId : false,
     },
     provider: e.user.authProvider ?? "clerk",
     likes: e.likes.map((l) => ({
       id: l.id,
-      user: { name: l.user.name, email: l.user.email },
+      user: { name: l.user.name, clerkId: l.user.clerkId },
     })),
     replies: (repliesByRoot.get(e.id) ?? []).map((r) => ({
       id: r.id,
       message: r.message,
       createdAt: r.createdAt,
-      user: { name: r.user.name, image: r.user.imageUrl },
+      user: {
+        name: r.user.name,
+        image: r.user.imageUrl,
+        isOwner: adminClerkId ? r.user.clerkId === adminClerkId : false,
+      },
       mentionedUser: r.mentionedUser ? { name: r.mentionedUser.name } : null,
       likes: r.likes.map((l) => ({
         id: l.id,
-        user: { name: l.user.name, email: l.user.email },
+        user: { name: l.user.name, clerkId: l.user.clerkId },
       })),
       parentId: r.parentId,
       rootId: r.rootId,
@@ -132,21 +147,24 @@ export async function addGuestbookEntry(
   try {
     const dbUser = await ensureDbUser()
     const trimmed = validateMessage(message)
-    const headersList = await headers()
-    const ip = headersList.get("x-forwarded-for") ?? "127.0.0.1"
+
+    const ip = await getClientIp()
 
     const oneMinuteAgo = new Date(Date.now() - 60 * 1000)
-    const recentEntry = await db.guestbookEntry.findFirst({
-      where: {
-        ipAddress: ip,
-        createdAt: {
-          gte: oneMinuteAgo,
-        },
-      },
+
+    const recentByUser = await db.guestbookEntry.findFirst({
+      where: { userId: dbUser.id, createdAt: { gte: oneMinuteAgo } },
       select: { id: true },
     })
 
-    if (recentEntry) {
+    const recentByIp = ip
+      ? await db.guestbookEntry.findFirst({
+          where: { ipAddress: ip, createdAt: { gte: oneMinuteAgo } },
+          select: { id: true },
+        })
+      : null
+
+    if (recentByUser || recentByIp) {
       return { success: false, error: "rate_limit_exceeded" }
     }
 
@@ -166,50 +184,21 @@ export async function addGuestbookEntry(
         user: {
           select: {
             name: true,
-            email: true,
             imageUrl: true,
             authProvider: true,
           },
         },
-        likes: { include: { user: { select: { name: true, email: true } } } },
+        likes: { include: { user: { select: { name: true, clerkId: true } } } },
       },
     })
 
-    if (parentId) {
-      emitEvent({
-        type: "guestbook:reply",
-        parentId: rootId ?? parentId,
-        reply: {
-          id: entry.id,
-          message: entry.message,
-          createdAt: entry.createdAt,
-          user: { name: entry.user.name, image: entry.user.imageUrl },
-          mentionedUser: entry.mentionedUserId
-            ? { name: parentAuthor ?? null }
-            : null,
-          likes: [],
-          parentId: entry.parentId,
-          rootId: entry.rootId,
-        },
-      })
-    } else {
-      emitEvent({
-        type: "guestbook:new",
-        entry: {
-          id: entry.id,
-          message: entry.message,
-          createdAt: entry.createdAt,
-          user: {
-            name: entry.user.name,
-            image: entry.user.imageUrl,
-            email: entry.user.email,
-          },
-          provider: entry.user.authProvider ?? "clerk",
-          likes: [],
-          replies: [],
-        },
-      })
-    }
+    await emitEvent({
+      type: "guestbook:refresh",
+      reason: parentId ? "reply" : "new",
+      entryId: entry.id,
+      rootId: entry.rootId ?? (parentId ? (rootId ?? parentId) : undefined),
+      ts: Date.now(),
+    })
 
     return { success: true, entryId: entry.id }
   } catch (error) {
@@ -234,11 +223,11 @@ export async function toggleLike(entryId: string) {
 
     if (existing) {
       await db.like.delete({ where: { id: existing.id } })
-      emitEvent({
-        type: "guestbook:like",
-        id: entryId,
-        userEmail: dbUser.email,
-        action: "unlike",
+      await emitEvent({
+        type: "guestbook:refresh",
+        reason: "unlike",
+        entryId,
+        ts: Date.now(),
       })
       return { success: true, liked: false }
     }
@@ -250,11 +239,11 @@ export async function toggleLike(entryId: string) {
       },
     })
 
-    emitEvent({
-      type: "guestbook:like",
-      id: entryId,
-      userEmail: dbUser.email,
-      action: "like",
+    await emitEvent({
+      type: "guestbook:refresh",
+      reason: "like",
+      entryId,
+      ts: Date.now(),
     })
 
     return { success: true, liked: true }

@@ -7,6 +7,7 @@ import BlogList from "./BlogList"
 import { useTranslations } from "next-intl"
 import { SearchInput } from "@/components/SearchInput"
 import { Pagination } from "@/components/ui/pagination-custom"
+import { EmptyState } from "@/components/ui/empty-state"
 
 type BlogContentProps = {
   posts: (Post & { blurDataURL?: string })[]
@@ -76,10 +77,10 @@ export function BlogContent({
             }}
           >
             {posts.length === 0 ? (
-              <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card text-center text-muted-foreground">
-                <p className="text-lg font-medium">{t("empty.title")}</p>
-                <p className="text-sm">{t("empty.subtitle")}</p>
-              </div>
+              <EmptyState
+                title={t("empty.title")}
+                description={t("empty.subtitle")}
+              />
             ) : (
               <>
                 <BlogList posts={posts} />
