@@ -266,7 +266,7 @@ export default function AdminContactContent() {
               </p>
             </div>
 
-            <Separator className="my-6 bg-border/60" />
+            <Separator className="my-6 bg-border" />
 
             <ContactTableSkeleton />
           </div>
@@ -351,7 +351,7 @@ export default function AdminContactContent() {
                     {table.getHeaderGroups().map((hg) => (
                       <TableRow
                         key={hg.id}
-                        className="border-b border-border/50 hover:bg-transparent"
+                        className="border-b border-border hover:bg-transparent"
                       >
                         {hg.headers.map((h) => (
                           <TableHead key={h.id} className="h-11 px-6 text-xs">
@@ -373,7 +373,7 @@ export default function AdminContactContent() {
                         <TableRow
                           key={r.id}
                           data-state={r.getIsSelected() && "selected"}
-                          className="border-b border-border/50 last:border-0 hover:bg-muted/50"
+                          className="border-b border-border last:border-0 hover:bg-muted"
                         >
                           {r.getVisibleCells().map((cell) => (
                             <TableCell key={cell.id} className="px-6 py-3">

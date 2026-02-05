@@ -60,13 +60,13 @@ export default function AdminBlogNewContent() {
             </div>
           </div>
 
-          <Separator className="bg-border/60" />
+          <Separator className="bg-border" />
 
           <form action={formAction} className="grid gap-8 lg:grid-cols-3">
             <input type="hidden" name="content" value={content} />
 
             <div className="space-y-6 lg:col-span-2">
-              <Card className="border-border/30 bg-card">
+              <Card className="border-border bg-card">
                 <CardHeader>
                   <CardTitle>{t("form.article_content")}</CardTitle>
                   <CardDescription>
@@ -103,7 +103,7 @@ export default function AdminBlogNewContent() {
             </div>
 
             <div className="space-y-6">
-              <Card className="border-border/30 bg-card">
+              <Card className="border-border bg-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Settings className="h-4 w-4" />
@@ -125,10 +125,11 @@ export default function AdminBlogNewContent() {
 
                   {state.message && (
                     <div
-                      className={`rounded-md p-3 text-sm font-medium ${state.message.includes("success")
-                        ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                        : "bg-destructive/10 text-destructive"
-                        }`}
+                      className={`rounded-md p-3 text-sm font-medium ${
+                        state.message.includes("success")
+                          ? "bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-400"
+                          : "bg-destructive text-destructive-foreground"
+                      }`}
                     >
                       {state.message}
                     </div>
@@ -154,7 +155,7 @@ export default function AdminBlogNewContent() {
                 </CardContent>
               </Card>
 
-              <Card className="border-border/30 bg-card">
+              <Card className="border-border bg-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-4 w-4" />
@@ -190,7 +191,7 @@ export default function AdminBlogNewContent() {
                 </CardContent>
               </Card>
 
-              <Card className="border-border/30 bg-card">
+              <Card className="border-border bg-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <ImageIcon className="h-4 w-4" />

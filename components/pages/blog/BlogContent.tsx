@@ -66,7 +66,7 @@ export function BlogContent({
               show: { opacity: 1, scaleX: 1 },
             }}
           >
-            <Separator className="bg-border/40" />
+            <Separator className="bg-border" />
           </motion.div>
 
           <motion.div
@@ -76,7 +76,7 @@ export function BlogContent({
             }}
           >
             {posts.length === 0 ? (
-              <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-xl border border-dashed border-border/30 bg-card text-center text-muted-foreground">
+              <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card text-center text-muted-foreground">
                 <p className="text-lg font-medium">{t("empty.title")}</p>
                 <p className="text-sm">{t("empty.subtitle")}</p>
               </div>

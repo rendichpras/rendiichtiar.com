@@ -54,20 +54,11 @@ const TECH_STACK: readonly TechItem[] = [
   { name: "VS Code", icon: VscCode },
 ] as const
 
-const EdgeFades = memo(function EdgeFades() {
-  return (
-    <>
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-background/0" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-background/0" />
-    </>
-  )
-})
-
 const TechPill = memo(function TechPill({ name, icon: Icon }: TechItem) {
   return (
     <Badge
       variant="outline"
-      className="mx-1 flex items-center gap-2 rounded-full border-border/30 bg-background px-4 py-1.5 text-muted-foreground transition-colors duration-300 hover:border-border/50 hover:bg-accent hover:text-foreground"
+      className="mx-1 flex items-center gap-2 rounded-full border-border bg-background px-4 py-1.5 text-muted-foreground transition-colors duration-300 hover:border-foreground/20 hover:bg-accent hover:text-foreground"
     >
       <Icon className="h-5 w-5" aria-hidden="true" />
       <span className="text-base font-medium leading-none">{name}</span>
@@ -90,7 +81,6 @@ const MarqueeRow = memo(function MarqueeRow({
 
   return (
     <div className="relative">
-      <EdgeFades />
       <Marquee
         duration={durationSeconds}
         reverse={reverse}

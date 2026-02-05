@@ -168,7 +168,7 @@ export function ContactContent() {
                 show: { opacity: 1, scaleX: 1 },
               }}
             >
-              <Separator className="bg-border/40" />
+              <Separator className="bg-border" />
             </motion.div>
 
             <motion.div
@@ -177,7 +177,7 @@ export function ContactContent() {
                 show: { opacity: 1, y: 0 },
               }}
             >
-              <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
+              <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
                 <CardHeader>
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1">
@@ -198,7 +198,7 @@ export function ContactContent() {
                     <Button
                       asChild
                       size="lg"
-                      className="shrink-0 self-start rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
+                      className="shrink-0 self-start rounded-xl bg-secondary text-primary hover:bg-secondary/80"
                     >
                       <a
                         href="https://cal.com/rendiichtiar"
@@ -219,7 +219,7 @@ export function ContactContent() {
                 show: { opacity: 1, y: 0 },
               }}
             >
-              <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
+              <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg font-semibold text-foreground">
                     {t("form.title")}
@@ -258,7 +258,7 @@ export function ContactContent() {
                           aria-describedby={
                             errors.name ? "name-error" : undefined
                           }
-                          className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                          className="rounded-xl border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
                         />
 
                         {errors.name ? (
@@ -293,7 +293,7 @@ export function ContactContent() {
                           aria-describedby={
                             errors.email ? "email-error" : undefined
                           }
-                          className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                          className="rounded-xl border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
                         />
 
                         {errors.email ? (
@@ -346,7 +346,7 @@ export function ContactContent() {
                         type="submit"
                         size="lg"
                         disabled={isLoading}
-                        className="ml-auto rounded-xl bg-primary/10 text-primary hover:bg-primary/20"
+                        className="ml-auto rounded-xl bg-secondary text-primary hover:bg-secondary/80"
                       >
                         {isLoading ? t("form.sending") : t("form.send")}
                       </Button>

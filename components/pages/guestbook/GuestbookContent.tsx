@@ -43,9 +43,9 @@ const AuthBar = memo(function AuthBar({
     const initial = (name || "G").charAt(0).toUpperCase()
 
     return (
-      <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
+      <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
         <CardContent className="flex items-start gap-4">
-          <Avatar className="size-10 border-2 border-border/30">
+          <Avatar className="size-10 border-2 border-border">
             <AvatarImage src={image} alt={name} />
             <AvatarFallback className="text-sm font-medium text-foreground/90">
               {initial}
@@ -72,7 +72,7 @@ const AuthBar = memo(function AuthBar({
   }
 
   return (
-    <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
+    <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
       <CardHeader>
         <CardTitle className="text-sm font-medium text-foreground/90">
           {signInMessage}
@@ -136,7 +136,7 @@ export function GuestbookContent() {
                 show: { opacity: 1, scaleX: 1 },
               }}
             >
-              <Separator className="bg-border/40" />
+              <Separator className="bg-border" />
             </motion.div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr,400px]">
@@ -163,7 +163,7 @@ export function GuestbookContent() {
                   <FormCardSkeleton />
                 ) : (
                   isSignedIn && (
-                    <Card className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50">
+                    <Card className="border-border bg-card transition-colors duration-300 hover:border-primary">
                       <CardHeader>
                         <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
                           {t("title")}
@@ -187,7 +187,7 @@ export function GuestbookContent() {
                   show: { opacity: 1, y: 0 },
                 }}
               >
-                <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border/30 bg-card transition-colors duration-300 hover:border-border/50 lg:h-[calc(100vh-8rem)]">
+                <Card className="flex h-[calc(100vh-12rem)] flex-col overflow-hidden border-border bg-card transition-colors duration-300 hover:border-primary lg:h-[calc(100vh-8rem)]">
                   <CardHeader>
                     <CardTitle className="text-sm font-semibold text-foreground sm:text-base">
                       {t("list.title")}

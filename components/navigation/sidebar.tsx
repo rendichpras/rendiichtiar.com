@@ -47,7 +47,7 @@ export function Navigation({
       >
         <div
           className={cn(
-            "absolute inset-0 border-b border-border/30 bg-background transition-all duration-300",
+            "absolute inset-0 border-b border-border bg-background transition-all duration-300",
             scrolled && "shadow-md"
           )}
         />
@@ -71,7 +71,7 @@ export function Navigation({
 
       <aside
         className={cn(
-          "fixed left-0 top-0 bottom-0 z-50 hidden border-r border-border/30 lg:flex lg:flex-col transition-all duration-300",
+          "fixed left-0 top-0 bottom-0 z-50 hidden border-r border-border lg:flex lg:flex-col transition-all duration-300",
           collapsed ? "w-16" : "w-64"
         )}
         role="complementary"
@@ -146,13 +146,13 @@ export function Navigation({
                         "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors",
                         collapsed ? "justify-center px-2" : "gap-3 px-3",
                         active
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                          ? "bg-secondary text-primary"
+                          : "text-muted-foreground hover:bg-secondary hover:text-primary"
                       )}
                       aria-current={active ? "page" : undefined}
                     >
                       <Icon
-                        className="size-4 flex-shrink-0"
+                        className="border-none size-4 flex-shrink-0"
                         aria-hidden="true"
                       />
                       <span className={cn(collapsed && "hidden")}>{label}</span>
@@ -211,8 +211,8 @@ export function Navigation({
                         "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors",
                         collapsed ? "justify-center px-2" : "gap-3 px-3",
                         active
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                          ? "bg-secondary text-primary"
+                          : "text-muted-foreground hover:bg-secondary hover:text-primary"
                       )}
                       aria-current={active ? "page" : undefined}
                     >
@@ -278,7 +278,7 @@ export function Navigation({
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
-                          "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors",
+                          "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary transition-colors",
                           "gap-3 px-3"
                         )}
                       >

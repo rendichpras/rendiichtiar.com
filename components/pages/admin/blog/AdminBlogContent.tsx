@@ -54,13 +54,13 @@ export default function AdminBlogContent({ posts }: Props) {
           </Button>
         </div>
 
-        <Separator className="my-6 bg-border/60" />
+        <Separator className="my-6 bg-border" />
 
-        <Card className="border-border/30 bg-card">
+        <Card className="border-border bg-card">
           <div className="rounded-lg border-0">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-border/50 hover:bg-transparent">
+                <TableRow className="border-b border-border hover:bg-transparent">
                   <TableHead className="h-11 px-6 text-xs">
                     {t("columns.title")}
                   </TableHead>
@@ -89,7 +89,7 @@ export default function AdminBlogContent({ posts }: Props) {
                   posts.map((post) => (
                     <TableRow
                       key={post.id}
-                      className="group border-b border-border/50 last:border-0 hover:bg-muted/50"
+                      className="group border-b border-border last:border-0 hover:bg-muted"
                     >
                       <TableCell className="px-6 py-3 font-medium">
                         <Link

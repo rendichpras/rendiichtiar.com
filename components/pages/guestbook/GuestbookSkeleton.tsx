@@ -14,7 +14,7 @@ export function MessageSkeleton() {
   return (
     <div className="group">
       <div className="flex gap-4">
-        <Skeleton className="h-8 w-8 shrink-0 rounded-full border border-border/30 sm:h-9 sm:w-9" />
+        <Skeleton className="h-8 w-8 shrink-0 rounded-full border border-border sm:h-9 sm:w-9" />
 
         <div className="flex-1 space-y-2">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
@@ -38,7 +38,7 @@ export function MessageSkeleton() {
             {Array.from({ length: 2 }).map((_, i) => (
               <div key={i}>
                 <div className="flex items-start gap-2 sm:gap-3">
-                  <Skeleton className="h-5 w-5 shrink-0 rounded-full border border-border/30 sm:h-6 sm:w-6" />
+                  <Skeleton className="h-5 w-5 shrink-0 rounded-full border border-border sm:h-6 sm:w-6" />
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -67,9 +67,9 @@ export function MessageSkeleton() {
 
 export function AuthBarSkeleton() {
   return (
-    <Card className="border-border/30 bg-card">
+    <Card className="border-border bg-card">
       <CardContent className="flex items-start gap-4">
-        <Skeleton className="size-10 rounded-full border-2 border-border/30" />
+        <Skeleton className="size-10 rounded-full border-2 border-border" />
         <div className="flex-1">
           <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
             <div className="min-w-0 space-y-1">
@@ -86,7 +86,7 @@ export function AuthBarSkeleton() {
 
 export function FormCardSkeleton() {
   return (
-    <Card className="border-border/30 bg-card">
+    <Card className="border-border bg-card">
       <CardHeader>
         <CardTitle>
           <Skeleton className="h-4 w-28" />

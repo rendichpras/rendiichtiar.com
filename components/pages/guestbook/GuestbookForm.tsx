@@ -86,7 +86,7 @@ export function GuestbookForm() {
           maxLength={MAX_LEN}
           disabled={isSubmitting}
           className={cn(
-            "min-h-[44px] resize-none pr-12 rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+            "min-h-[44px] resize-none pr-12 rounded-xl border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
           )}
         />
 
@@ -106,7 +106,7 @@ export function GuestbookForm() {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "relative rounded-xl bg-primary/10 text-primary hover:bg-primary/20",
+            "relative rounded-xl bg-secondary text-primary hover:bg-secondary/80",
             isSubmitting && "cursor-wait opacity-80"
           )}
         >

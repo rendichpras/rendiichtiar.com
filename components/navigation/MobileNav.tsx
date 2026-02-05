@@ -38,8 +38,8 @@ const MobileNavItem = memo(function MobileNavItem({
       className={cn(
         "relative flex w-full items-center gap-3 overflow-hidden rounded-lg px-4 py-3 text-sm font-medium",
         active
-          ? "bg-primary/10 text-primary"
-          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+          ? "bg-secondary text-primary"
+          : "text-muted-foreground hover:bg-secondary hover:text-primary"
       )}
       aria-current={active ? "page" : undefined}
       role="menuitem"
@@ -56,18 +56,18 @@ const MobileExternalItem = memo(function MobileExternalItem({
   t,
 }: SocialItem & { t: (key: string) => string }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="relative flex w-full items-center gap-3 overflow-hidden rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary"
-      role="menuitem"
+    <Button
+      variant="ghost"
+      asChild
+      className="relative flex w-full items-center justify-start gap-3 overflow-hidden rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
     >
-      <span className="font-medium">
-        {t(`navigation.social_names.${name.toLowerCase()}`)}
-      </span>
-      <ArrowUpRight className="ml-auto size-4" aria-hidden="true" />
-    </a>
+      <a href={href} target="_blank" rel="noopener noreferrer" role="menuitem">
+        <span className="font-medium">
+          {t(`navigation.social_names.${name.toLowerCase()}`)}
+        </span>
+        <ArrowUpRight className="ml-auto size-4" aria-hidden="true" />
+      </a>
+    </Button>
   )
 })
 
@@ -135,7 +135,7 @@ export function MobileNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 bg-black/40 lg:hidden"
+              className="fixed inset-0 z-50 bg-black/80 lg:hidden"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />

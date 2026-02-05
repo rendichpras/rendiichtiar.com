@@ -66,7 +66,7 @@ export function ForbiddenContent() {
                 <Button
                   size="lg"
                   onClick={() => router.push("/")}
-                  className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
+                  className="rounded-xl border border-border bg-secondary text-primary hover:bg-secondary/80"
                 >
                   {t("error.forbidden.back_home")}
                 </Button>

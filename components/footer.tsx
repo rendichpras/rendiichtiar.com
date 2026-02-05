@@ -25,7 +25,7 @@ function SocialLink({
         variant="ghost"
         size="icon"
         className={cn(
-          "h-9 w-9 rounded-xl border border-border/30 bg-card text-muted-foreground hover:border-border/50 hover:bg-accent hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40",
+          "h-9 w-9 rounded-xl border border-border bg-card text-muted-foreground hover:border-primary hover:bg-accent hover:text-primary focus-visible:ring-2 focus-visible:ring-primary",
           className
         )}
         aria-label={label}
@@ -44,7 +44,7 @@ export function Footer() {
   const t = useTranslations("common")
 
   return (
-    <footer className="border-t border-border/30 bg-background">
+    <footer className="border-t border-border bg-background">
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
         <div className="py-6">
           <div className="flex flex-col gap-4 text-center text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:text-left">
@@ -78,7 +78,7 @@ export function Footer() {
             </nav>
           </div>
 
-          <Separator className="mt-4 bg-border/20 sm:hidden" />
+          <Separator className="mt-4 bg-border sm:hidden" />
         </div>
       </div>
     </footer>

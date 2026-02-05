@@ -403,7 +403,7 @@ export function GuestbookList({
             className="group"
           >
             <div className="flex gap-4">
-              <Avatar className="h-8 w-8 shrink-0 border border-border/30">
+              <Avatar className="h-8 w-8 shrink-0 border border-border">
                 <AvatarImage
                   src={entry.user.image || ""}
                   alt={entry.user.name || tCommon("navigation.avatar")}
@@ -538,7 +538,7 @@ export function GuestbookList({
               </div>
             </div>
 
-            <Separator className="mt-6 bg-border/40" />
+            <Separator className="mt-6 bg-border" />
           </motion.div>
         ))}
       </motion.div>

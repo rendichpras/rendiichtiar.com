@@ -49,7 +49,7 @@ export default function BlogList({ posts }: { posts: Post[] }) {
       {posts.map((post) => (
         <motion.div key={post.id} variants={item}>
           <Link href={`/blog/${post.slug}`} className="group h-full">
-            <Card className="flex h-full flex-col gap-0 overflow-hidden rounded-xl border-border/30 bg-card p-0 transition-colors duration-300 hover:border-border/50">
+            <Card className="flex h-full flex-col gap-0 overflow-hidden rounded-xl border-border bg-card p-0 transition-colors duration-300 hover:border-primary">
               <div className="relative aspect-video w-full overflow-hidden bg-muted">
                 {post.coverImage ? (
                   <Image
@@ -59,11 +59,10 @@ export default function BlogList({ posts }: { posts: Post[] }) {
                     className="object-cover transition-transform duration-500 will-change-transform group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center bg-secondary/30 text-muted-foreground">
+                  <div className="flex h-full items-center justify-center bg-secondary text-muted-foreground">
                     <span className="text-sm">{t("no_cover_image")}</span>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/20" />
 
                 <div className="absolute left-4 top-4 flex flex-wrap gap-1.5 direction-reverse">
                   {post.tags.slice(0, 2).map((tag) => (

@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { Toggle } from "@/components/ui/toggle"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 
 type ToolbarProps = {
   editor: Editor | null
@@ -53,7 +54,7 @@ export function Toolbar({ editor }: ToolbarProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-1 border-b bg-muted/40 p-2">
+    <div className="flex flex-wrap gap-1 border-b bg-muted p-2">
       <Toggle
         size="sm"
         pressed={editor.isActive("bold")}
@@ -95,7 +96,7 @@ export function Toolbar({ editor }: ToolbarProps) {
         <Code className="h-4 w-4 border-2 border-current rounded-[2px]" />
       </Toggle>
 
-      <div className="mx-1 w-[1px] bg-border" />
+      <Separator orientation="vertical" className="mx-1 h-6" />
 
       <Toggle
         size="sm"
@@ -128,7 +129,7 @@ export function Toolbar({ editor }: ToolbarProps) {
         <Heading3 className="h-4 w-4" />
       </Toggle>
 
-      <div className="mx-1 w-[1px] bg-border" />
+      <Separator orientation="vertical" className="mx-1 h-6" />
 
       <Toggle
         size="sm"
@@ -155,7 +156,7 @@ export function Toolbar({ editor }: ToolbarProps) {
         <Quote className="h-4 w-4" />
       </Toggle>
 
-      <div className="mx-1 w-[1px] bg-border" />
+      <Separator orientation="vertical" className="mx-1 h-6" />
 
       <Button variant="ghost" size="sm" onClick={setLink} type="button">
         <LinkIcon className="h-4 w-4" />

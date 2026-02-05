@@ -87,7 +87,7 @@ export function GuestbookReply({
         aria-busy={isSubmitting}
       >
         <div className="flex items-start gap-2 sm:gap-3">
-          <Avatar className="mt-1 h-5 w-5 border border-border/30 sm:h-6 sm:w-6">
+          <Avatar className="mt-1 h-5 w-5 border border-border sm:h-6 sm:w-6">
             <AvatarImage src={image} alt={name} />
             <AvatarFallback
               className="text-[10px] font-medium text-foreground/90"
@@ -111,7 +111,7 @@ export function GuestbookReply({
                   name: parentAuthor,
                 })}
                 className={cn(
-                  "min-h-[44px] resize-none rounded-xl border-border/30 bg-card text-xs transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary sm:text-sm"
+                  "min-h-[44px] resize-none rounded-xl border-border bg-card text-xs transition-colors duration-300 hover:border-primary focus-visible:ring-primary sm:text-sm"
                 )}
                 maxLength={280}
                 disabled={isSubmitting}
@@ -134,7 +134,7 @@ export function GuestbookReply({
                 type="submit"
                 size="sm"
                 disabled={isSubmitting}
-                className="h-7 rounded-xl bg-primary/10 px-2 text-[10px] text-primary hover:bg-primary/20 sm:h-8 sm:px-3 sm:text-xs"
+                className="h-7 rounded-xl bg-secondary px-2 text-[10px] text-primary hover:bg-secondary/80 sm:h-8 sm:px-3 sm:text-xs"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-1.5">
@@ -292,7 +292,7 @@ export function GuestbookReplyList({
   if (!replies.length) return null
 
   return (
-    <div className="mt-3 space-y-4 border-l border-border/30 pl-4 sm:pl-8">
+    <div className="mt-3 space-y-4 border-l border-border pl-4 sm:pl-8">
       {replies.map((reply) => {
         const name = reply.user.name || t("list.guest")
         const initial = name.charAt(0).toUpperCase()
@@ -301,7 +301,7 @@ export function GuestbookReplyList({
           <div key={reply.id} className="space-y-2">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-2 sm:gap-3">
-                <Avatar className="mt-0.5 h-6 w-6 border border-border/30 sm:h-7 sm:w-7">
+                <Avatar className="mt-0.5 h-6 w-6 border border-border sm:h-7 sm:w-7">
                   <AvatarImage src={reply.user.image || ""} alt={name} />
                   <AvatarFallback className="text-[10px] font-medium text-foreground/90">
                     {initial}
@@ -323,13 +323,15 @@ export function GuestbookReplyList({
                   </p>
 
                   <div className="mt-1 flex items-center gap-3 text-[10px] text-muted-foreground sm:text-xs">
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => onReplyClick(reply.id, name, rootId)}
-                      className="hover:text-foreground"
+                      className="h-auto p-0 text-[10px] text-muted-foreground hover:bg-transparent hover:text-foreground sm:text-xs"
                     >
                       {t("list.reply.button")}
-                    </button>
+                    </Button>
 
                     <LikeButton
                       guestbookId={reply.id}
