@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { Edit, Plus, Eye } from "lucide-react"
 import { DeletePostButton } from "./DeletePostButton"
 import { useTranslations, useLocale } from "next-intl"

@@ -16,7 +16,7 @@ import {
   FileText,
   Settings,
 } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import {
   Card,
   CardContent,
@@ -25,7 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 const initialState: CreatePostState = {
   message: "",
@@ -34,6 +34,7 @@ const initialState: CreatePostState = {
 
 export default function AdminBlogNewContent() {
   const t = useTranslations("admin.blog")
+  const locale = useLocale()
   const [content, setContent] = useState("<p>Start writing...</p>")
   const [state, formAction, isPending] = useActionState<
     CreatePostState,
@@ -63,6 +64,7 @@ export default function AdminBlogNewContent() {
           <Separator className="bg-border" />
 
           <form action={formAction} className="grid gap-8 lg:grid-cols-3">
+            <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="content" value={content} />
 
             <div className="space-y-6 lg:col-span-2">

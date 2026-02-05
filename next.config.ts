@@ -8,7 +8,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "rendiichtiar.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.rendiichtiar.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
       },
     ],
   },
@@ -17,11 +25,6 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [
-          {
-            key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://*.clerk.accounts.dev https://clerk.rendiichtiar.com https://cdn.jsdelivr.net blob:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https: https://img.clerk.com; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self' https: https://*.clerk.accounts.dev https://clerk.rendiichtiar.com wss://ws-ap1.pusher.com; frame-src 'self' blob:; worker-src 'self' blob:;",
-          },
           {
             key: "X-Frame-Options",
             value: "DENY",

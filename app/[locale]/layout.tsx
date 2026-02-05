@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${t("title")}`,
     },
     description: t("description"),
-    metadataBase: new URL(SITE_URL),
+    ...(SITE_URL ? { metadataBase: new URL(SITE_URL) } : {}),
     keywords: t.raw("keywords"),
     authors: [{ name: "Rendi Ichtiar Prasetyo" }],
     creator: "Rendi Ichtiar Prasetyo",
@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t("title"),
       description: t("description"),
-      url: "/",
+      url: `/${locale}`,
       type: "website",
       siteName: t("title"),
       locale: locale === "id" ? "id_ID" : "en_US",
@@ -71,7 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
       google: "JSf4AOk3_MJEskxEwDCL519D-Uvd8pmEczlC7dQzX8Y",
     },
     alternates: {
-      canonical: "/",
+      canonical: `/${locale}`,
       languages: {
         id: "/id",
         en: "/en",

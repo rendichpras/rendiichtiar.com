@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { SiGithub, SiGoogle } from "react-icons/si"
 import { useSignIn } from "@clerk/nextjs"
 import type { OAuthStrategy } from "@clerk/types"
@@ -26,8 +26,9 @@ export function LoginDialog({
   callbackUrlOverride,
 }: LoginDialogProps) {
   const t = useTranslations("common")
+  const locale = useLocale()
   const pathname = usePathname()
-  const callbackUrl = callbackUrlOverride || pathname || "/"
+  const callbackUrl = callbackUrlOverride || pathname || `/${locale}`
 
   const { signIn } = useSignIn()
 
@@ -35,7 +36,7 @@ export function LoginDialog({
     if (!signIn) return
     void signIn.authenticateWithRedirect({
       strategy,
-      redirectUrl: "/sso-callback",
+      redirectUrl: `/${locale}/sso-callback`,
       redirectUrlComplete: callbackUrl,
     })
   }

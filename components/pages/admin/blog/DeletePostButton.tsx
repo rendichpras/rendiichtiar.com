@@ -5,6 +5,7 @@ import { deletePost } from "@/lib/actions/blog"
 import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import { useLocale } from "next-intl"
 
 import { cn } from "@/lib/utils"
 
@@ -16,11 +17,12 @@ export function DeletePostButton({
   className?: string
 }) {
   const [isPending, startTransition] = useTransition()
+  const locale = useLocale()
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this post?")) {
       startTransition(async () => {
-        const result = await deletePost(id)
+        const result = await deletePost(id, locale)
         if (result.message === "Deleted Post") {
           toast.success("Post deleted")
         } else {

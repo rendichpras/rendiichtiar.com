@@ -15,6 +15,18 @@ type TiptapEditorProps = {
   onChange: (richText: string) => void
 }
 
+function isSafeHref(href: string) {
+  if (href.startsWith("#") || href.startsWith("/")) return true
+
+  try {
+    const url = new URL(href)
+    const allowed = new Set(["http:", "https:", "mailto:", "tel:"])
+    return allowed.has(url.protocol)
+  } catch {
+    return false
+  }
+}
+
 export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -26,6 +38,9 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
       }),
       Link.configure({
         openOnClick: false,
+        autolink: true,
+        defaultProtocol: "https",
+        validate: (href) => isSafeHref(href),
         HTMLAttributes: {
           class: "text-primary underline underline-offset-4",
         },

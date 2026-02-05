@@ -9,7 +9,15 @@ export async function POST(req: Request) {
   try {
     await requireAdmin()
 
-    const json = await req.json()
+    let json: unknown
+    try {
+      json = await req.json()
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "invalid_json" },
+        { status: 400 }
+      )
+    }
     const result = contactReplySchema.safeParse(json)
 
     if (!result.success) {

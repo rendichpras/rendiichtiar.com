@@ -1,128 +1,109 @@
-import { getTranslations, setRequestLocale } from "next-intl/server"
 import { getPostBySlug } from "@/lib/actions/blog"
 import { notFound } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
-import parse from "html-react-parser"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, CalendarDays, Clock } from "lucide-react"
-import { Metadata } from "next"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
+import { setRequestLocale } from "next-intl/server"
+import { useTranslations } from "next-intl"
+import { getTranslations } from "next-intl/server"
+import { parse } from "html-react-parser"
+import { Link } from "@/i18n/routing"
+import { sanitizeHtml } from "@/lib/security/sanitize-html"
+import Footer from "@/components/Footer"
 
 type Props = {
-  params: Promise<{ slug: string; locale: string }>
+  params: { slug: string; locale: string }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
+export async function generateMetadata({ params }: Props) {
+  const { slug } = params
   const post = await getPostBySlug(slug)
 
   if (!post) {
     return {
-      title: "Post Not Found",
+      title: "Not found",
+      description: "",
     }
   }
 
   return {
-    title: `${post.title} | Rendi Ichtiar Prasetyo`,
+    title: post.title,
     description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt || "",
-      images: post.coverImage ? [post.coverImage] : [],
-      type: "article",
-      publishedTime: post.createdAt.toISOString(),
-    },
   }
 }
 
+function calculateReadingTime(htmlContent: string) {
+  const text = htmlContent.replace(/<[^>]*>/g, "")
+  const words = text.trim().split(/\s+/).filter(Boolean).length
+  const wordsPerMinute = 200
+  const minutes = Math.ceil(words / wordsPerMinute)
+  return minutes
+}
+
 export default async function BlogPostPage({ params }: Props) {
-  const { slug, locale } = await params
+  const { slug, locale } = params
   setRequestLocale(locale)
-  const t = await getTranslations({ locale, namespace: "pages.blog" })
+
   const post = await getPostBySlug(slug)
 
-  if (!post || !post.published) {
+  if (!post) {
     return notFound()
   }
 
+  const safeHtml = sanitizeHtml(post.content)
+  const readingTime = calculateReadingTime(safeHtml)
+
   return (
-    <article className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
-        <div className="mx-auto max-w-4xl space-y-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="rounded-xl border-border/30 bg-card text-muted-foreground transition-colors duration-300 hover:border-border/50 hover:bg-accent hover:text-foreground"
-            asChild
+    <div className="min-h-screen bg-white dark:bg-black">
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="mb-8">
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
           >
-            <Link href="/blog">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t("back_to_blog")}
-            </Link>
-          </Button>
-
-          <header className="space-y-4">
-            {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="rounded-full border-0 bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-              {post.title}
-            </h1>
-
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4" />
-                <time dateTime={post.createdAt.toISOString()}>
-                  {new Date(post.createdAt).toLocaleDateString(locale, {
-                    dateStyle: "long",
-                  })}
-                </time>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4" />
-                <span>{t("min_read", { count: post.readingTime })}</span>
-              </div>
-            </div>
-          </header>
-
-          <Separator className="bg-border/40" />
-
-          {post.coverImage && (
-            <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border/30 bg-muted">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                priority
-                className="object-cover"
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
               />
-            </div>
-          )}
+            </svg>
+            Back to Blog
+          </Link>
+        </div>
+
+        <header className="mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+            {post.title}
+          </h1>
+
+          <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+            <time>
+              {new Date(post.createdAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+            <span className="mx-2">•</span>
+            <span>{readingTime} min read</span>
+          </div>
 
           {post.excerpt && (
-            <p className="border-l-2 border-primary/30 py-2 pl-4 text-base italic leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
               {post.excerpt}
             </p>
           )}
+        </header>
 
-          <div className="prose prose-base dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl max-w-none">
-            {parse(post.content)}
-          </div>
-        </div>
+        <article className="prose prose-lg dark:prose-invert max-w-none">
+          {parse(safeHtml)}
+        </article>
       </div>
-    </article>
+      <Footer locale={locale} />
+    </div>
   )
 }

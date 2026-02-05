@@ -1,10 +1,14 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+import { getLocale } from "next-intl/server"
 import { db } from "@/db"
 import { Prisma } from "@/db/generated/client"
+import { requireAdmin } from "@/lib/auth/require-admin"
+import { sanitizeHtml } from "@/lib/security/sanitize-html"
 import { blogSchema } from "@/lib/validations/blog"
+import { redirect } from "@/i18n/routing"
+import { routing } from "@/i18n/routing"
 
 function generateSlug(title: string) {
   return title
@@ -13,10 +17,20 @@ function generateSlug(title: string) {
     .replace(/(^-|-$)+/g, "")
 }
 
+function getSafeLocaleFromFormData(formData: FormData, fallback: string) {
+  const raw = formData.get("locale")
+  const value = typeof raw === "string" ? raw : ""
+  return routing.locales.includes(value as any) ? value : fallback
+}
+
 export type CreatePostState = {
   errors?: {
     title?: string[]
     content?: string[]
+    excerpt?: string[]
+    coverImage?: string[]
+    published?: string[]
+    slug?: string[]
     _form?: string[]
   }
   message: string
@@ -26,19 +40,22 @@ export async function createPost(
   prevState: CreatePostState,
   formData: FormData
 ) {
+  await requireAdmin()
+
+  const locale = getSafeLocaleFromFormData(formData, await getLocale())
+
   const rawData = {
     title: formData.get("title") as string,
     content: formData.get("content") as string,
     excerpt: formData.get("excerpt") as string,
     coverImage: formData.get("coverImage") as string,
     published: formData.get("published") === "on",
-    slug: formData.get("slug") as string | undefined,
+    slug: (formData.get("slug") as string | undefined) || undefined,
   }
 
   if (!rawData.slug) delete rawData.slug
 
   const result = blogSchema.safeParse(rawData)
-
   if (!result.success) {
     return {
       errors: result.error.flatten().fieldErrors,
@@ -55,7 +72,9 @@ export async function createPost(
     slug: slugInput,
   } = result.data
 
+  const sanitizedContent = sanitizeHtml(content)
   let slug = slugInput || generateSlug(title)
+
   const existingPost = await db.post.findUnique({ where: { slug } })
   if (existingPost) {
     slug = `${slug}-${Date.now()}`
@@ -66,7 +85,7 @@ export async function createPost(
       data: {
         title,
         slug,
-        content,
+        content: sanitizedContent,
         excerpt,
         coverImage,
         published,
@@ -79,9 +98,10 @@ export async function createPost(
     }
   }
 
-  revalidatePath("/blog")
-  revalidatePath("/admin/blog")
-  redirect("/admin/blog")
+  revalidatePath(`/${locale}/blog`)
+  revalidatePath(`/${locale}/admin/blog`)
+
+  redirect({ href: "/admin/blog", locale })
 }
 
 export async function updatePost(
@@ -89,19 +109,22 @@ export async function updatePost(
   prevState: CreatePostState,
   formData: FormData
 ) {
+  await requireAdmin()
+
+  const locale = getSafeLocaleFromFormData(formData, await getLocale())
+
   const rawData = {
     title: formData.get("title") as string,
     content: formData.get("content") as string,
     excerpt: formData.get("excerpt") as string,
     coverImage: formData.get("coverImage") as string,
     published: formData.get("published") === "on",
-    slug: formData.get("slug") as string | undefined,
+    slug: (formData.get("slug") as string | undefined) || undefined,
   }
 
   if (!rawData.slug) delete rawData.slug
 
   const result = blogSchema.safeParse(rawData)
-
   if (!result.success) {
     return {
       errors: result.error.flatten().fieldErrors,
@@ -118,6 +141,7 @@ export async function updatePost(
     slug: slugInput,
   } = result.data
 
+  const sanitizedContent = sanitizeHtml(content)
   const slug = slugInput || generateSlug(title)
 
   try {
@@ -126,7 +150,7 @@ export async function updatePost(
       data: {
         title,
         slug,
-        content,
+        content: sanitizedContent,
         excerpt,
         coverImage,
         published,
@@ -136,17 +160,29 @@ export async function updatePost(
     return { message: "Failed to update post" }
   }
 
-  revalidatePath("/blog")
-  revalidatePath(`/blog/${slug}`)
-  revalidatePath("/admin/blog")
+  revalidatePath(`/${locale}/blog`)
+  revalidatePath(`/${locale}/blog/${slug}`)
+
+  revalidatePath(`/${locale}/admin/blog`)
+  revalidatePath(`/${locale}/admin/blog/${id}`)
+
   return { message: "Updated successfully" }
 }
 
-export async function deletePost(id: string) {
+export async function deletePost(id: string, locale?: string) {
+  await requireAdmin()
+
   try {
     await db.post.delete({ where: { id } })
-    revalidatePath("/blog")
-    revalidatePath("/admin/blog")
+
+    const safeLocale =
+      locale && routing.locales.includes(locale as any)
+        ? locale
+        : await getLocale()
+
+    revalidatePath(`/${safeLocale}/blog`)
+    revalidatePath(`/${safeLocale}/admin/blog`)
+
     return { message: "Deleted Post" }
   } catch {
     return { message: "Failed to delete post" }
@@ -154,8 +190,11 @@ export async function deletePost(id: string) {
 }
 
 export async function getPostBySlug(slug: string) {
-  return await db.post.findUnique({
-    where: { slug },
+  return await db.post.findFirst({
+    where: {
+      slug,
+      published: true,
+    },
   })
 }
 
@@ -165,6 +204,10 @@ export async function getAllPosts(
   page = 1,
   pageSize = 9
 ) {
+  if (!publishedOnly) {
+    await requireAdmin()
+  }
+
   const where: Prisma.PostWhereInput = publishedOnly ? { published: true } : {}
 
   if (query) {
@@ -191,6 +234,8 @@ export async function getAllPosts(
 }
 
 export async function getPostById(id: string) {
+  await requireAdmin()
+
   return await db.post.findUnique({
     where: { id },
   })

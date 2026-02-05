@@ -83,7 +83,7 @@ export default function AdminContactContent() {
     try {
       const res = await fetch("/api/contact")
       if (res.status === 401 || res.status === 403) {
-        router.push("/forbidden")
+        router.push(`/${locale}/forbidden`)
         return
       }
       const data = await res.json()
@@ -102,7 +102,7 @@ export default function AdminContactContent() {
   useEffect(() => {
     if (!isLoaded) return
     if (!isSignedIn) {
-      router.push("/forbidden")
+      router.push(`/${locale}/forbidden`)
       return
     }
     void fetchContacts()

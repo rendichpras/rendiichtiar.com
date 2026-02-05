@@ -16,7 +16,7 @@ import {
   FileText,
   Image as ImageIcon,
 } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import Image from "next/image"
 import {
   Card,
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { DeletePostButton } from "./DeletePostButton"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 type Post = {
   id: string
@@ -50,6 +50,7 @@ const initialState: CreatePostState = {
 
 export default function AdminBlogEditContent({ post }: Props) {
   const t = useTranslations("admin.blog")
+  const locale = useLocale()
   const [content, setContent] = useState(post.content)
   const updatePostWithId = updatePost.bind(null, post.id)
   const [state, formAction, isPending] = useActionState<
@@ -80,6 +81,7 @@ export default function AdminBlogEditContent({ post }: Props) {
           <Separator className="bg-border" />
 
           <form action={formAction} className="grid gap-8 lg:grid-cols-3">
+            <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="content" value={content} />
 
             <div className="space-y-6 lg:col-span-2">

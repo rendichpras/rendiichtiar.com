@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
