@@ -11,7 +11,10 @@ export default async function Page({
 
   return (
     <>
-      <AuthenticateWithRedirectCallback />
+      <AuthenticateWithRedirectCallback
+        signInFallbackRedirectUrl={`/${locale}`}
+        signUpFallbackRedirectUrl={`/${locale}`}
+      />
       <div id="clerk-captcha" />
     </>
   )
