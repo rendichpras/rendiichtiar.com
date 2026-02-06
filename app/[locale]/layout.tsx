@@ -120,13 +120,12 @@ export default async function RootLayout({
   const messages = await getMessages()
 
   const nonce = (await headers()).get("x-nonce") ?? undefined
+  const isDev = process.env.NODE_ENV !== "production"
+
+  const proxyUrl = isDev ? undefined : process.env.NEXT_PUBLIC_CLERK_PROXY_URL
 
   return (
-    <ClerkProvider
-      dynamic
-      nonce={nonce}
-      proxyUrl={process.env.NEXT_PUBLIC_CLERK_PROXY_URL}
-    >
+    <ClerkProvider dynamic nonce={nonce} proxyUrl={proxyUrl}>
       <html lang={locale} suppressHydrationWarning>
         <head>
           {APPLE_ICON_SIZES.map((s) => (

@@ -9,6 +9,6 @@ type Props = {
 export default async function NewPostPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
-  await requireAdmin()
+  await requireAdmin(true)
   return <AdminBlogNewContent />
 }

@@ -28,6 +28,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AdminContactPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
-  await requireAdmin()
+  await requireAdmin(true)
   return <AdminContactContent />
 }

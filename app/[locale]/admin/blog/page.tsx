@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AdminBlogPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
-  await requireAdmin()
+  await requireAdmin(true)
   const { posts } = await getAllPosts(false, undefined, 1, 100)
 
   return <AdminBlogContent posts={posts} />

@@ -11,7 +11,7 @@ type Props = {
 export default async function EditPostPage({ params }: Props) {
   const { id, locale } = await params
   setRequestLocale(locale)
-  await requireAdmin()
+  await requireAdmin(true)
   const post = await getPostById(id)
 
   if (!post) {
