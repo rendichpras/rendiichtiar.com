@@ -1,39 +1,42 @@
-import { MetadataRoute } from "next"
-import { SITE_URL } from "@/lib/site"
+import type { MetadataRoute } from "next"
+import { absoluteUrl } from "@/lib/site"
 import { locales } from "@/i18n/routing"
 import { getAllPosts } from "@/lib/actions/blog"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = SITE_URL
   const staticPaths = ["", "/about", "/guestbook", "/contact", "/playground"]
 
-  const routes = locales.flatMap((locale) =>
-    staticPaths.map((path) => ({
-      url: `${baseUrl}/${locale}${path}`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: (path === ""
-        ? "weekly"
-        : path === "/guestbook"
-          ? "daily"
-          : "monthly") as "weekly" | "daily" | "monthly",
-      priority: path === "" ? 1 : 0.8,
-    }))
+  const routes: MetadataRoute.Sitemap = locales.flatMap((locale) =>
+    staticPaths.map((path) => {
+      const changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] =
+        path === "" ? "weekly" : path === "/guestbook" ? "daily" : "monthly"
+
+      const priority: MetadataRoute.Sitemap[number]["priority"] =
+        path === "" ? 1 : path === "/guestbook" ? 0.9 : 0.8
+
+      return {
+        url: absoluteUrl(`/${locale}${path}`),
+        lastModified: new Date(),
+        changeFrequency,
+        priority,
+      }
+    })
   )
 
   const { posts } = await getAllPosts(true, undefined, 1, 1000)
 
-  const blogIndexRoutes = locales.map((locale) => ({
-    url: `${baseUrl}/${locale}/blog`,
-    lastModified: new Date().toISOString(),
-    changeFrequency: "daily" as const,
+  const blogIndexRoutes: MetadataRoute.Sitemap = locales.map((locale) => ({
+    url: absoluteUrl(`/${locale}/blog`),
+    lastModified: new Date(),
+    changeFrequency: "weekly",
     priority: 0.8,
   }))
 
-  const blogRoutes = locales.flatMap((locale) =>
+  const blogRoutes: MetadataRoute.Sitemap = locales.flatMap((locale) =>
     posts.map((post) => ({
-      url: `${baseUrl}/${locale}/blog/${post.slug}`,
-      lastModified: post.updatedAt.toISOString(),
-      changeFrequency: "weekly" as const,
+      url: absoluteUrl(`/${locale}/blog/${post.slug}`),
+      lastModified: post.updatedAt,
+      changeFrequency: "weekly",
       priority: 0.7,
     }))
   )

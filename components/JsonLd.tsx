@@ -1,8 +1,8 @@
 import { SITE_URL } from "@/lib/site"
-import { useTranslations } from "next-intl"
+import { getTranslations } from "next-intl/server"
 
-export default function JsonLd() {
-  const t = useTranslations("metadata.common")
+export default async function JsonLd() {
+  const t = await getTranslations("metadata.common")
 
   const schema = {
     "@context": "https://schema.org",
@@ -14,15 +14,10 @@ export default function JsonLd() {
     sameAs: [
       "https://github.com/rendichpras",
       "https://linkedin.com/in/rendiichtiar",
+      "https://twitter.com/rendichpras",
+      "https://instagram.com/rendichpras",
     ],
-    knowsAbout: [
-      "Web Development",
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Node.js",
-      "Tailwind CSS",
-    ],
+    knowsAbout: ["Next.js", "React", "TypeScript", "Node.js", "Tailwind CSS"],
   }
 
   return (

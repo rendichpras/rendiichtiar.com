@@ -1,7 +1,6 @@
 import { clerkMiddleware } from "@clerk/nextjs/server"
 import createIntlMiddleware from "next-intl/middleware"
-import { NextResponse } from "next/server"
-import { requireAdmin } from "@/lib/auth/require-admin"
+import { NextResponse, type NextRequest } from "next/server"
 import { routing, locales } from "./i18n/routing"
 
 const intlMiddleware = createIntlMiddleware(routing)
@@ -33,26 +32,13 @@ function createNonce() {
 }
 
 function buildCsp(nonce: string) {
-  const isDev = process.env.NODE_ENV !== "production"
-
   return [
     "default-src 'self'",
-    "base-uri 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http:`,
     "object-src 'none'",
-    "frame-ancestors 'none'",
-    "form-action 'self'",
-    [
-      "script-src 'self'",
-      "'unsafe-inline'",
-      `'nonce-${nonce}'`,
-      isDev ? "'unsafe-eval'" : "",
-      "https://unpkg.com",
-      "https://cdn.jsdelivr.net",
-      "https://*.clerk.accounts.dev",
-      "https://clerk.rendiichtiar.com",
-    ]
-      .filter(Boolean)
-      .join(" "),
+    "base-uri 'self'",
+    "frame-ancestors 'self'",
+    "upgrade-insecure-requests",
     "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
     "img-src 'self' data: https: https://img.clerk.com",
     "font-src 'self' data: https://cdn.jsdelivr.net",
@@ -68,36 +54,39 @@ function applySecurityHeaders(res: NextResponse, nonce: string) {
   return res
 }
 
-export default clerkMiddleware(async (auth, req) => {
-  const { pathname } = req.nextUrl
+function safeLocaleFrom(raw: string | null) {
+  const loc =
+    raw && locales.includes(raw as (typeof locales)[number]) ? raw : null
+  return (loc ?? routing.defaultLocale) as (typeof locales)[number]
+}
+
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   const nonce = createNonce()
-  const isStaticFile = pathname.includes(".")
-  const isApiRoute = pathname.startsWith("/api") || pathname.startsWith("/trpc")
 
-  if (!isApiRoute && !isStaticFile) {
-    const response = intlMiddleware(req)
-    if (response) return applySecurityHeaders(response, nonce)
-  }
-
-  const { locale, pathname: normalizedPath } = stripLocale(pathname)
+  const { locale, pathname: normalizedPath } = stripLocale(req.nextUrl.pathname)
+  const safeLocale = safeLocaleFrom(locale)
 
   if (isAdminPath(normalizedPath)) {
-    await auth.protect()
+    const { userId, redirectToSignIn } = await auth()
 
-    try {
-      await requireAdmin()
-    } catch {
-      const safeLocale =
-        (locale && routing.locales.includes(locale as (typeof locales)[number])
-          ? locale
-          : routing.defaultLocale) ?? routing.defaultLocale
+    if (!userId) {
+      const res = redirectToSignIn({ returnBackUrl: req.url })
+      return applySecurityHeaders(res, nonce)
+    }
 
-      return applySecurityHeaders(
-        NextResponse.redirect(new URL(`/${safeLocale}/forbidden`, req.url)),
-        nonce
+    const adminId = process.env.ADMIN_CLERK_ID
+    const isAdmin = !!adminId && userId === adminId
+
+    if (!isAdmin) {
+      const res = NextResponse.redirect(
+        new URL(`/${safeLocale}/forbidden`, req.url)
       )
+      return applySecurityHeaders(res, nonce)
     }
   }
+
+  const intlRes = intlMiddleware(req)
+  if (intlRes) return applySecurityHeaders(intlRes, nonce)
 
   return applySecurityHeaders(NextResponse.next(), nonce)
 })
