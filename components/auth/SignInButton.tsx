@@ -29,7 +29,8 @@ function SignInWithProviderButton({
         void signIn.authenticateWithRedirect({
           strategy,
           redirectUrl: `/${locale}/sso-callback`,
-          redirectUrlComplete: `/${locale}/guestbook`,
+          // @ts-expect-error - signInFallbackRedirectUrl is valid in runtime but missing in types
+          signInFallbackRedirectUrl: `/${locale}/guestbook`,
         })
       }}
     >

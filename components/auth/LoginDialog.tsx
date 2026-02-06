@@ -37,7 +37,8 @@ export function LoginDialog({
     void signIn.authenticateWithRedirect({
       strategy,
       redirectUrl: `/${locale}/sso-callback`,
-      redirectUrlComplete: callbackUrl,
+      // @ts-expect-error - signInFallbackRedirectUrl is valid in runtime but missing in types
+      signInFallbackRedirectUrl: callbackUrl,
     })
   }
 
