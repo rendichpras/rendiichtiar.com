@@ -5,7 +5,7 @@ import { getLocale } from "next-intl/server"
 import { db } from "@/db"
 import { Prisma } from "@/db/generated/client"
 import { requireAdmin } from "@/lib/auth/require-admin"
-import { sanitizeHtml } from "@/lib/security/sanitize-html"
+import { sanitizeBlogHtml } from "@/lib/security/sanitize-html"
 import { blogSchema } from "@/lib/validations/blog"
 import { redirect } from "@/i18n/routing"
 import { routing, locales } from "@/i18n/routing"
@@ -74,7 +74,7 @@ export async function createPost(
     slug: slugInput,
   } = result.data
 
-  const sanitizedContent = sanitizeHtml(content)
+  const sanitizedContent = sanitizeBlogHtml(content)
   let slug = slugInput || generateSlug(title)
 
   const existingPost = await db.post.findUnique({ where: { slug } })
@@ -144,7 +144,7 @@ export async function updatePost(
     slug: slugInput,
   } = result.data
 
-  const sanitizedContent = sanitizeHtml(content)
+  const sanitizedContent = sanitizeBlogHtml(content)
   const slug = slugInput || generateSlug(title)
 
   try {

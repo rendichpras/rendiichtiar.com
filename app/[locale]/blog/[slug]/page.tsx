@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { setRequestLocale } from "next-intl/server"
 import parse from "html-react-parser"
 import { Link } from "@/i18n/routing"
-import { sanitizeHtml } from "@/lib/security/sanitize-html"
+import { sanitizeBlogHtml } from "@/lib/security/sanitize-html"
 import { Footer } from "@/components/Footer"
 
 type Props = {
@@ -45,7 +45,7 @@ export default async function BlogPostPage({ params }: Props) {
     return notFound()
   }
 
-  const safeHtml = sanitizeHtml(post.content)
+  const safeHtml = sanitizeBlogHtml(post.content)
   const readingTime = calculateReadingTime(safeHtml)
 
   return (
