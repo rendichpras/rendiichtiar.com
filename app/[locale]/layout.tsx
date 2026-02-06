@@ -16,6 +16,7 @@ import { AppShell } from "@/components/AppShell"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Metadata } from "next"
 import { SITE_URL } from "@/lib/site"
+import { headers } from "next/headers"
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale()
@@ -116,11 +117,16 @@ export default async function RootLayout({
   }
 
   setRequestLocale(locale)
-
   const messages = await getMessages()
 
+  const nonce = (await headers()).get("x-nonce") ?? undefined
+
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      dynamic
+      nonce={nonce}
+      proxyUrl={process.env.NEXT_PUBLIC_CLERK_PROXY_URL}
+    >
       <html lang={locale} suppressHydrationWarning>
         <head>
           {APPLE_ICON_SIZES.map((s) => (
@@ -176,6 +182,7 @@ export default async function RootLayout({
           )}
         >
           <ThemeProvider
+            nonce={nonce}
             attribute="class"
             defaultTheme="system"
             enableSystem
