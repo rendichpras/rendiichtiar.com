@@ -1,4 +1,4 @@
-import { Sora, IBM_Plex_Mono } from "next/font/google"
+import { JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import JsonLd from "@/components/JsonLd"
@@ -14,7 +14,7 @@ import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
 import { AppShell } from "@/components/AppShell"
 import { ClerkProvider } from "@clerk/nextjs"
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import { SITE_URL } from "@/lib/site"
 import { headers } from "next/headers"
 
@@ -82,20 +82,9 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-const sora = Sora({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal"],
-  variable: "--font-sora",
-  display: "swap",
-})
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal"],
-  variable: "--font-ibm-plex-mono",
-  display: "swap",
+  variable: "--font-sans",
 })
 
 const APPLE_ICON_SIZES = [57, 60, 72, 76, 114, 120, 144, 152] as const
@@ -103,6 +92,15 @@ const PNG_ICON_SIZES = [16, 32, 96] as const
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#2b2b2b" },
+  ],
 }
 
 export default async function RootLayout({
@@ -156,27 +154,10 @@ export default async function RootLayout({
               href={`/favicon-${s}x${s}.png`}
             />
           ))}
-          <link rel="manifest" href="/manifest.json" />
-          <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-          <meta
-            name="theme-color"
-            content="#ffffff"
-            media="(prefers-color-scheme: light)"
-          />
-          <meta
-            name="theme-color"
-            content="#2b2b2b"
-            media="(prefers-color-scheme: dark)"
-          />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
         </head>
         <body
           className={cn(
-            sora.variable,
-            plexMono.variable,
+            jetbrainsMono.variable,
             "min-h-screen bg-background font-sans antialiased"
           )}
         >

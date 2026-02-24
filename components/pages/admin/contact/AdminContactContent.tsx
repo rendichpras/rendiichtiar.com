@@ -339,7 +339,7 @@ export default function AdminContactContent() {
                 </DropdownMenu>
               </div>
 
-              <div className="rounded-lg border bg-card text-card-foreground">
+              <div className=" border bg-card text-card-foreground">
                 <Table>
                   <TableHeader>
                     {table.getHeaderGroups().map((hg) => (
@@ -433,7 +433,7 @@ export default function AdminContactContent() {
               </DialogHeader>
 
               <div className="space-y-4 py-4">
-                <div className="space-y-2 rounded-lg bg-muted p-4">
+                <div className="space-y-2  bg-muted p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-medium">
                       {t("reply_dialog.original_message")}

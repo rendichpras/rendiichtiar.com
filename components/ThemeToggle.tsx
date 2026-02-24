@@ -42,7 +42,7 @@ export function ThemeToggle({
         variant="ghost"
         size="icon"
         className={cn(
-          "relative rounded-full hover:bg-accent",
+          "relative hover:bg-accent",
           isCompact ? "size-8" : "size-9",
           className
         )}
@@ -62,7 +62,7 @@ export function ThemeToggle({
             size="icon"
             onClick={() => setTheme(isDark ? "light" : "dark")}
             className={cn(
-              "relative overflow-hidden rounded-full hover:bg-accent",
+              "relative overflow-hidden hover:bg-accent",
               isCompact ? "size-8" : "size-9",
               className
             )}

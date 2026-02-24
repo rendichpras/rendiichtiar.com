@@ -93,7 +93,7 @@ export function Toolbar({ editor }: ToolbarProps) {
         onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
         aria-label="Toggle code block"
       >
-        <Code className="h-4 w-4 border-2 border-current rounded-[2px]" />
+        <Code className="h-4 w-4 border-2 border-current" />
       </Toggle>
 
       <Separator orientation="vertical" className="mx-1 h-6" />

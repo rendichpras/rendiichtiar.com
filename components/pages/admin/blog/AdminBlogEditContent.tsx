@@ -106,7 +106,7 @@ export default function AdminBlogEditContent({ post }: Props) {
 
                   <div className="space-y-2">
                     <Label>{t("form.content_label")}</Label>
-                    <div className="min-h-[400px] rounded-md border text-sm shadow-sm">
+                    <div className="min-h-[400px]  border text-sm shadow-sm">
                       <TiptapEditor content={content} onChange={setContent} />
                     </div>
                   </div>
@@ -123,7 +123,7 @@ export default function AdminBlogEditContent({ post }: Props) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between rounded-lg border p-4 shadow-sm">
+                  <div className="flex items-center justify-between  border p-4 shadow-sm">
                     <div className="space-y-0.5">
                       <Label htmlFor="published" className="text-base">
                         {t("form.published")}
@@ -141,7 +141,7 @@ export default function AdminBlogEditContent({ post }: Props) {
 
                   {state.message && (
                     <div
-                      className={`rounded-md p-3 text-sm font-medium ${
+                      className={` p-3 text-sm font-medium ${
                         state.message.includes("success") ||
                         state.message.includes("Updated")
                           ? "bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-400"
@@ -232,7 +232,7 @@ export default function AdminBlogEditContent({ post }: Props) {
                       defaultValue={post.coverImage || ""}
                     />
                     {post.coverImage && (
-                      <div className="relative aspect-video w-full overflow-hidden rounded-md border">
+                      <div className="relative aspect-video w-full overflow-hidden  border">
                         <Image
                           src={post.coverImage}
                           alt="Preview"

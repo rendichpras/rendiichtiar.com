@@ -5,6 +5,11 @@ import Image from "next/image"
 import { Marquee } from "@/components/ui/marquee"
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
+import {
+  FADE_IN_VARIANTS,
+  FADE_UP_VARIANTS,
+  SCALE_X_VARIANTS,
+} from "@/lib/animations"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -58,7 +63,7 @@ const TechPill = memo(function TechPill({ name, icon: Icon }: TechItem) {
   return (
     <Badge
       variant="outline"
-      className="mx-1 flex items-center gap-2 rounded-full border-border bg-background px-4 py-1.5 text-muted-foreground transition-colors duration-300 hover:border-foreground/20 hover:bg-accent hover:text-foreground"
+      className="mx-1 flex items-center gap-2 border-border bg-background px-4 py-1.5 text-muted-foreground transition-colors duration-300 hover:border-foreground/20 hover:bg-accent hover:text-foreground"
     >
       <Icon className="h-5 w-5" aria-hidden="true" />
       <span className="text-base font-medium leading-none">{name}</span>
@@ -101,29 +106,17 @@ export default function HomeContent() {
       <section className="relative bg-background py-8 text-foreground sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24">
           <motion.div
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                  delayChildren: 0.3,
-                },
-              },
-            }}
+            variants={FADE_IN_VARIANTS}
             initial="hidden"
             animate="show"
             className="space-y-6 sm:space-y-8"
           >
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 },
-              }}
+              variants={FADE_UP_VARIANTS}
               className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6"
             >
               <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-32 md:w-32">
-                <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
+                <div className="relative h-full w-full overflow-hidden border-2 border-primary/10 bg-card transition-all duration-300 hover:border-primary/30">
                   <Image
                     src="/avatar.jpg"
                     alt={t("profile_alt")}
@@ -166,20 +159,12 @@ export default function HomeContent() {
               </div>
             </motion.div>
 
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, scaleX: 0 },
-                show: { opacity: 1, scaleX: 1 },
-              }}
-            >
+            <motion.div variants={SCALE_X_VARIANTS}>
               <Separator className="bg-border/40" />
             </motion.div>
 
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 },
-              }}
+              variants={FADE_UP_VARIANTS}
               className="space-y-6 sm:space-y-8"
             >
               <div className="space-y-2">
@@ -196,20 +181,12 @@ export default function HomeContent() {
               </div>
             </motion.div>
 
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, scaleX: 0 },
-                show: { opacity: 1, scaleX: 1 },
-              }}
-            >
+            <motion.div variants={SCALE_X_VARIANTS}>
               <Separator className="bg-border/40" />
             </motion.div>
 
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 },
-              }}
+              variants={FADE_UP_VARIANTS}
               className="space-y-8 sm:space-y-12"
             >
               <div className="space-y-4 sm:space-y-6">
@@ -222,7 +199,7 @@ export default function HomeContent() {
                 </p>
               </div>
 
-              <Card className="rounded-xl border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
+              <Card className="border-border/30 bg-card text-foreground transition-colors duration-300 hover:border-border/50">
                 <CardHeader className="space-y-2">
                   <div className="flex items-center gap-2">
                     <MessageCircle
@@ -242,7 +219,7 @@ export default function HomeContent() {
                 <CardFooter>
                   <Button
                     asChild
-                    className="rounded-xl border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
+                    className="border border-border/30 bg-primary/10 text-primary hover:bg-primary/20"
                   >
                     <a href="mailto:rendichpras@gmail.com">{t("contact_me")}</a>
                   </Button>

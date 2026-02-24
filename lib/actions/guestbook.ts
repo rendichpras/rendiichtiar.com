@@ -2,64 +2,11 @@
 
 import { db } from "@/db"
 import { ensureDbUser } from "@/lib/auth/ensure-db-user"
+import { validateGuestbookMessage } from "@/lib/guestbook/message"
+import { resolveMentionedUserIdByName } from "@/lib/guestbook/mentions"
+import { resolveGuestbookRootId } from "@/lib/guestbook/threading"
 import { emitEvent } from "@/lib/realtime"
 import { getClientIp } from "@/lib/security/client-ip"
-import { guestbookSchema } from "@/lib/validations/guestbook"
-
-function validateMessage(message: string) {
-  const result = guestbookSchema.safeParse({ message })
-
-  if (!result.success) {
-    const error = result.error.issues[0].message
-    throw new Error(error)
-  }
-
-  return result.data.message.trim()
-}
-
-async function resolveMentionedUserId(parentAuthor?: string) {
-  if (!parentAuthor) return null
-  const u = await db.user.findFirst({
-    where: {
-      name: {
-        equals: parentAuthor,
-        mode: "insensitive",
-      },
-    },
-    select: { id: true },
-  })
-  return u?.id ?? null
-}
-
-async function resolveRootId(parentId: string) {
-  let current: {
-    id: string
-    parentId: string | null
-    rootId: string | null
-  } | null = await db.guestbookEntry.findUnique({
-    where: { id: parentId },
-    select: { id: true, parentId: true, rootId: true },
-  })
-  if (!current) return null
-
-  if (current.rootId) return current.rootId
-
-  while (current && current.parentId) {
-    const next: {
-      id: string
-      parentId: string | null
-      rootId: string | null
-    } | null = await db.guestbookEntry.findUnique({
-      where: { id: current.parentId },
-      select: { id: true, parentId: true, rootId: true },
-    })
-    if (!next) break
-    if (next.rootId) return next.rootId
-    current = next
-  }
-
-  return current?.id ?? null
-}
 
 export async function getGuestbookEntries() {
   const adminClerkId = process.env.ADMIN_CLERK_ID ?? ""
@@ -97,29 +44,20 @@ export async function getGuestbookEntries() {
     },
   })
 
-  const repliesByRoot = new Map<string, (typeof replies)[number][]>()
-  for (const r of replies) {
-    if (!r.rootId) continue
-    const arr = repliesByRoot.get(r.rootId) ?? []
-    arr.push(r)
-    repliesByRoot.set(r.rootId, arr)
-  }
+  const repliesByRoot = replies.reduce((acc, r) => {
+    if (!r.rootId) return acc
+    acc.set(r.rootId, [...(acc.get(r.rootId) || []), r])
+    return acc
+  }, new Map<string, typeof replies>())
 
-  return entries.map((e) => ({
-    id: e.id,
-    message: e.message,
-    createdAt: e.createdAt,
-    user: {
-      name: e.user.name,
-      image: e.user.imageUrl,
-      isOwner: adminClerkId ? e.user.clerkId === adminClerkId : false,
-    },
-    provider: e.user.authProvider ?? "clerk",
-    likes: e.likes.map((l) => ({
+  return entries.map((e) => {
+    const isOwner = adminClerkId ? e.user.clerkId === adminClerkId : false
+    const mappedLikes = e.likes.map((l) => ({
       id: l.id,
       user: { name: l.user.name, clerkId: l.user.clerkId },
-    })),
-    replies: (repliesByRoot.get(e.id) ?? []).map((r) => ({
+    }))
+
+    const mappedReplies = (repliesByRoot.get(e.id) || []).map((r) => ({
       id: r.id,
       message: r.message,
       createdAt: r.createdAt,
@@ -135,8 +73,22 @@ export async function getGuestbookEntries() {
       })),
       parentId: r.parentId,
       rootId: r.rootId,
-    })),
-  }))
+    }))
+
+    return {
+      id: e.id,
+      message: e.message,
+      createdAt: e.createdAt,
+      user: {
+        name: e.user.name,
+        image: e.user.imageUrl,
+        isOwner,
+      },
+      provider: e.user.authProvider ?? "clerk",
+      likes: mappedLikes,
+      replies: mappedReplies,
+    }
+  })
 }
 
 export async function addGuestbookEntry(
@@ -146,7 +98,7 @@ export async function addGuestbookEntry(
 ) {
   try {
     const dbUser = await ensureDbUser()
-    const trimmed = validateMessage(message)
+    const trimmed = validateGuestbookMessage(message)
 
     const ip = await getClientIp()
 
@@ -168,8 +120,8 @@ export async function addGuestbookEntry(
       return { success: false, error: "rate_limit_exceeded" }
     }
 
-    const mentionedUserId = await resolveMentionedUserId(parentAuthor)
-    const rootId = parentId ? await resolveRootId(parentId) : null
+    const mentionedUserId = await resolveMentionedUserIdByName(parentAuthor)
+    const rootId = parentId ? await resolveGuestbookRootId(parentId) : null
 
     const entry = await db.guestbookEntry.create({
       data: {
@@ -188,7 +140,9 @@ export async function addGuestbookEntry(
             authProvider: true,
           },
         },
-        likes: { include: { user: { select: { name: true, clerkId: true } } } },
+        likes: {
+          include: { user: { select: { name: true, clerkId: true } } },
+        },
       },
     })
 

@@ -5,7 +5,6 @@ function normalizeOrigin(value?: string | null): string | null {
   return /^https?:\/\//i.test(v) ? v : `https://${v}`
 }
 
-// Canonical site origin (no trailing slash)
 export const SITE_URL =
   normalizeOrigin(process.env.NEXT_PUBLIC_URL) ??
   normalizeOrigin(process.env.VERCEL_PROJECT_PRODUCTION_URL) ??

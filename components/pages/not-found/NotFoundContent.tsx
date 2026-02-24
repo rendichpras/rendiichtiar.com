@@ -68,7 +68,7 @@ export function NotFoundContent() {
                 <Button
                   size="lg"
                   onClick={() => router.push(`/${locale}`)}
-                  className="rounded-xl border border-border bg-secondary text-primary hover:bg-secondary/80"
+                  className="border border-border bg-secondary text-primary hover:bg-secondary/80"
                 >
                   {t("error.not_found.back_home")}
                 </Button>

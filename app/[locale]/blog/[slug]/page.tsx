@@ -4,7 +4,6 @@ import { setRequestLocale } from "next-intl/server"
 import parse from "html-react-parser"
 import { Link } from "@/i18n/routing"
 import { sanitizeBlogHtml } from "@/lib/security/sanitize-html"
-import { Footer } from "@/components/Footer"
 
 type Props = {
   params: Promise<{ slug: string; locale: string }>
@@ -101,7 +100,6 @@ export default async function BlogPostPage({ params }: Props) {
           {parse(safeHtml)}
         </article>
       </div>
-      <Footer />
     </div>
   )
 }

@@ -44,7 +44,7 @@ export function LoginDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="rounded-xl border border-border bg-background text-foreground sm:max-w-md">
+      <DialogContent className="border border-border bg-background text-foreground sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-foreground">
             {t("auth.login.title")}
@@ -59,7 +59,7 @@ export function LoginDialog({
             type="button"
             variant="outline"
             onClick={() => signInWith("oauth_google")}
-            className="w-full justify-center gap-2 rounded-xl border-border text-sm font-medium hover:border-primary"
+            className="w-full justify-center gap-2 border-border text-sm font-medium hover:border-primary"
             aria-label={t("auth.login.google")}
           >
             <SiGoogle className="h-4 w-4 text-foreground" aria-hidden="true" />
@@ -70,7 +70,7 @@ export function LoginDialog({
             type="button"
             variant="outline"
             onClick={() => signInWith("oauth_github")}
-            className="w-full justify-center gap-2 rounded-xl border-border text-sm font-medium hover:border-primary"
+            className="w-full justify-center gap-2 border-border text-sm font-medium hover:border-primary"
             aria-label={t("auth.login.github")}
           >
             <SiGithub className="h-4 w-4 text-foreground" aria-hidden="true" />

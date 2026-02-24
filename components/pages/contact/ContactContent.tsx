@@ -198,7 +198,7 @@ export function ContactContent() {
                     <Button
                       asChild
                       size="lg"
-                      className="shrink-0 self-start rounded-xl bg-secondary text-primary hover:bg-secondary/80"
+                      className="shrink-0 self-start bg-secondary text-primary hover:bg-secondary/80"
                     >
                       <a
                         href="https://cal.com/rendiichtiar"
@@ -258,7 +258,7 @@ export function ContactContent() {
                           aria-describedby={
                             errors.name ? "name-error" : undefined
                           }
-                          className="rounded-xl border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
+                          className="border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
                         />
 
                         {errors.name ? (
@@ -293,7 +293,7 @@ export function ContactContent() {
                           aria-describedby={
                             errors.email ? "email-error" : undefined
                           }
-                          className="rounded-xl border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
+                          className="border-border bg-card transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
                         />
 
                         {errors.email ? (
@@ -328,7 +328,7 @@ export function ContactContent() {
                         aria-describedby={
                           errors.message ? "message-error" : undefined
                         }
-                        className="rounded-xl border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
+                        className="border-border/30 bg-card transition-colors duration-300 hover:border-border/50 focus-visible:ring-primary"
                       />
 
                       {errors.message ? (
@@ -346,7 +346,7 @@ export function ContactContent() {
                         type="submit"
                         size="lg"
                         disabled={isLoading}
-                        className="ml-auto rounded-xl bg-secondary text-primary hover:bg-secondary/80"
+                        className="ml-auto bg-secondary text-primary hover:bg-secondary/80"
                       >
                         {isLoading ? t("form.sending") : t("form.send")}
                       </Button>

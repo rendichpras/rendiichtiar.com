@@ -32,7 +32,7 @@ export function UserProfile({ collapsed }: UserProfileProps) {
       <div
         className={cn("flex items-center gap-3", collapsed && "justify-center")}
       >
-        <Skeleton className="h-8 w-8 rounded-full" />
+        <Skeleton className="h-8 w-8 " />
         {!collapsed && (
           <div className="flex-1 space-y-1">
             <Skeleton className="h-4 w-20" />
@@ -59,7 +59,7 @@ export function UserProfile({ collapsed }: UserProfileProps) {
         ) : (
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 px-3 relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors text-muted-foreground hover:bg-secondary hover:text-primary"
+            className="w-full justify-start gap-3 px-3 relative flex items-center overflow-hidden  py-2.5 text-sm font-medium transition-colors text-muted-foreground hover:bg-secondary hover:text-primary"
             onClick={() => openSignIn()}
           >
             <UserIcon className="size-4" />
@@ -85,7 +85,7 @@ export function UserProfile({ collapsed }: UserProfileProps) {
           <Button
             variant="ghost"
             className={cn(
-              "relative flex w-full items-center gap-3 rounded-lg overflow-hidden transition-colors hover:bg-secondary",
+              "relative flex w-full items-center gap-3  overflow-hidden transition-colors hover:bg-secondary",
               collapsed
                 ? "h-10 justify-center px-0"
                 : "h-auto px-3 py-2.5 justify-start"
@@ -124,7 +124,7 @@ export function UserProfile({ collapsed }: UserProfileProps) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
+            className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
             onClick={() => signOut({ redirectUrl: `/${locale}` })}
           >
             <LogOut className="mr-2 h-4 w-4" />

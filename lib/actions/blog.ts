@@ -5,25 +5,12 @@ import { getLocale } from "next-intl/server"
 import { db } from "@/db"
 import { Prisma } from "@/db/generated/client"
 import { requireAdmin } from "@/lib/auth/require-admin"
+import { generateSlugFromTitle } from "@/lib/blog/slug"
+import { getSafeLocaleFromFormData, isSupportedLocale } from "@/lib/i18n/locale"
 import { sanitizeBlogHtml } from "@/lib/security/sanitize-html"
 import { blogSchema } from "@/lib/validations/blog"
 import { redirect } from "@/i18n/routing"
-import { routing, locales } from "@/i18n/routing"
-
-function generateSlug(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-}
-
-function getSafeLocaleFromFormData(formData: FormData, fallback: string) {
-  const raw = formData.get("locale")
-  const value = typeof raw === "string" ? raw : ""
-  return routing.locales.includes(value as (typeof locales)[number])
-    ? value
-    : fallback
-}
+import { logger } from "@/lib/observability/logger"
 
 export type CreatePostState = {
   errors?: {
@@ -75,7 +62,7 @@ export async function createPost(
   } = result.data
 
   const sanitizedContent = sanitizeBlogHtml(content)
-  let slug = slugInput || generateSlug(title)
+  let slug = slugInput || generateSlugFromTitle(title)
 
   const existingPost = await db.post.findUnique({ where: { slug } })
   if (existingPost) {
@@ -94,7 +81,9 @@ export async function createPost(
       },
     })
   } catch (error) {
-    console.error("Database Error:", error)
+    logger.error("Database Error: Failed to Create Post", {
+      error: error instanceof Error ? error.message : String(error),
+    })
     return {
       message: "Database Error: Failed to Create Post.",
     }
@@ -145,7 +134,7 @@ export async function updatePost(
   } = result.data
 
   const sanitizedContent = sanitizeBlogHtml(content)
-  const slug = slugInput || generateSlug(title)
+  const slug = slugInput || generateSlugFromTitle(title)
 
   try {
     await db.post.update({
@@ -179,9 +168,7 @@ export async function deletePost(id: string, locale?: string) {
     await db.post.delete({ where: { id } })
 
     const safeLocale =
-      locale && routing.locales.includes(locale as (typeof locales)[number])
-        ? locale
-        : await getLocale()
+      locale && isSupportedLocale(locale) ? locale : await getLocale()
 
     revalidatePath(`/${safeLocale}/blog`)
     revalidatePath(`/${safeLocale}/admin/blog`)

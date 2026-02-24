@@ -23,7 +23,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   )
 
-  const { posts } = await getAllPosts(true, undefined, 1, 1000)
+  let posts: any[] = []
+  try {
+    const res = await getAllPosts(true, undefined, 1, 1000)
+    posts = res.posts
+  } catch (e) {
+    console.warn("Could not fetch posts for sitemap, skipping database links.")
+  }
 
   const blogIndexRoutes: MetadataRoute.Sitemap = locales.map((locale) => ({
     url: absoluteUrl(`/${locale}/blog`),

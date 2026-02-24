@@ -4,21 +4,16 @@ import { requireAdmin } from "@/lib/auth/require-admin"
 import { sendEmail } from "@/lib/email"
 import { getReplyEmailTemplate } from "@/lib/email-templates"
 import { contactReplySchema } from "@/lib/validations/contact"
+import { jsonError, readJson } from "@/lib/http/route-helpers"
 
 export async function POST(req: Request) {
   try {
     await requireAdmin()
 
-    let json: unknown
-    try {
-      json = await req.json()
-    } catch {
-      return NextResponse.json(
-        { success: false, error: "invalid_json" },
-        { status: 400 }
-      )
-    }
-    const result = contactReplySchema.safeParse(json)
+    const parsed = await readJson(req)
+    if (!parsed.ok) return parsed.response
+
+    const result = contactReplySchema.safeParse(parsed.body)
 
     if (!result.success) {
       return NextResponse.json(
@@ -77,6 +72,6 @@ export async function POST(req: Request) {
     const msg = e instanceof Error ? e.message : "error"
     const status =
       msg === "unauthorized" ? 401 : msg === "forbidden" ? 403 : 500
-    return NextResponse.json({ success: false, error: msg }, { status })
+    return jsonError(msg, status)
   }
 }

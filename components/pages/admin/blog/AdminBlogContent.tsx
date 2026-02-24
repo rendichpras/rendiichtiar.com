@@ -57,7 +57,7 @@ export default function AdminBlogContent({ posts }: Props) {
         <Separator className="my-6 bg-border" />
 
         <Card className="border-border bg-card">
-          <div className="rounded-lg border-0">
+          <div className=" border-0">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-border hover:bg-transparent">
@@ -120,7 +120,11 @@ export default function AdminBlogContent({ posts }: Props) {
                       <TableCell className="px-6 py-3 text-right">
                         <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="icon" asChild>
-                            <Link href={`/blog/${post.slug}`} target="_blank">
+                            <Link
+                              href={`/blog/${post.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>

@@ -96,7 +96,7 @@ export default function AdminBlogNewContent() {
 
                   <div className="space-y-2">
                     <Label>{t("form.content_label")}</Label>
-                    <div className="min-h-[400px] rounded-md border text-sm shadow-sm">
+                    <div className="min-h-[400px]  border text-sm shadow-sm">
                       <TiptapEditor content={content} onChange={setContent} />
                     </div>
                   </div>
@@ -113,7 +113,7 @@ export default function AdminBlogNewContent() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between rounded-lg border p-4 shadow-sm">
+                  <div className="flex items-center justify-between  border p-4 shadow-sm">
                     <div className="space-y-0.5">
                       <Label htmlFor="published" className="text-base">
                         {t("form.published")}
@@ -127,7 +127,7 @@ export default function AdminBlogNewContent() {
 
                   {state.message && (
                     <div
-                      className={`rounded-md p-3 text-sm font-medium ${
+                      className={` p-3 text-sm font-medium ${
                         state.message.includes("success")
                           ? "bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-400"
                           : "bg-destructive text-destructive-foreground"

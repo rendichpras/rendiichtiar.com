@@ -1,8 +1,33 @@
-.next
+# Prettier ignore file (gitignore syntax)
+# Docs: https://prettier.io/docs/ignore
+
+# Dependencies
 node_modules
-dist
-build
+
+# Next.js build output
+.next
+out
+
+# Coverage / reports
+coverage
+
+# Vercel
 .vercel
-pnpm-lock.yaml
+
+# Build artifacts
+build
+dist
+
+# Generated Prisma client (this repo generates into db/generated)
+db/generated
+
+# Prisma migrations (if present)
+prisma/migrations
+
+# Logs
+*.log
+
+# Lock files (intentionally not auto-formatted)
 package-lock.json
+pnpm-lock.yaml
 yarn.lock

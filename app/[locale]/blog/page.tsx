@@ -1,5 +1,4 @@
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import { getAllPosts } from "@/lib/actions/blog"
 import { BlogContent } from "@/components/pages/blog/BlogContent"
 import type { Metadata } from "next"
 
@@ -25,13 +24,6 @@ export default async function BlogIndexPage({ params, searchParams }: Props) {
   const currentPage = typeof page === "string" ? parseInt(page) : 1
 
   setRequestLocale(locale)
-  const { posts, totalPages } = await getAllPosts(true, query, currentPage)
 
-  return (
-    <BlogContent
-      posts={posts}
-      totalPages={totalPages}
-      currentPage={currentPage}
-    />
-  )
+  return <BlogContent initialQuery={query} initialPage={currentPage} />
 }

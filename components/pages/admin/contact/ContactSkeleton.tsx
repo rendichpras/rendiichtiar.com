@@ -12,7 +12,7 @@ export function ContactTableSkeleton() {
           <Skeleton className="h-10 w-full sm:ml-auto sm:w-[120px]" />
         </div>
 
-        <div className="rounded-lg border bg-card">
+        <div className=" border bg-card">
           <div className="flex h-11 items-center gap-4 border-b border-border/50 px-6">
             <Skeleton className="h-4 w-[80px]" />
             <Skeleton className="h-4 w-[100px]" />
@@ -31,7 +31,7 @@ export function ContactTableSkeleton() {
               <Skeleton className="h-5 w-[100px]" />
               <Skeleton className="h-5 w-[150px]" />
               <Skeleton className="h-12 w-[200px]" />
-              <Skeleton className="h-6 w-[80px] rounded-full" />
+              <Skeleton className="h-6 w-[80px] " />
               <Skeleton className="h-8 w-[100px]" />
             </div>
           ))}

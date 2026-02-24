@@ -1,55 +1,36 @@
-# rendiichtiar.com
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This repository contains the source code for my personal website, [rendiichtiar.com](https://rendiichtiar.com).
+## Getting Started
 
-I built this website as a playground to experiment with modern web technologies, while serving as an interactive portfolio.
+First, run the development server:
 
-## Features
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-- **Realtime Guestbook**: Visitors can leave messages, reply to comments, and like entries in real-time.
-- **Playground**: A simple code editor integrated directly into the browser.
-- **Bilingual**: Supports both Indonesian and English.
-- **Modern UI**: Features Dark Mode support and smooth animations.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Tech Stack
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project is built using:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- **Next.js 16** (App Router & Turbopack)
-- **TypeScript**
-- **Tailwind CSS 4**
-- **Prisma** & **PostgreSQL**
-- **Clerk** (Authentication)
-- **Pusher** (Real-time features)
-- **Framer Motion**
+## Learn More
 
-## Running Locally
+To learn more about Next.js, take a look at the following resources:
 
-If you want to run this project on your local machine:
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-1.  **Clone & Install**
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-    ```bash
-    git clone https://github.com/rendichpras/rendiichtiar.com.git
-    cd rendiichtiar.com
-    npm install
-    ```
+## Deploy on Vercel
 
-2.  **Environment Setup**
-    Copy `.env.example` to `.env` and fill in the required variables (Database URL, Clerk Keys, Pusher Keys, etc.).
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-3.  **Database Setup**
-
-    ```bash
-    npm run db:generate
-    npm run db:migrate
-    ```
-
-4.  **Run Dev Server**
-    ```bash
-    npm run dev
-    ```
-
-## License
-
-[MIT](LICENSE)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

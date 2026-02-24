@@ -7,7 +7,11 @@ type SendEmailArgs = {
   from?: string
 }
 
-export async function sendEmail({ to, subject, html, from }: SendEmailArgs) {
+let _transporter: ReturnType<typeof nodemailer.createTransport> | null = null
+
+function getTransporter() {
+  if (_transporter) return _transporter
+
   const host = process.env.SMTP_HOST
   const port = Number(process.env.SMTP_PORT || 587)
   const user = process.env.SMTP_USER
@@ -17,14 +21,20 @@ export async function sendEmail({ to, subject, html, from }: SendEmailArgs) {
     throw new Error("smtp_not_configured")
   }
 
-  const transporter = nodemailer.createTransport({
+  _transporter = nodemailer.createTransport({
     host,
     port,
     secure: port === 465,
     auth: { user, pass },
   })
 
-  const fromAddress = from || process.env.SITE_EMAIL_FROM || user
+  return _transporter
+}
+
+export async function sendEmail({ to, subject, html, from }: SendEmailArgs) {
+  const transporter = getTransporter()
+  const fromAddress =
+    from || process.env.SITE_EMAIL_FROM || process.env.SMTP_USER
 
   await transporter.sendMail({
     from: fromAddress,

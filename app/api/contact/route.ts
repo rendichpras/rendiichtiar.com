@@ -5,19 +5,15 @@ import { getClientIp } from "@/lib/security/client-ip"
 import { sendEmail } from "@/lib/email"
 import { getContactEmailTemplate } from "@/lib/email-templates"
 import { contactSchema } from "@/lib/validations/contact"
+import { jsonError, readJson } from "@/lib/http/route-helpers"
+import { logger } from "@/lib/observability/logger"
 
 export async function POST(req: Request) {
   try {
-    let json: unknown
-    try {
-      json = await req.json()
-    } catch {
-      return NextResponse.json(
-        { success: false, error: "invalid_json" },
-        { status: 400 }
-      )
-    }
-    const result = contactSchema.safeParse(json)
+    const parsed = await readJson(req)
+    if (!parsed.ok) return parsed.response
+
+    const result = contactSchema.safeParse(parsed.body)
 
     if (!result.success) {
       return NextResponse.json(
@@ -73,15 +69,14 @@ export async function POST(req: Request) {
         })
       }
     } catch (error) {
-      console.error("Failed to send email notification to admin:", error)
+      logger.error("Failed to send email notification to admin", {
+        error: error instanceof Error ? error.message : String(error),
+      })
     }
 
     return NextResponse.json({ success: true })
   } catch {
-    return NextResponse.json(
-      { success: false, error: "Failed to send message" },
-      { status: 500 }
-    )
+    return jsonError("Failed to send message", 500)
   }
 }
 

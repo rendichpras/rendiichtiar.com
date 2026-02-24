@@ -3,16 +3,13 @@
 import { memo } from "react"
 import { Link } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
-import { VerifiedBadge } from "./VerifiedBadge"
 
 export const Logo = memo(function Logo({
   className,
   homeLabel,
-  verifiedLabel,
 }: {
   className?: string
   homeLabel: string
-  verifiedLabel: string
 }) {
   return (
     <Link
@@ -24,7 +21,6 @@ export const Logo = memo(function Logo({
       aria-label={homeLabel}
     >
       <span>rendiichtiar</span>
-      <VerifiedBadge label={verifiedLabel} />
     </Link>
   )
 })

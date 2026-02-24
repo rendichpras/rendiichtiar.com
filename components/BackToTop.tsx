@@ -43,7 +43,7 @@ export function BackToTop() {
             onClick={handleClick}
             aria-label={t("back_to_top.aria_label")}
             className={cn(
-              "fixed bottom-8 right-8 z-50 translate-y-16 rounded-full border-border bg-background shadow-lg transition-all duration-300 hover:scale-110 hover:border-primary hover:bg-background",
+              "fixed bottom-8 right-8 z-50 translate-y-16 border-border bg-background transition-all duration-300 hover:scale-110 hover:border-primary hover:bg-background",
               "opacity-0",
               visible && "translate-y-0 opacity-100"
             )}

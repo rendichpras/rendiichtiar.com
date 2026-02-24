@@ -1,7 +1,6 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { Link } from "@/i18n/routing"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SiGithub, SiLinkedin, SiInstagram } from "react-icons/si"
@@ -25,15 +24,15 @@ function SocialLink({
         variant="ghost"
         size="icon"
         className={cn(
-          "h-9 w-9 rounded-xl border border-border bg-card text-muted-foreground hover:border-primary hover:bg-accent hover:text-primary focus-visible:ring-2 focus-visible:ring-primary",
+          "h-9 w-9  border border-border bg-card text-muted-foreground hover:border-primary hover:bg-accent hover:text-primary focus-visible:ring-2 focus-visible:ring-primary",
           className
         )}
         aria-label={label}
         title={label}
       >
-        <Link href={href} target="_blank" rel="noopener noreferrer">
+        <a href={href} target="_blank" rel="noopener noreferrer">
           {children}
-        </Link>
+        </a>
       </Button>
     </li>
   )

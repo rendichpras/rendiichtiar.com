@@ -25,8 +25,8 @@ const MAX_LEN = 5000
 
 function EditorLoading() {
   return (
-    <div className="flex h-full min-h[500px] w-full items-center justify-center rounded-xl border border-border bg-card">
-      <Skeleton className="h-full w-full rounded-xl" />
+    <div className="flex h-full min-h[500px] w-full items-center justify-center  border border-border bg-card">
+      <Skeleton className="h-full w-full " />
     </div>
   )
 }
@@ -242,7 +242,7 @@ export function PlaygroundContent() {
             >
               <Card
                 className={cn(
-                  "grid grid-cols-1 gap-4 rounded-xl border border-border bg-card p-4 text-foreground transition-all duration-300 hover:border-primary lg:grid-cols-2",
+                  "grid grid-cols-1 gap-4  border border-border bg-card p-4 text-foreground transition-all duration-300 hover:border-primary lg:grid-cols-2",
                   isFullscreen &&
                     "fixed inset-4 z-50 overflow-auto lg:grid-cols-2"
                 )}
@@ -250,7 +250,7 @@ export function PlaygroundContent() {
                 <CardContent className="space-y-2 p-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-xl border border-border bg-secondary px-2 py-1 text-xs font-medium text-primary">
+                      <span className=" border border-border bg-secondary px-2 py-1 text-xs font-medium text-primary">
                         {t("editor.language")}
                       </span>
                     </div>
@@ -263,7 +263,7 @@ export function PlaygroundContent() {
                           setCode("")
                           setOutput("")
                         }}
-                        className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                        className="size-8  border border-transparent text-muted-foreground hover:bg-background/80"
                       >
                         <Trash2 className="size-4" aria-hidden="true" />
                         <span className="sr-only">
@@ -276,7 +276,7 @@ export function PlaygroundContent() {
                         size="icon"
                         onClick={() => setIsFullscreen((s) => !s)}
                         aria-pressed={isFullscreen}
-                        className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                        className="size-8  border border-transparent text-muted-foreground hover:bg-background/80"
                       >
                         <Expand className="size-4" aria-hidden="true" />
                         <span className="sr-only">
@@ -286,7 +286,7 @@ export function PlaygroundContent() {
                     </div>
                   </div>
 
-                  <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-border bg-background transition-all duration-300 hover:border-primary">
+                  <div className="relative min-h-[500px] overflow-hidden  border border-border bg-background transition-all duration-300 hover:border-primary">
                     <Suspense fallback={<EditorLoading />}>
                       <MonacoEditor
                         height="500px"
@@ -352,7 +352,7 @@ export function PlaygroundContent() {
                 <CardContent className="space-y-2 p-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-xl border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                      <span className=" border border-border/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
                         {t("console.title")}
                       </span>
                     </div>
@@ -362,7 +362,7 @@ export function PlaygroundContent() {
                         variant="ghost"
                         size="icon"
                         onClick={() => setOutput("")}
-                        className="size-8 rounded-xl border border-transparent text-muted-foreground hover:bg-background/80"
+                        className="size-8  border border-transparent text-muted-foreground hover:bg-background/80"
                       >
                         <Trash2 className="size-4" aria-hidden="true" />
                         <span className="sr-only">{t("console.clear")}</span>
@@ -371,7 +371,7 @@ export function PlaygroundContent() {
                       <Button
                         size="icon"
                         onClick={runCode}
-                        className="size-8 rounded-xl border border-border bg-secondary text-primary hover:bg-secondary/80"
+                        className="size-8  border border-border bg-secondary text-primary hover:bg-secondary/80"
                       >
                         <Play className="size-4" aria-hidden="true" />
                         <span className="sr-only">
@@ -382,7 +382,7 @@ export function PlaygroundContent() {
                   </div>
 
                   <div
-                    className="min-h-[500px] whitespace-pre-wrap overflow-auto rounded-xl border border-border bg-background p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-primary"
+                    className="min-h-[500px] whitespace-pre-wrap overflow-auto  border border-border bg-background p-4 font-mono text-sm text-foreground transition-all duration-300 hover:border-primary"
                     role="region"
                     aria-live="polite"
                     aria-label={t("console.output_label")}

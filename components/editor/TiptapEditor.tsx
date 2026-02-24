@@ -6,25 +6,14 @@ import Link from "@tiptap/extension-link"
 import Image from "@tiptap/extension-image"
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight"
 import { common, createLowlight } from "lowlight"
+import { isSafeHref } from "@/lib/security/url"
+import { Toolbar } from "./Toolbar"
 
 const lowlight = createLowlight(common)
-import { Toolbar } from "./Toolbar"
 
 type TiptapEditorProps = {
   content: string
   onChange: (richText: string) => void
-}
-
-function isSafeHref(href: string) {
-  if (href.startsWith("#") || href.startsWith("/")) return true
-
-  try {
-    const url = new URL(href)
-    const allowed = new Set(["http:", "https:", "mailto:", "tel:"])
-    return allowed.has(url.protocol)
-  } catch {
-    return false
-  }
 }
 
 export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
@@ -43,11 +32,13 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
         validate: (href) => isSafeHref(href),
         HTMLAttributes: {
           class: "text-primary underline underline-offset-4",
+          target: "_blank",
+          rel: "noopener noreferrer",
         },
       }),
       Image.configure({
         HTMLAttributes: {
-          class: "rounded-md border",
+          class: " border",
         },
       }),
       CodeBlockLowlight.configure({
@@ -69,7 +60,7 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
   })
 
   return (
-    <div className="flex min-h-[400px] w-full flex-col rounded-md border bg-card">
+    <div className="flex min-h-[400px] w-full flex-col  border bg-card">
       <Toolbar editor={editor} />
       <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
     </div>

@@ -47,7 +47,7 @@ export function LanguageSwitcher({
             size={isCompact ? "icon" : "default"}
             onClick={toggleLanguage}
             className={cn(
-              "relative overflow-hidden rounded-full hover:bg-accent",
+              "relative overflow-hidden hover:bg-accent",
               isCompact ? "size-8" : "h-9 min-w-[2.25rem] px-3",
               className
             )}
@@ -64,7 +64,7 @@ export function LanguageSwitcher({
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex items-center gap-2"
                 >
-                  <span className="flex h-4 w-4 overflow-hidden rounded-sm ring-1 ring-border/40">
+                  <span className="flex h-4 w-4 overflow-hidden ring-1 ring-border/40">
                     <Image
                       src={
                         locale === "id"

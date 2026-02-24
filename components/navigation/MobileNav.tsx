@@ -9,6 +9,11 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 import { useTranslations } from "next-intl"
 import { useRouter, usePathname } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
+import {
+  SLIDE_LEFT_PANEL_VARIANTS,
+  STAGGER_CHILDREN_VARIANTS,
+  SLIDE_RIGHT_CHILD_VARIANTS,
+} from "@/lib/animations"
 import { Logo } from "./Logo"
 import {
   MAIN_NAV,
@@ -37,7 +42,7 @@ const MobileNavItem = memo(function MobileNavItem({
     <button
       onClick={() => onNavigate(item.path)}
       className={cn(
-        "relative flex w-full items-center gap-3 overflow-hidden rounded-lg px-4 py-3 text-sm font-medium",
+        "relative flex w-full items-center gap-3 overflow-hidden  px-4 py-3 text-sm font-medium",
         active
           ? "bg-secondary text-primary"
           : "text-muted-foreground hover:bg-secondary hover:text-primary"
@@ -60,7 +65,7 @@ const MobileExternalItem = memo(function MobileExternalItem({
     <Button
       variant="ghost"
       asChild
-      className="relative flex w-full items-center justify-start gap-3 overflow-hidden rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
+      className="relative flex w-full items-center justify-start gap-3 overflow-hidden  px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary"
     >
       <a href={href} target="_blank" rel="noopener noreferrer" role="menuitem">
         <span className="font-medium">
@@ -111,7 +116,7 @@ export function MobileNav() {
       <Button
         variant="ghost"
         size="icon"
-        className="rounded-full"
+        className=""
         onClick={() => setOpen((v) => !v)}
         aria-label={
           open
@@ -141,9 +146,10 @@ export function MobileNav() {
               aria-hidden="true"
             />
             <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
+              variants={SLIDE_LEFT_PANEL_VARIANTS}
+              initial="closed"
+              animate="open"
+              exit="closed"
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed left-0 top-0 bottom-0 z-50 w-[280px] border-r bg-background lg:hidden"
               role="dialog"
@@ -153,15 +159,12 @@ export function MobileNav() {
             >
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b p-4">
-                  <Logo
-                    homeLabel={tPages("home.to_home")}
-                    verifiedLabel={tPages("home.verified")}
-                  />
+                  <Logo homeLabel={tPages("home.to_home")} />
 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full"
+                    className=""
                     onClick={() => setOpen(false)}
                     aria-label={tCommon("navigation.close_menu")}
                   >
@@ -173,17 +176,7 @@ export function MobileNav() {
                   className="flex-1 space-y-4 overflow-y-auto p-4"
                   role="menu"
                   aria-label={tCommon("navigation.main_menu")}
-                  variants={{
-                    open: {
-                      transition: { staggerChildren: 0.05, delayChildren: 0.1 },
-                    },
-                    closed: {
-                      transition: {
-                        staggerChildren: 0.05,
-                        staggerDirection: -1,
-                      },
-                    },
-                  }}
+                  variants={STAGGER_CHILDREN_VARIANTS}
                   initial="closed"
                   animate="open"
                 >
@@ -191,10 +184,7 @@ export function MobileNav() {
                     {MAIN_NAV.map((it) => (
                       <motion.div
                         key={it.path}
-                        variants={{
-                          open: { opacity: 1, x: 0 },
-                          closed: { opacity: 0, x: -20 },
-                        }}
+                        variants={SLIDE_RIGHT_CHILD_VARIANTS}
                       >
                         <MobileNavItem
                           item={it}
@@ -208,10 +198,7 @@ export function MobileNav() {
 
                   <div className="space-y-1">
                     <motion.div
-                      variants={{
-                        open: { opacity: 1, x: 0 },
-                        closed: { opacity: 0, x: -20 },
-                      }}
+                      variants={SLIDE_RIGHT_CHILD_VARIANTS}
                       className="px-3 py-2 text-xs font-medium text-muted-foreground"
                     >
                       {tCommon("navigation.apps")}
@@ -220,10 +207,7 @@ export function MobileNav() {
                     {APP_NAV.map((it) => (
                       <motion.div
                         key={it.path}
-                        variants={{
-                          open: { opacity: 1, x: 0 },
-                          closed: { opacity: 0, x: -20 },
-                        }}
+                        variants={SLIDE_RIGHT_CHILD_VARIANTS}
                       >
                         <MobileNavItem
                           item={it}
@@ -237,10 +221,7 @@ export function MobileNav() {
 
                   <div className="space-y-1">
                     <motion.div
-                      variants={{
-                        open: { opacity: 1, x: 0 },
-                        closed: { opacity: 0, x: -20 },
-                      }}
+                      variants={SLIDE_RIGHT_CHILD_VARIANTS}
                       className="px-3 py-2 text-xs font-medium text-muted-foreground"
                     >
                       {tCommon("navigation.socials")}
@@ -249,10 +230,7 @@ export function MobileNav() {
                     {SOCIAL_NAV.map((s) => (
                       <motion.div
                         key={s.name}
-                        variants={{
-                          open: { opacity: 1, x: 0 },
-                          closed: { opacity: 0, x: -20 },
-                        }}
+                        variants={SLIDE_RIGHT_CHILD_VARIANTS}
                       >
                         <MobileExternalItem {...s} t={tCommon} />
                       </motion.div>

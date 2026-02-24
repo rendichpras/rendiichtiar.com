@@ -14,7 +14,7 @@ export function SignOutButton() {
     <Button
       variant="outline"
       size="sm"
-      className="rounded-lg border-border/30 text-xs hover:border-border/50"
+      className="border-border/30 text-xs hover:border-border/50"
       onClick={() => void clerk.signOut({ redirectUrl: `/${locale}` })}
     >
       {t("auth.logout.title")}

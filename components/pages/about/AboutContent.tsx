@@ -49,7 +49,7 @@ const SectionNavCard = memo(function SectionNavCard({
         onClick={onClick}
         variant="ghost"
         className={cn(
-          "group w-full justify-start rounded-xl border text-left transition-colors duration-300",
+          "group w-full justify-start border text-left transition-colors duration-300",
           "border-border bg-card hover:border-primary hover:bg-accent",
           "focus-visible:ring-2 focus-visible:ring-primary",
           active &&
@@ -87,10 +87,10 @@ function EducationItem({
   sizes?: string
 }) {
   return (
-    <Card className="rounded-xl border-border bg-card text-foreground transition-colors duration-300 hover:border-primary hover:bg-accent">
+    <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary hover:bg-accent">
       <CardContent>
         <div className="flex items-start gap-4 sm:items-center">
-          <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-border bg-background p-2 sm:size-14">
+          <div className="relative size-12 shrink-0 overflow-hidden  border border-border bg-background p-2 sm:size-14">
             <Image
               src={src}
               alt={name}
@@ -125,7 +125,7 @@ const sections: readonly SectionContent[] = [
     icon: User2,
     titleKey: "sections.intro",
     content: ({ t }) => (
-      <Card className="rounded-xl border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
+      <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
             {t("sections.intro")}
@@ -157,7 +157,7 @@ const sections: readonly SectionContent[] = [
     icon: BookOpen,
     titleKey: "sections.career",
     content: ({ t }) => (
-      <Card className="rounded-xl border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
+      <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
             {t("sections.career")}
@@ -178,7 +178,7 @@ const sections: readonly SectionContent[] = [
     icon: GraduationCap,
     titleKey: "sections.education",
     content: ({ t }) => (
-      <Card className="rounded-xl border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
+      <Card className="border-border bg-card text-foreground transition-colors duration-300 hover:border-primary">
         <CardHeader>
           <CardTitle className="text-base font-semibold text-foreground sm:text-lg">
             {t("sections.education")}

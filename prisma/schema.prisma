@@ -50,10 +50,11 @@ model GuestbookEntry {
   @@index([userId])
   @@index([parentId])
   @@index([rootId])
+  @@index([createdAt])
 }
 
 model Like {
-  id               String   @id @default(uuid())
+  id               String   @id @default(cuid())
   createdAt        DateTime @default(now())
   userId           String
   guestbookEntryId String
@@ -72,7 +73,7 @@ enum ContactStatus {
 }
 
 model ContactMessage {
-  id        String        @id @default(uuid())
+  id        String        @id @default(cuid())
   name      String
   email     String
   message   String
@@ -91,7 +92,7 @@ model ContactMessage {
 }
 
 model ContactReply {
-  id        String         @id @default(uuid())
+  id        String         @id @default(cuid())
   contactId String         @unique
   contact   ContactMessage @relation(fields: [contactId], references: [id], onDelete: Cascade)
   message   String
@@ -118,6 +119,5 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([slug])
   @@index([published])
 }

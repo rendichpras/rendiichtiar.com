@@ -114,7 +114,7 @@ export function GuestbookForm() {
               type="submit"
               disabled={isSubmitting || !message.trim()}
               className={cn(
-                "rounded-full px-6 font-semibold",
+                "px-6 font-semibold",
                 isSubmitting && "cursor-wait opacity-80"
               )}
             >

@@ -2,23 +2,18 @@
 
 import { motion } from "framer-motion"
 import { Separator } from "@/components/ui/separator"
-import type { Post } from "@/db/generated/client"
 import BlogList from "./BlogList"
 import { useTranslations } from "next-intl"
 import { SearchInput } from "@/components/SearchInput"
-import { Pagination } from "@/components/ui/pagination-custom"
-import { EmptyState } from "@/components/ui/empty-state"
 
 type BlogContentProps = {
-  posts: (Post & { blurDataURL?: string })[]
-  totalPages: number
-  currentPage: number
+  initialQuery?: string
+  initialPage?: number
 }
 
 export function BlogContent({
-  posts,
-  totalPages,
-  currentPage,
+  initialQuery,
+  initialPage = 1,
 }: BlogContentProps) {
   const t = useTranslations("pages.blog")
 
@@ -76,19 +71,7 @@ export function BlogContent({
               show: { opacity: 1, y: 0 },
             }}
           >
-            {posts.length === 0 ? (
-              <EmptyState
-                title={t("empty.title")}
-                description={t("empty.subtitle")}
-              />
-            ) : (
-              <>
-                <BlogList posts={posts} />
-                <div className="mt-8 flex justify-center">
-                  <Pagination page={currentPage} totalPages={totalPages} />
-                </div>
-              </>
-            )}
+            <BlogList initialQuery={initialQuery} initialPage={initialPage} />
           </motion.div>
         </motion.div>
       </div>

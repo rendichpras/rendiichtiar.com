@@ -44,7 +44,7 @@ function SearchInputContent({ placeholder }: { placeholder: string }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="pl-9 bg-background border border-input shadow-none focus-visible:ring-1"
+        className="bg-card pl-10 transition-colors duration-300 hover:border-primary focus-visible:ring-primary"
       />
     </div>
   )

@@ -1,4 +1,5 @@
 import sanitizeHtml, { type IOptions } from "sanitize-html"
+import { isSafeHref, isSafeImageSrc } from "@/lib/security/url"
 
 const SANITIZE_OPTIONS: IOptions = {
   allowedTags: [
@@ -44,7 +45,11 @@ const SANITIZE_OPTIONS: IOptions = {
       const href = attribs.href
       const nextAttribs: Record<string, string> = { ...attribs }
 
-      if (href) nextAttribs.href = href
+      if (href && isSafeHref(href, new Set(["http:", "https:", "mailto:"]))) {
+        nextAttribs.href = href
+      } else {
+        delete nextAttribs.href
+      }
       nextAttribs.rel = "noopener noreferrer"
       nextAttribs.target = "_blank"
 
@@ -52,6 +57,9 @@ const SANITIZE_OPTIONS: IOptions = {
     },
     img: (tagName, attribs) => {
       const nextAttribs: Record<string, string> = { ...attribs }
+      if (nextAttribs.src && !isSafeImageSrc(nextAttribs.src)) {
+        delete nextAttribs.src
+      }
       nextAttribs.loading = "lazy"
       return { tagName, attribs: nextAttribs }
     },

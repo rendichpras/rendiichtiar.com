@@ -23,7 +23,7 @@ function SignInWithProviderButton({
     <Button
       type="button"
       variant="outline"
-      className="w-full justify-start gap-3 rounded-xl border-border/30 px-4 py-3 text-sm font-medium hover:border-border/50"
+      className="w-full justify-start gap-3 border-border/30 px-4 py-3 text-sm font-medium hover:border-border/50"
       onClick={() => {
         if (!signIn) return
         void signIn.authenticateWithRedirect({

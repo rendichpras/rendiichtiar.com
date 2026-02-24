@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { SLIDE_RIGHT_VARIANTS } from "@/lib/animations"
 
 import { Logo } from "./Logo"
 import { MobileNav } from "./MobileNav"
@@ -51,7 +52,7 @@ export function Navigation({
         <div
           className={cn(
             "absolute inset-0 border-b border-border bg-background transition-all duration-300",
-            scrolled && "shadow-md"
+            scrolled && ""
           )}
         />
         <div className="container relative mx-auto px-6">
@@ -62,11 +63,7 @@ export function Navigation({
           >
             <div className="flex items-center gap-2">
               <MobileNav />
-              <Logo
-                className="text-lg"
-                homeLabel={tPages("home.to_home")}
-                verifiedLabel={tPages("home.verified")}
-              />
+              <Logo className="text-lg" homeLabel={tPages("home.to_home")} />
             </div>
           </nav>
         </div>
@@ -83,7 +80,7 @@ export function Navigation({
         <div
           className={cn(
             "absolute inset-0 bg-background transition-all duration-300",
-            scrolled && "shadow-md"
+            scrolled && ""
           )}
         />
 
@@ -95,17 +92,13 @@ export function Navigation({
                 collapsed && "sr-only"
               )}
             >
-              <Logo
-                className="text-xl"
-                homeLabel={tPages("home.to_home")}
-                verifiedLabel={tPages("home.verified")}
-              />
+              <Logo className="text-xl" homeLabel={tPages("home.to_home")} />
             </div>
 
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full"
+              className="h-8 w-8"
               onClick={onToggle}
               aria-label={
                 collapsed
@@ -146,7 +139,7 @@ export function Navigation({
                     <Link
                       href={it.path}
                       className={cn(
-                        "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors",
+                        "group relative flex items-center overflow-hidden  py-2.5 text-sm font-medium transition-colors",
                         collapsed ? "justify-center px-2" : "gap-3 px-3",
                         active
                           ? "bg-secondary text-primary"
@@ -163,13 +156,7 @@ export function Navigation({
                   )
 
                   return (
-                    <motion.div
-                      key={it.path}
-                      variants={{
-                        hidden: { opacity: 0, x: -10 },
-                        show: { opacity: 1, x: 0 },
-                      }}
-                    >
+                    <motion.div key={it.path} variants={SLIDE_RIGHT_VARIANTS}>
                       {collapsed ? (
                         <Tooltip>
                           <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
@@ -192,10 +179,7 @@ export function Navigation({
               <div className="space-y-1">
                 <motion.div
                   className={cn("px-3 py-2", collapsed && "sr-only")}
-                  variants={{
-                    hidden: { opacity: 0, x: -10 },
-                    show: { opacity: 1, x: 0 },
-                  }}
+                  variants={SLIDE_RIGHT_VARIANTS}
                 >
                   <p className="text-xs font-medium text-muted-foreground">
                     {tCommon("navigation.apps")}
@@ -211,7 +195,7 @@ export function Navigation({
                     <Link
                       href={it.path}
                       className={cn(
-                        "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium transition-colors",
+                        "group relative flex items-center overflow-hidden  py-2.5 text-sm font-medium transition-colors",
                         collapsed ? "justify-center px-2" : "gap-3 px-3",
                         active
                           ? "bg-secondary text-primary"
@@ -228,13 +212,7 @@ export function Navigation({
                   )
 
                   return (
-                    <motion.div
-                      key={it.path}
-                      variants={{
-                        hidden: { opacity: 0, x: -10 },
-                        show: { opacity: 1, x: 0 },
-                      }}
-                    >
+                    <motion.div key={it.path} variants={SLIDE_RIGHT_VARIANTS}>
                       {collapsed ? (
                         <Tooltip>
                           <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
@@ -258,10 +236,7 @@ export function Navigation({
                 <div className="space-y-1">
                   <motion.div
                     className="px-3 py-2"
-                    variants={{
-                      hidden: { opacity: 0, x: -10 },
-                      show: { opacity: 1, x: 0 },
-                    }}
+                    variants={SLIDE_RIGHT_VARIANTS}
                   >
                     <p className="text-xs font-medium text-muted-foreground">
                       {tCommon("navigation.socials")}
@@ -269,19 +244,13 @@ export function Navigation({
                   </motion.div>
 
                   {SOCIAL_NAV.map((s) => (
-                    <motion.div
-                      key={s.name}
-                      variants={{
-                        hidden: { opacity: 0, x: -10 },
-                        show: { opacity: 1, x: 0 },
-                      }}
-                    >
+                    <motion.div key={s.name} variants={SLIDE_RIGHT_VARIANTS}>
                       <a
                         href={s.href}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
-                          "group relative flex items-center overflow-hidden rounded-lg py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary transition-colors",
+                          "group relative flex items-center overflow-hidden  py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-primary transition-colors",
                           "gap-3 px-3"
                         )}
                       >

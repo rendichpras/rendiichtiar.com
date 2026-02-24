@@ -111,7 +111,7 @@ export function GuestbookReply({
                   name: parentAuthor,
                 })}
                 className={cn(
-                  "min-h-[44px] resize-none rounded-xl border-border bg-card text-xs transition-colors duration-300 hover:border-primary focus-visible:ring-primary sm:text-sm"
+                  "min-h-[44px] resize-none border-border bg-card text-xs transition-colors duration-300 hover:border-primary focus-visible:ring-primary sm:text-sm"
                 )}
                 maxLength={280}
                 disabled={isSubmitting}
@@ -125,7 +125,7 @@ export function GuestbookReply({
                 size="sm"
                 onClick={onReplyComplete}
                 disabled={isSubmitting}
-                className="h-7 rounded-xl px-2 text-[10px] text-muted-foreground hover:bg-muted hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
+                className="h-7 px-2 text-[10px] text-muted-foreground hover:bg-muted hover:text-foreground sm:h-8 sm:px-3 sm:text-xs"
               >
                 {t("list.reply.cancel")}
               </Button>
@@ -134,7 +134,7 @@ export function GuestbookReply({
                 type="submit"
                 size="sm"
                 disabled={isSubmitting}
-                className="h-7 rounded-xl bg-secondary px-2 text-[10px] text-primary hover:bg-secondary/80 sm:h-8 sm:px-3 sm:text-xs"
+                className="h-7 bg-secondary px-2 text-[10px] text-primary hover:bg-secondary/80 sm:h-8 sm:px-3 sm:text-xs"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-1.5">
